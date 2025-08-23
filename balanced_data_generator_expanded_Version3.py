@@ -1566,32 +1566,50 @@ class WorkExpertiseTemplate(BalancedTemplate):
         industry = random.choice(["technology", "healthcare", "finance", "education", "manufacturing"])
         
         # First person variation (50% chance)
-        if random.choice([True, False]):
+        first_person = random.choice([True, False])
+        if first_person:
             text = f"I work for {organization} in the {industry} industry. I have expertise in {expertise} and use {skill} with {technology}. I'm currently working on {project} using my {equipment}."
+            entities = {
+                "pronoun_i": (EntityTypes.PRONOUN, "I"),
+                "org1": (EntityTypes.ORGANIZATION, organization),
+                "skill1": (EntityTypes.SKILL, skill),
+                "expertise1": (EntityTypes.SKILL, expertise),  # Using SKILL type for expertise
+                "project1": (EntityTypes.PROJECT, project),
+                "tech1": (EntityTypes.TECHNOLOGY, technology),
+                "equip1": (EntityTypes.EQUIPMENT, equipment),
+                "industry1": (EntityTypes.INDUSTRY, industry)
+            }
+            relations = [
+                (RelationTypes.WORKS_FOR, "pronoun_i", "org1"),
+                (RelationTypes.HAS_EXPERTISE, "pronoun_i", "expertise1"),
+                (RelationTypes.HAS_SKILL, "pronoun_i", "skill1"),
+                (RelationTypes.USES, "pronoun_i", "tech1"),
+                (RelationTypes.WORKS_ON, "pronoun_i", "project1"),
+                (RelationTypes.USES, "pronoun_i", "equip1"),
+                (RelationTypes.WORKS_FROM, "pronoun_i", "industry1")
+            ]
         else:
             # Third person variation
             text = f"{person} works for {organization} in the {industry} industry. They have expertise in {expertise} and use {skill} with {technology}. They're currently working on {project} using their {equipment}."
-        
-        entities = {
-            "person1": (EntityTypes.PERSON, person),
-            "org1": (EntityTypes.ORGANIZATION, organization),
-            "skill1": (EntityTypes.SKILL, skill),
-            "expertise1": (EntityTypes.SKILL, expertise),  # Using SKILL type for expertise
-            "project1": (EntityTypes.PROJECT, project),
-            "tech1": (EntityTypes.TECHNOLOGY, technology),
-            "equip1": (EntityTypes.EQUIPMENT, equipment),
-            "industry1": (EntityTypes.INDUSTRY, industry)
-        }
-        
-        relations = [
-            (RelationTypes.WORKS_FOR, "person1", "org1"),
-            (RelationTypes.HAS_EXPERTISE, "person1", "expertise1"),
-            (RelationTypes.HAS_SKILL, "person1", "skill1"),
-            (RelationTypes.USES, "person1", "tech1"),
-            (RelationTypes.WORKS_ON, "person1", "project1"),
-            (RelationTypes.USES, "person1", "equip1"),
-            (RelationTypes.WORKS_FROM, "person1", "industry1")
-        ]
+            entities = {
+                "person1": (EntityTypes.PERSON, person),
+                "org1": (EntityTypes.ORGANIZATION, organization),
+                "skill1": (EntityTypes.SKILL, skill),
+                "expertise1": (EntityTypes.SKILL, expertise),  # Using SKILL type for expertise
+                "project1": (EntityTypes.PROJECT, project),
+                "tech1": (EntityTypes.TECHNOLOGY, technology),
+                "equip1": (EntityTypes.EQUIPMENT, equipment),
+                "industry1": (EntityTypes.INDUSTRY, industry)
+            }
+            relations = [
+                (RelationTypes.WORKS_FOR, "person1", "org1"),
+                (RelationTypes.HAS_EXPERTISE, "person1", "expertise1"),
+                (RelationTypes.HAS_SKILL, "person1", "skill1"),
+                (RelationTypes.USES, "person1", "tech1"),
+                (RelationTypes.WORKS_ON, "person1", "project1"),
+                (RelationTypes.USES, "person1", "equip1"),
+                (RelationTypes.WORKS_FROM, "person1", "industry1")
+            ]
         
         return text, entities, relations
 
@@ -1608,31 +1626,48 @@ class CareerProgressionTemplate(BalancedTemplate):
         learning_method = random.choice(LEARNING_METHODS)
         
         # First person variation (50% chance)
-        if random.choice([True, False]):
+        first_person = random.choice([True, False])
+        if first_person:
             text = f"I currently work as a {role} in the {industry} sector. My goal is {goal} over the {timeline}. I intend to {intent} and am using {learning_method} to achieve this."
+            entities = {
+                "pronoun_i": (EntityTypes.PRONOUN, "I"),
+                "role1": (EntityTypes.ROLE, role),
+                "goal1": (EntityTypes.GOAL, goal),
+                "timeline1": (EntityTypes.TIMELINE, timeline),
+                "industry1": (EntityTypes.INDUSTRY, industry),
+                "intent1": (EntityTypes.INTENT, intent),
+                "method1": (EntityTypes.LEARNING_METHOD, learning_method)
+            }
+            relations = [
+                (RelationTypes.HAS_ROLE, "pronoun_i", "role1"),
+                (RelationTypes.HAS_GOAL, "pronoun_i", "goal1"),
+                (RelationTypes.HAS_INTENT, "pronoun_i", "intent1"),
+                (RelationTypes.LEARNS_FROM, "pronoun_i", "method1"),
+                (RelationTypes.WORKS_FROM, "pronoun_i", "industry1"),
+                (RelationTypes.PLANS, "pronoun_i", "goal1"),
+                (RelationTypes.AIMS_FOR, "pronoun_i", "goal1")
+            ]
         else:
             # Third person variation
             text = f"{person} currently works as a {role} in the {industry} sector. Their goal is {goal} over the {timeline}. They intend to {intent} and are using {learning_method} to achieve this."
-        
-        entities = {
-            "person1": (EntityTypes.PERSON, person),
-            "role1": (EntityTypes.ROLE, role),
-            "goal1": (EntityTypes.GOAL, goal),
-            "timeline1": (EntityTypes.TIMELINE, timeline),
-            "industry1": (EntityTypes.INDUSTRY, industry),
-            "intent1": (EntityTypes.INTENT, intent),
-            "method1": (EntityTypes.LEARNING_METHOD, learning_method)
-        }
-        
-        relations = [
-            (RelationTypes.HAS_ROLE, "person1", "role1"),
-            (RelationTypes.HAS_GOAL, "person1", "goal1"),
-            (RelationTypes.HAS_INTENT, "person1", "intent1"),
-            (RelationTypes.LEARNS_FROM, "person1", "method1"),
-            (RelationTypes.WORKS_FROM, "person1", "industry1"),
-            (RelationTypes.PLANS, "person1", "goal1"),
-            (RelationTypes.AIMS_FOR, "person1", "goal1")
-        ]
+            entities = {
+                "person1": (EntityTypes.PERSON, person),
+                "role1": (EntityTypes.ROLE, role),
+                "goal1": (EntityTypes.GOAL, goal),
+                "timeline1": (EntityTypes.TIMELINE, timeline),
+                "industry1": (EntityTypes.INDUSTRY, industry),
+                "intent1": (EntityTypes.INTENT, intent),
+                "method1": (EntityTypes.LEARNING_METHOD, learning_method)
+            }
+            relations = [
+                (RelationTypes.HAS_ROLE, "person1", "role1"),
+                (RelationTypes.HAS_GOAL, "person1", "goal1"),
+                (RelationTypes.HAS_INTENT, "person1", "intent1"),
+                (RelationTypes.LEARNS_FROM, "person1", "method1"),
+                (RelationTypes.WORKS_FROM, "person1", "industry1"),
+                (RelationTypes.PLANS, "person1", "goal1"),
+                (RelationTypes.AIMS_FOR, "person1", "goal1")
+            ]
         
         return text, entities, relations
 
@@ -1649,31 +1684,48 @@ class TeamCollaborationTemplate(BalancedTemplate):
         skill = random.choice(SKILLS)
         
         # First person variation (50% chance)
-        if random.choice([True, False]):
+        first_person = random.choice([True, False])
+        if first_person:
             text = f"I collaborate with {person2} in our {group}. We're working on {activity} at the {location} for the {project}. I use my {skill} skills in this collaboration."
+            entities = {
+                "pronoun_i": (EntityTypes.PRONOUN, "I"),
+                "person2": (EntityTypes.PERSON, person2),
+                "group1": (EntityTypes.GROUP, group),
+                "activity1": (EntityTypes.ACTIVITY, activity),
+                "location1": (EntityTypes.LOCATION, location),
+                "project1": (EntityTypes.PROJECT, project),
+                "skill1": (EntityTypes.SKILL, skill)
+            }
+            relations = [
+                (RelationTypes.COLLABORATES_WITH, "pronoun_i", "person2"),
+                (RelationTypes.MEMBER_OF, "pronoun_i", "group1"),
+                (RelationTypes.DOES_ACTIVITY, "pronoun_i", "activity1"),
+                (RelationTypes.AT_LOCATION, "pronoun_i", "location1"),
+                (RelationTypes.WORKS_ON, "pronoun_i", "project1"),
+                (RelationTypes.HAS_SKILL, "pronoun_i", "skill1"),
+                (RelationTypes.USES, "pronoun_i", "skill1")
+            ]
         else:
             # Third person variation
             text = f"{person1} collaborates with {person2} in their {group}. They're working on {activity} at the {location} for the {project}. {person1} uses their {skill} skills in this collaboration."
-        
-        entities = {
-            "person1": (EntityTypes.PERSON, person1),
-            "person2": (EntityTypes.PERSON, person2),
-            "group1": (EntityTypes.GROUP, group),
-            "activity1": (EntityTypes.ACTIVITY, activity),
-            "location1": (EntityTypes.LOCATION, location),
-            "project1": (EntityTypes.PROJECT, project),
-            "skill1": (EntityTypes.SKILL, skill)
-        }
-        
-        relations = [
-            (RelationTypes.COLLABORATES_WITH, "person1", "person2"),
-            (RelationTypes.MEMBER_OF, "person1", "group1"),
-            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
-            (RelationTypes.AT_LOCATION, "person1", "location1"),
-            (RelationTypes.WORKS_ON, "person1", "project1"),
-            (RelationTypes.HAS_SKILL, "person1", "skill1"),
-            (RelationTypes.USES, "person1", "skill1")
-        ]
+            entities = {
+                "person1": (EntityTypes.PERSON, person1),
+                "person2": (EntityTypes.PERSON, person2),
+                "group1": (EntityTypes.GROUP, group),
+                "activity1": (EntityTypes.ACTIVITY, activity),
+                "location1": (EntityTypes.LOCATION, location),
+                "project1": (EntityTypes.PROJECT, project),
+                "skill1": (EntityTypes.SKILL, skill)
+            }
+            relations = [
+                (RelationTypes.COLLABORATES_WITH, "person1", "person2"),
+                (RelationTypes.MEMBER_OF, "person1", "group1"),
+                (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+                (RelationTypes.AT_LOCATION, "person1", "location1"),
+                (RelationTypes.WORKS_ON, "person1", "project1"),
+                (RelationTypes.HAS_SKILL, "person1", "skill1"),
+                (RelationTypes.USES, "person1", "skill1")
+            ]
         
         return text, entities, relations
 
