@@ -1857,47 +1857,33 @@ class HobbyInterestTemplate(BalancedTemplate):
         goal = random.choice(["mastery", "relaxation", "creativity", "fitness", "social connection"])
         
         # First person variation (50% chance)
-        first_person = random.choice([True, False])
-        if first_person:
+        if random.choice([True, False]):
             text = f"I enjoy {hobby} as my main hobby and practice it {frequency}. I use my {skill} skills and {equipment} to pursue {goal} through this activity."
-            entities = {
-                "pronoun_i": (EntityTypes.PRONOUN, "I"),
-                "hobby1": (EntityTypes.HOBBY, hobby),
-                "skill1": (EntityTypes.SKILL, skill),
-                "freq1": (EntityTypes.FREQUENCY, frequency),
-                "equip1": (EntityTypes.EQUIPMENT, equipment),
-                "goal1": (EntityTypes.GOAL, goal)
-            }
-            relations = [
-                (RelationTypes.HAS_HOBBY, "pronoun_i", "hobby1"),
-                (RelationTypes.ENJOYS, "pronoun_i", "hobby1"),
-                (RelationTypes.HAS_SKILL, "pronoun_i", "skill1"),
-                (RelationTypes.HAS_FREQUENCY, "hobby1", "freq1"),
-                (RelationTypes.USES, "pronoun_i", "equip1"),
-                (RelationTypes.HAS_GOAL, "pronoun_i", "goal1"),
-                (RelationTypes.PRACTICES, "pronoun_i", "hobby1")
-            ]
         else:
             # Third person variation
             text = f"{person} enjoys {hobby} as their main hobby and practices it {frequency}. They use their {skill} skills and {equipment} to pursue {goal} through this activity."
-            entities = {
-                "person1": (EntityTypes.PERSON, person),
-                "hobby1": (EntityTypes.HOBBY, hobby),
-                "skill1": (EntityTypes.SKILL, skill),
-                "freq1": (EntityTypes.FREQUENCY, frequency),
-                "equip1": (EntityTypes.EQUIPMENT, equipment),
-                "goal1": (EntityTypes.GOAL, goal)
-            }
-            relations = [
-                (RelationTypes.HAS_HOBBY, "person1", "hobby1"),
-                (RelationTypes.ENJOYS, "person1", "hobby1"),
-                (RelationTypes.HAS_SKILL, "person1", "skill1"),
-                (RelationTypes.HAS_FREQUENCY, "hobby1", "freq1"),
-                (RelationTypes.USES, "person1", "equip1"),
-                (RelationTypes.HAS_GOAL, "person1", "goal1"),
-                (RelationTypes.PRACTICES, "person1", "hobby1")
-            ]
         
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "hobby1": (EntityTypes.HOBBY, hobby),
+            "skill1": (EntityTypes.SKILL, skill),
+            "freq1": (EntityTypes.FREQUENCY, frequency),
+            "equip1": (EntityTypes.EQUIPMENT, equipment),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_HOBBY, "person1", "hobby1"),
+            (RelationTypes.ENJOYS, "person1", "hobby1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.HAS_FREQUENCY, "hobby1", "freq1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.PRACTICES, "person1", "hobby1")
+        ]
+        
+        return text, entities, relations
+
         return text, entities, relations
 
 class LearningGrowthTemplate(BalancedTemplate):
@@ -1912,48 +1898,30 @@ class LearningGrowthTemplate(BalancedTemplate):
         topic = random.choice(["artificial intelligence", "philosophy", "cooking", "music", "history", "science"])
         
         # First person variation (50% chance)
-        first_person = random.choice([True, False])
-        if first_person:
+        if random.choice([True, False]):
             text = f"I'm using {learning_method} to develop my {skill} abilities. This approach supports my {personal_growth} as I work toward {goal} in {topic}."
-            entities = {
-                "pronoun_i": (EntityTypes.PRONOUN, "I"),
-                "method1": (EntityTypes.LEARNING_METHOD, learning_method),
-                "growth1": (EntityTypes.PERSONAL_GROWTH, personal_growth),
-                "skill1": (EntityTypes.SKILL, skill),
-                "goal1": (EntityTypes.GOAL, goal),
-                "topic1": (EntityTypes.TOPIC, topic)
-            }
-            relations = [
-                (RelationTypes.LEARNS_FROM, "pronoun_i", "method1"),
-                (RelationTypes.IMPROVES, "pronoun_i", "growth1"),
-                (RelationTypes.HAS_SKILL, "pronoun_i", "skill1"),
-                (RelationTypes.HAS_GOAL, "pronoun_i", "goal1"),
-                (RelationTypes.LEARNS, "pronoun_i", "topic1"),
-                (RelationTypes.DEVELOPS, "pronoun_i", "skill1"),
-                (RelationTypes.MASTERS, "pronoun_i", "skill1")
-            ]
         else:
             # Third person variation
             text = f"{person} is using {learning_method} to develop their {skill} abilities. This approach supports their {personal_growth} as they work toward {goal} in {topic}."
-            entities = {
-                "person1": (EntityTypes.PERSON, person),
-                "method1": (EntityTypes.LEARNING_METHOD, learning_method),
-                "growth1": (EntityTypes.PERSONAL_GROWTH, personal_growth),
-                "skill1": (EntityTypes.SKILL, skill),
-                "goal1": (EntityTypes.GOAL, goal),
-                "topic1": (EntityTypes.TOPIC, topic)
-            }
-            relations = [
-                (RelationTypes.LEARNS_FROM, "person1", "method1"),
-                (RelationTypes.IMPROVES, "person1", "growth1"),
-                (RelationTypes.HAS_SKILL, "person1", "skill1"),
-                (RelationTypes.HAS_GOAL, "person1", "goal1"),
-                (RelationTypes.LEARNS, "person1", "topic1"),
-                (RelationTypes.DEVELOPS, "person1", "skill1"),
-                (RelationTypes.MASTERS, "person1", "skill1")
-            ]
         
-        return text, entities, relations
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "method1": (EntityTypes.LEARNING_METHOD, learning_method),
+            "growth1": (EntityTypes.PERSONAL_GROWTH, personal_growth),
+            "skill1": (EntityTypes.SKILL, skill),
+            "goal1": (EntityTypes.GOAL, goal),
+            "topic1": (EntityTypes.TOPIC, topic)
+        }
+        
+        relations = [
+            (RelationTypes.LEARNS_FROM, "person1", "method1"),
+            (RelationTypes.IMPROVES, "person1", "growth1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.LEARNS, "person1", "topic1"),
+            (RelationTypes.DEVELOPS, "person1", "skill1"),
+            (RelationTypes.MASTERS, "person1", "skill1")
+        ]
         
         return text, entities, relations
 
