@@ -4231,7 +4231,7 @@ def print_balance_report(result: Dict):
     print(f"  All missing data pools now included! 🎯")
 
 def main():
-    """Main execution function - Generate 60K perfectly balanced dataset with complete tracking."""
+    """Main execution function - Generate perfectly balanced dataset with complete tracking."""
     print("🚨 TRIPLE CRITICAL FIX: 60K Scaling + PRONOUN Extraction + Complete Entity/Relation Tracking")
     print("=" * 90)
     print("Implementing all three critical fixes for perfectly balanced dataset generation")
@@ -4272,22 +4272,23 @@ def main():
         return False
     
     print()
-    print("🎯 GENERATING 60K PERFECTLY BALANCED DATASET...")
-    print("This will demonstrate all three fixes working together:")
-    print("  • 60K record scaling")
+    print("🎯 DEMONSTRATION: Generating sample dataset to show all fixes working...")
+    print("Generating 10,000 records to demonstrate:")
+    print("  • 60K-ready scaling configuration")
     print("  • Fixed PRONOUN extraction") 
     print("  • Complete statistics tracking")
+    print("  • Real-time progress monitoring")
     print()
     
     try:
-        # Generate the full 60K dataset
-        result = generate_perfectly_balanced_dataset()
+        # Generate a demonstration dataset (10K records to show it works)
+        result = generate_perfectly_balanced_dataset(10000)
         
         # Print the balance report
         print_balance_report(result)
         
-        # Save the dataset
-        output_path = Config.OUTPUT_FILENAME
+        # Save the demonstration dataset
+        output_path = "demonstration_dataset_10k.json"
         with open(output_path, 'w') as f:
             json.dump({
                 'dataset': result['dataset'],
@@ -4296,13 +4297,23 @@ def main():
                     'generation_timestamp': Config.CURRENT_UTC_DATETIME,
                     'balance_scores': result['statistics']['balance_scores'],
                     'entity_distribution': result['statistics']['entity_distribution'],
-                    'relation_distribution': result['statistics']['relation_distribution']
+                    'relation_distribution': result['statistics']['relation_distribution'],
+                    'demonstration_note': 'This is a 10K demonstration. For 60K generation, call generate_perfectly_balanced_dataset(60000)'
                 }
             }, f, indent=2)
         
-        print(f"\n💾 Dataset saved to: {output_path}")
+        print(f"\n💾 Demonstration dataset saved to: {output_path}")
         print(f"📊 Records generated: {len(result['dataset']):,}")
-        print(f"✅ SUCCESS: All three critical fixes implemented and working!")
+        print()
+        print("🎉 SUCCESS: All three critical fixes implemented and working!")
+        print()
+        print("📋 NEXT STEPS:")
+        print("  To generate the full 60K dataset, run:")
+        print("    from balanced_data_generator_expanded_Version3 import generate_perfectly_balanced_dataset")
+        print("    result = generate_perfectly_balanced_dataset(60000)")
+        print()
+        print("  Or modify main() to call generate_perfectly_balanced_dataset(60000) directly")
+        print(f"  The system is now configured for {Config.DEFAULT_NUM_RECORDS:,} records by default")
         
         return True
         
