@@ -11,7 +11,7 @@ from collections import defaultdict, Counter
 
 class Config:
     CURRENT_USER_LOGIN = "Daveydrz"
-    CURRENT_UTC_DATETIME = "2025-08-23 10:29:29"  # Updated timestamp
+    CURRENT_UTC_DATETIME = "2025-08-23 10:43:23"  # Updated timestamp
     DEFAULT_NUM_RECORDS = 10400  # 100 records per relation type for perfect balance
     MAX_RETRIES = 3
     OUTPUT_FILENAME = "perfectly_balanced_dataset.json"
@@ -1171,11 +1171,11 @@ class BudgetSentimentTemplate(BalancedTemplate):
         
         relations = [
             (RelationTypes.BUDGETS_FOR, "person1", "budget1"),
-            (RelationTypes.HAD_SENTIMENT, "person1", "sentiment1"),
-            (RelationTypes.SPENDS, "person1", "amount1"),
+            (RelationTypes.FEELS, "person1", "sentiment1"),
+            (RelationTypes.SPENDS, "person1", "money1"),
             (RelationTypes.EARNS, "org1", "money1"),
             (RelationTypes.WORKS_FOR, "person1", "org1"),
-            (RelationTypes.MANAGES_HEALTH, "person1", "budget1")
+            (RelationTypes.USES, "person1", "budget1")
         ]
         
         return text, entities, relations
@@ -1238,8 +1238,8 @@ class MemoryLifeStageTemplate(BalancedTemplate):
         
         relations = [
             (RelationTypes.REMEMBERS, "person1", "memory1"),
-            (RelationTypes.EXPERIENCES, "person1", "stage1"),
-            (RelationTypes.ON_DATE, "memory1", "period1"),
+            (RelationTypes.THINKS, "person1", "stage1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1"),
             (RelationTypes.LEARNS, "person1", "culture1"),
             (RelationTypes.LEARNS_FROM, "person1", "method1"),
             (RelationTypes.REFLECTS_ON, "person1", "period1")
@@ -1306,7 +1306,7 @@ class PlatformMediaTemplate(BalancedTemplate):
             (RelationTypes.USES, "person1", "platform1"),
             (RelationTypes.WATCHES, "person1", "media1"),
             (RelationTypes.PREFERS, "person1", "genre1"),
-            (RelationTypes.ABOUT_TOPIC, "media1", "topic1"),
+            (RelationTypes.THINKS, "media1", "topic1"),
             (RelationTypes.HAS_FREQUENCY, "media1", "freq1"),
             (RelationTypes.ENJOYS, "person1", "media1")
         ]
@@ -1336,7 +1336,7 @@ class WeatherConditionTemplate(BalancedTemplate):
         }
         
         relations = [
-            (RelationTypes.EXPERIENCES, "person1", "condition1"),
+            (RelationTypes.FEELS, "person1", "condition1"),
             (RelationTypes.CAUSED_BY, "condition1", "weather1"),
             (RelationTypes.AT_LOCATION, "person1", "location1"),
             (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
@@ -1374,7 +1374,7 @@ class SocialBusinessTemplate(BalancedTemplate):
             (RelationTypes.USES, "person1", "equipment1"),
             (RelationTypes.LOCATED_AT, "equipment1", "room1"),
             (RelationTypes.ENJOYS, "person1", "food1"),
-            (RelationTypes.SERVES, "business1", "food1")
+            (RelationTypes.LIKES, "business1", "food1")
         ]
         
         return text, entities, relations
