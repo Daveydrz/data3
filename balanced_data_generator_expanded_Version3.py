@@ -1388,30 +1388,82 @@ class PerfectBalanceTracker:
                 if not attr.startswith('_')]
     
     def get_needed_entities(self, count=10):
-        """Get the most needed entity types based on individual targets."""
-        needed = []
+        """Get the most needed entity types, prioritizing completely missing types for 100% coverage."""
+        # First priority: completely missing types (guarantee 100% coverage)
+        missing_types = []
+        under_target_types = []
+        
         for entity_type in self.entity_types:
             current_usage = self.entity_usage[entity_type]
             target = self.entity_targets.get(entity_type, self.entity_target)
-            if current_usage < target:
-                needed.append((entity_type, target - current_usage))
+            
+            if current_usage == 0:
+                # Completely missing - highest priority
+                missing_types.append((entity_type, target))
+            elif current_usage < target:
+                # Under target - second priority
+                under_target_types.append((entity_type, target - current_usage))
         
-        # Sort by most needed first
-        needed.sort(key=lambda x: x[1], reverse=True)
-        return [entity_type for entity_type, _ in needed[:count]]
+        # Sort missing types by target (higher targets first)
+        missing_types.sort(key=lambda x: x[1], reverse=True)
+        # Sort under-target types by deficit (higher deficits first)
+        under_target_types.sort(key=lambda x: x[1], reverse=True)
+        
+        # Combine: missing types first, then under-target types
+        result = []
+        
+        # Add all missing types first (for 100% coverage)
+        for entity_type, _ in missing_types:
+            result.append(entity_type)
+            if len(result) >= count:
+                return result
+        
+        # Add under-target types to fill remaining slots
+        for entity_type, _ in under_target_types:
+            result.append(entity_type)
+            if len(result) >= count:
+                return result
+        
+        return result
     
     def get_needed_relations(self, count=10):
-        """Get the most needed relation types based on individual targets."""
-        needed = []
+        """Get the most needed relation types, prioritizing completely missing types for 100% coverage."""
+        # First priority: completely missing types (guarantee 100% coverage)
+        missing_types = []
+        under_target_types = []
+        
         for relation_type in self.relation_types:
             current_usage = self.relation_usage[relation_type]
             target = self.relation_targets.get(relation_type, self.relation_target)
-            if current_usage < target:
-                needed.append((relation_type, target - current_usage))
+            
+            if current_usage == 0:
+                # Completely missing - highest priority
+                missing_types.append((relation_type, target))
+            elif current_usage < target:
+                # Under target - second priority
+                under_target_types.append((relation_type, target - current_usage))
         
-        # Sort by most needed first
-        needed.sort(key=lambda x: x[1], reverse=True)
-        return [relation_type for relation_type, _ in needed[:count]]
+        # Sort missing types by target (higher targets first)
+        missing_types.sort(key=lambda x: x[1], reverse=True)
+        # Sort under-target types by deficit (higher deficits first)
+        under_target_types.sort(key=lambda x: x[1], reverse=True)
+        
+        # Combine: missing types first, then under-target types
+        result = []
+        
+        # Add all missing types first (for 100% coverage)
+        for relation_type, _ in missing_types:
+            result.append(relation_type)
+            if len(result) >= count:
+                return result
+        
+        # Add under-target types to fill remaining slots
+        for relation_type, _ in under_target_types:
+            result.append(relation_type)
+            if len(result) >= count:
+                return result
+        
+        return result
     
     def record_usage(self, entities, relations):
         """Record usage of entities and relations."""
@@ -1439,12 +1491,21 @@ class PerfectBalanceTracker:
             relation_completion = sum(min(count, self.relation_targets.get(relation_type, 0)) 
                                     for relation_type, count in self.relation_usage.items()) / total_relation_target * 100
         
+        # Add coverage information
+        coverage_status = self.get_coverage_status()
+        
         return {
             "entity_balance_score": entity_balance,
             "relation_balance_score": relation_balance,
             "overall_balance": (entity_balance + relation_balance) / 2,
             "entity_completion": entity_completion,
-            "relation_completion": relation_completion
+            "relation_completion": relation_completion,
+            "entity_coverage": coverage_status['entity_coverage'],
+            "relation_coverage": coverage_status['relation_coverage'],
+            "entities_used": coverage_status['entities_used'],
+            "entities_total": coverage_status['entities_total'],
+            "relations_used": coverage_status['relations_used'],
+            "relations_total": coverage_status['relations_total']
         }
     
     def _calculate_balance(self, usage_dict, type_category):
@@ -1529,6 +1590,140 @@ class PerfectBalanceTracker:
         print(f"  • Ready for 60K perfectly balanced generation ✅")
         
         return True
+    
+    def validate_100_percent_coverage(self):
+        """Validate that all entity and relation types have been used at least once."""
+        missing_entities = set(self.entity_types) - set(self.entity_usage.keys())
+        missing_relations = set(self.relation_types) - set(self.relation_usage.keys())
+        
+        if missing_entities or missing_relations:
+            print(f"\n❌ CRITICAL: 100% coverage not achieved!")
+            if missing_entities:
+                print(f"   Missing entities ({len(missing_entities)}): {sorted(list(missing_entities))}")
+            if missing_relations:
+                print(f"   Missing relations ({len(missing_relations)}): {sorted(list(missing_relations))}")
+            return False
+        
+        print(f"\n✅ 100% COVERAGE ACHIEVED!")
+        print(f"   All {len(self.entity_types)} entity types used")
+        print(f"   All {len(self.relation_types)} relation types used")
+        return True
+    
+    def get_coverage_status(self):
+        """Get current coverage status for monitoring."""
+        used_entities = len(self.entity_usage)
+        used_relations = len(self.relation_usage)
+        total_entities = len(self.entity_types)
+        total_relations = len(self.relation_types)
+        
+        entity_coverage = (used_entities / total_entities) * 100
+        relation_coverage = (used_relations / total_relations) * 100
+        
+        return {
+            'entity_coverage': entity_coverage,
+            'relation_coverage': relation_coverage,
+            'entities_used': used_entities,
+            'entities_total': total_entities,
+            'relations_used': used_relations,
+            'relations_total': total_relations,
+            'missing_entities': set(self.entity_types) - set(self.entity_usage.keys()),
+            'missing_relations': set(self.relation_types) - set(self.relation_usage.keys())
+        }
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# DIAGNOSTIC FUNCTIONS FOR 100% COVERAGE
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+def find_missing_types(tracker: PerfectBalanceTracker):
+    """Identify missing entity and relation types from coverage."""
+    # Get all defined types
+    all_entity_types = set(tracker.entity_types)
+    all_relation_types = set(tracker.relation_types)
+    
+    # Get actually used types
+    used_entity_types = set(tracker.entity_usage.keys())
+    used_relation_types = set(tracker.relation_usage.keys())
+    
+    # Find missing types
+    missing_entities = all_entity_types - used_entity_types
+    missing_relations = all_relation_types - used_relation_types
+    
+    # Find under-used types (used but below target)
+    underused_entities = []
+    for entity_type in used_entity_types:
+        target = tracker.entity_targets.get(entity_type, tracker.entity_target)
+        current = tracker.entity_usage[entity_type]
+        if current < target * 0.5:  # Less than 50% of target
+            underused_entities.append((entity_type, current, target))
+    
+    underused_relations = []
+    for relation_type in used_relation_types:
+        target = tracker.relation_targets.get(relation_type, tracker.relation_target)
+        current = tracker.relation_usage[relation_type]
+        if current < target * 0.5:  # Less than 50% of target
+            underused_relations.append((relation_type, current, target))
+    
+    return {
+        'missing_entities': missing_entities,
+        'missing_relations': missing_relations,
+        'underused_entities': underused_entities,
+        'underused_relations': underused_relations,
+        'total_entities_used': len(used_entity_types),
+        'total_relations_used': len(used_relation_types),
+        'total_entities_defined': len(all_entity_types),
+        'total_relations_defined': len(all_relation_types)
+    }
+
+def print_coverage_analysis(tracker: PerfectBalanceTracker):
+    """Print detailed coverage analysis showing exactly what's missing."""
+    analysis = find_missing_types(tracker)
+    
+    print("\n" + "="*80)
+    print("📊 DETAILED COVERAGE ANALYSIS")
+    print("="*80)
+    
+    # Entity analysis
+    print(f"\n📋 ENTITY COVERAGE:")
+    print(f"  Used: {analysis['total_entities_used']}/{analysis['total_entities_defined']} types")
+    print(f"  Missing: {len(analysis['missing_entities'])} types")
+    
+    if analysis['missing_entities']:
+        print(f"\n❌ MISSING ENTITY TYPES ({len(analysis['missing_entities'])}):")
+        for entity in sorted(analysis['missing_entities']):
+            print(f"    • {entity}")
+    
+    if analysis['underused_entities']:
+        print(f"\n⚠️  UNDER-USED ENTITY TYPES ({len(analysis['underused_entities'])}):")
+        for entity, current, target in sorted(analysis['underused_entities']):
+            percentage = (current / target) * 100
+            print(f"    • {entity}: {current}/{target} ({percentage:.1f}%)")
+    
+    # Relation analysis
+    print(f"\n🔗 RELATION COVERAGE:")
+    print(f"  Used: {analysis['total_relations_used']}/{analysis['total_relations_defined']} types")
+    print(f"  Missing: {len(analysis['missing_relations'])} types")
+    
+    if analysis['missing_relations']:
+        print(f"\n❌ MISSING RELATION TYPES ({len(analysis['missing_relations'])}):")
+        for relation in sorted(analysis['missing_relations']):
+            print(f"    • {relation}")
+    
+    if analysis['underused_relations']:
+        print(f"\n⚠️  UNDER-USED RELATION TYPES ({len(analysis['underused_relations'])}):")
+        for relation, current, target in sorted(analysis['underused_relations']):
+            percentage = (current / target) * 100
+            print(f"    • {relation}: {current}/{target} ({percentage:.1f}%)")
+    
+    # Coverage summary
+    entity_coverage = (analysis['total_entities_used'] / analysis['total_entities_defined']) * 100
+    relation_coverage = (analysis['total_relations_used'] / analysis['total_relations_defined']) * 100
+    
+    print(f"\n📈 COVERAGE SUMMARY:")
+    print(f"  Entity Coverage: {entity_coverage:.1f}%")
+    print(f"  Relation Coverage: {relation_coverage:.1f}%")
+    print(f"  Overall Coverage: {(entity_coverage + relation_coverage) / 2:.1f}%")
+    
+    return analysis
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # UTILITY FUNCTIONS (Keep existing implementation)
@@ -4148,7 +4343,7 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
                 stats_tracker.track_relation(relation['type'])
             stats_tracker.track_record()
             
-            # Progress reporting with statistics
+            # Progress reporting with statistics and coverage
             if (i + 1) % Config.PROGRESS_INTERVAL == 0:
                 balance_status = tracker.get_balance_status()
                 progress_report = stats_tracker.get_progress_report(num_records)
@@ -4157,10 +4352,30 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
                       f"Entity: {balance_status['entity_completion']:.1f}% | "
                       f"Relation: {balance_status['relation_completion']:.1f}%")
                 print(f"  📊 {progress_report}")
+                print(f"  🎯 Coverage: Entities {balance_status['entities_used']}/{balance_status['entities_total']} "
+                      f"({balance_status['entity_coverage']:.1f}%) | "
+                      f"Relations {balance_status['relations_used']}/{balance_status['relations_total']} "
+                      f"({balance_status['relation_coverage']:.1f}%)")
                 
         except Exception as e:
             print(f"Failed to generate record {i}: {e}")
             failed_generations += 1
+    
+    # Validate 100% coverage and print analysis
+    print("\n" + "="*80)
+    print("🔍 VALIDATING 100% COVERAGE ACHIEVEMENT")
+    print("="*80)
+    
+    # Print detailed coverage analysis
+    coverage_analysis = print_coverage_analysis(tracker)
+    
+    # Validate 100% coverage
+    coverage_achieved = tracker.validate_100_percent_coverage()
+    
+    if not coverage_achieved:
+        print(f"\n⚠️  WARNING: 100% coverage not achieved on this run")
+        print(f"   This may happen with smaller datasets or random generation")
+        print(f"   For 60K records, 100% coverage should be achieved")
     
     # Generate final statistics
     final_balance = tracker.get_balance_status()
