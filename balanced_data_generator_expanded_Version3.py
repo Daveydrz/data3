@@ -2325,6 +2325,256 @@ class ConceptualThinkingTemplate(BalancedTemplate):
         
         return text, entities, relations
 
+        return text, entities, relations
+
+class FamilyConnectionTemplate(BalancedTemplate):
+    """Template focusing on family relationships and emotional connections."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        geopolitical_entity = random.choice(GEOPOLITICAL_ENTITIES)
+        memory_type = random.choice(MEMORY_TYPES)
+        emotion = random.choice(EMOTIONS)
+        period = random.choice(PERIODS)
+        cultural_element = random.choice(CULTURAL_ELEMENTS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I am family with {person2} who lives in {geopolitical_entity}. I have {memory_type} memories from the {period} and miss our connection to {cultural_element}. This makes me feel {emotion}."
+        else:
+            # Third person variation
+            text = f"{person1} is family with {person2} who lives in {geopolitical_entity}. They have {memory_type} memories from the {period} and miss their connection to {cultural_element}. This makes them feel {emotion}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
+            "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
+            "emotion1": (EntityTypes.EMOTION, emotion),
+            "period1": (EntityTypes.PERIOD, period),
+            "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element)
+        }
+        
+        relations = [
+            (RelationTypes.IS_FAMILY_WITH, "person1", "person2"),
+            (RelationTypes.LIVES_IN, "person2", "geo1"),
+            (RelationTypes.REMEMBERS, "person1", "memory1"),
+            (RelationTypes.MISSES, "person1", "culture1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1"),
+            (RelationTypes.REFLECTS_ON, "person1", "period1")
+        ]
+        
+        return text, entities, relations
+
+class MentorshipTemplate(BalancedTemplate):
+    """Template focusing on mentorship, teaching and influence relationships."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        skill = random.choice(SKILLS)
+        topic = random.choice(TOPICS)
+        organization = random.choice(ORGANIZATIONS)
+        goal = random.choice(["career growth", "skill development", "leadership", "expertise"])
+        platform = random.choice(PLATFORMS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I mentor {person2} at {organization} and teach them {skill} about {topic}. I follow their progress on {platform} and influence their goal of {goal}."
+        else:
+            # Third person variation
+            text = f"{person1} mentors {person2} at {organization} and teaches them {skill} about {topic}. They follow their progress on {platform} and influence their goal of {goal}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "skill1": (EntityTypes.SKILL, skill),
+            "topic1": (EntityTypes.TOPIC, topic),
+            "org1": (EntityTypes.ORGANIZATION, organization),
+            "goal1": (EntityTypes.GOAL, goal),
+            "platform1": (EntityTypes.PLATFORM, platform)
+        }
+        
+        relations = [
+            (RelationTypes.MENTORS, "person1", "person2"),
+            (RelationTypes.TEACHES, "person1", "skill1"),
+            (RelationTypes.FOLLOWS, "person1", "person2"),
+            (RelationTypes.INFLUENCES, "person1", "goal1"),
+            (RelationTypes.ORGANIZES, "person1", "topic1"),
+            (RelationTypes.WORKS_FOR, "person1", "org1"),
+            (RelationTypes.USES, "person1", "platform1")
+        ]
+        
+        return text, entities, relations
+
+class EmotionalJourneyTemplate(BalancedTemplate):
+    """Template focusing on emotional states and future aspirations."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        goal = random.choice(["travel", "education", "family", "achievement", "peace"])
+        event = random.choice(["reunion", "graduation", "promotion", "wedding", "adventure"])
+        memory_type = random.choice(MEMORY_TYPES)
+        geopolitical_entity = random.choice(GEOPOLITICAL_ENTITIES)
+        period = random.choice(PERIODS)
+        emotion = random.choice(EMOTIONS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I dream of {goal} and look forward to a {event}. I have {memory_type} memories that I regret from the {period}. I hope for moving to {geopolitical_entity} and feel {emotion} about it."
+        else:
+            # Third person variation
+            text = f"{person} dreams of {goal} and looks forward to a {event}. They have {memory_type} memories that they regret from the {period}. They hope for moving to {geopolitical_entity} and feel {emotion} about it."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "goal1": (EntityTypes.GOAL, goal),
+            "event1": (EntityTypes.EVENT, event),
+            "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
+            "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
+            "period1": (EntityTypes.PERIOD, period),
+            "emotion1": (EntityTypes.EMOTION, emotion)
+        }
+        
+        relations = [
+            (RelationTypes.DREAMS_OF, "person1", "goal1"),
+            (RelationTypes.LOOKING_FORWARD_TO, "person1", "event1"),
+            (RelationTypes.REGRETS, "person1", "memory1"),
+            (RelationTypes.HOPES_FOR, "person1", "geo1"),
+            (RelationTypes.MOVES_TO, "person1", "geo1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1")
+        ]
+        
+        return text, entities, relations
+
+class HealthLocationTemplate(BalancedTemplate):
+    """Template focusing on health conditions, locations and lifestyle."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        health_condition = random.choice(["allergies", "fitness goals", "wellness routine", "dietary needs"])
+        location = random.choice(LOCATIONS)
+        room = random.choice(ROOM_TYPES)
+        activity = random.choice(ACTIVITIES)
+        business = random.choice(BUSINESS_TYPES)
+        media = random.choice(MEDIA_TYPES_EXPANDED)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I have {health_condition} and stay at the {location} in the {room}. I'm near the {business} where I do {activity} and listen to {media}."
+        else:
+            # Third person variation
+            text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and listen to {media}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "health1": (EntityTypes.HEALTH_INFO, health_condition),  # Using HEALTH_INFO type
+            "location1": (EntityTypes.LOCATION, location),
+            "room1": (EntityTypes.ROOM, room),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "business1": (EntityTypes.BUSINESS, business),
+            "media1": (EntityTypes.MEDIA, media)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_HEALTH_CONDITION, "person1", "health1"),
+            (RelationTypes.STAYS_AT, "person1", "location1"),
+            (RelationTypes.AT_LOCATION, "person1", "room1"),
+            (RelationTypes.IS_NEAR, "location1", "business1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.LISTENS_TO, "person1", "media1"),
+            (RelationTypes.LOCATED_AT, "business1", "location1")
+        ]
+        
+        return text, entities, relations
+
+class CausalInfluenceTemplate(BalancedTemplate):
+    """Template focusing on cause-effect relationships and triggers."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        event = random.choice(["change", "decision", "opportunity", "challenge", "breakthrough"])
+        emotion = random.choice(EMOTIONS)
+        goal = random.choice(GOALS if 'GOALS' in globals() else ["success", "growth", "improvement"])
+        activity = random.choice(ACTIVITIES)
+        result = random.choice(["improvement", "success", "satisfaction", "achievement", "progress"])
+        project = random.choice(PROJECTS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"My {activity} contributed to the {project} and triggered a {event}. This results in {result} and makes me feel {emotion}, which influences my {goal}."
+        else:
+            # Third person variation
+            text = f"{person}'s {activity} contributed to the {project} and triggered a {event}. This results in {result} and makes them feel {emotion}, which influences their {goal}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "event1": (EntityTypes.EVENT, event),
+            "emotion1": (EntityTypes.EMOTION, emotion),
+            "goal1": (EntityTypes.GOAL, goal),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "result1": (EntityTypes.CONCEPT, result),  # Using CONCEPT for result
+            "project1": (EntityTypes.PROJECT, project)
+        }
+        
+        relations = [
+            (RelationTypes.CONTRIBUTED_TO, "activity1", "project1"),
+            (RelationTypes.TRIGGERS, "activity1", "event1"),
+            (RelationTypes.RESULTS_IN, "event1", "result1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.INFLUENCES, "emotion1", "goal1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.WORKS_ON, "person1", "project1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class WorkPlanningTemplate(BalancedTemplate):
+    """Template focusing on concerns, planning and future anxiety."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        goal = random.choice(["career advancement", "family security", "financial stability", "health", "future"])
+        event = random.choice(["deadline", "presentation", "interview", "meeting", "change"])
+        timeline = random.choice(TIMELINES)
+        intent = random.choice(INTENTS)
+        activity = random.choice(ACTIVITIES)
+        emotion = random.choice(EMOTIONS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I worry about my {goal} and the upcoming {event}. I plan to {intent} over the {timeline} through {activity}. This makes me feel {emotion}."
+        else:
+            # Third person variation
+            text = f"{person} worries about their {goal} and the upcoming {event}. They plan to {intent} over the {timeline} through {activity}. This makes them feel {emotion}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "goal1": (EntityTypes.GOAL, goal),
+            "event1": (EntityTypes.EVENT, event),
+            "timeline1": (EntityTypes.TIMELINE, timeline),
+            "intent1": (EntityTypes.INTENT, intent),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "emotion1": (EntityTypes.EMOTION, emotion)
+        }
+        
+        relations = [
+            (RelationTypes.WORRIES_ABOUT, "person1", "goal1"),
+            (RelationTypes.WORRIES_ABOUT, "person1", "event1"),
+            (RelationTypes.PLANS, "person1", "intent1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.HAS_INTENT, "person1", "intent1")
+        ]
+        
+        return text, entities, relations
+
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # MAIN GENERATION FUNCTIONS (Keep existing with expanded data pools)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -2394,7 +2644,15 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
         HealthWellnessTemplate,
         ObjectInteractionTemplate,
         NicknameIdentityTemplate,
-        ConceptualThinkingTemplate
+        ConceptualThinkingTemplate,
+        
+        # Targeted Templates for Missing Relations
+        FamilyConnectionTemplate,
+        MentorshipTemplate,
+        EmotionalJourneyTemplate,
+        HealthLocationTemplate,
+        CausalInfluenceTemplate,
+        WorkPlanningTemplate
     ]
     
     dataset = []
