@@ -1,6 +1,7 @@
 import json
 import random
 import uuid
+import re
 from datetime import datetime
 from typing import Dict, List, Tuple, Optional
 from collections import defaultdict, Counter
@@ -11,15 +12,131 @@ from collections import defaultdict, Counter
 
 class Config:
     CURRENT_USER_LOGIN = "Daveydrz"
-    CURRENT_UTC_DATETIME = "2025-08-23 10:43:23"  # Updated timestamp
-    DEFAULT_NUM_RECORDS = 10400  # 100 records per relation type for perfect balance
+    CURRENT_UTC_DATETIME = "2025-08-23 13:10:48"  # Updated timestamp
+    DEFAULT_NUM_RECORDS = 60000  # 60K records for optimal DeBERTa training
     MAX_RETRIES = 3
-    OUTPUT_FILENAME = "perfectly_balanced_dataset.json"
-    PROGRESS_INTERVAL = 500
+    OUTPUT_FILENAME = "perfectly_balanced_dataset_60k.json"
+    PROGRESS_INTERVAL = 1000  # Show progress every 1000 records for 60K
     
-    # Perfect balance targets
-    TARGET_RECORDS_PER_RELATION = 100
-    TARGET_RECORDS_PER_ENTITY = 153  # 10400/68 ≈ 153
+    # Perfect balance targets for 60K
+    TARGET_RECORDS_PER_RELATION = 545  # 60000/110 relations ≈ 545
+    TARGET_RECORDS_PER_ENTITY = 882    # 60000/68 entities ≈ 882
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# STATISTICS TRACKER FOR COMPREHENSIVE MONITORING
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+class StatisticsTracker:
+    """Comprehensive statistics tracking for entity/relation distribution and progress monitoring."""
+    
+    def __init__(self):
+        self.entity_counts = defaultdict(int)
+        self.relation_counts = defaultdict(int)
+        self.total_records = 0
+        self.start_time = datetime.now()
+        
+    def track_entity(self, entity_type):
+        """Track usage of an entity type."""
+        self.entity_counts[entity_type] += 1
+        
+    def track_relation(self, relation_type):
+        """Track usage of a relation type."""
+        self.relation_counts[relation_type] += 1
+        
+    def track_record(self):
+        """Track completion of a record."""
+        self.total_records += 1
+        
+    def get_progress_report(self, target_records):
+        """Generate real-time progress report."""
+        if self.total_records == 0:
+            return "No records generated yet"
+            
+        progress_pct = (self.total_records / target_records) * 100
+        elapsed = datetime.now() - self.start_time
+        
+        # Calculate top entity and relation types
+        top_entities = sorted(self.entity_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        top_relations = sorted(self.relation_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+        
+        report = f"Progress: {self.total_records:,}/{target_records:,} ({progress_pct:.1f}%) | "
+        report += f"Time: {elapsed.total_seconds():.1f}s | "
+        report += f"Top entities: {', '.join([f'{t}:{c}' for t, c in top_entities[:3]])}"
+        
+        return report
+        
+    def calculate_balance_score(self, target_per_entity, target_per_relation):
+        """Calculate balance score based on distribution uniformity."""
+        if not self.entity_counts or not self.relation_counts:
+            return 0.0
+            
+        # Calculate entity balance (how close each entity count is to target)
+        entity_total = sum(self.entity_counts.values())
+        entity_deviations = []
+        for count in self.entity_counts.values():
+            expected_pct = target_per_entity / entity_total * 100 if entity_total > 0 else 0
+            actual_pct = count / entity_total * 100 if entity_total > 0 else 0
+            deviation = abs(expected_pct - actual_pct)
+            entity_deviations.append(deviation)
+            
+        # Calculate relation balance
+        relation_total = sum(self.relation_counts.values())
+        relation_deviations = []
+        for count in self.relation_counts.values():
+            expected_pct = target_per_relation / relation_total * 100 if relation_total > 0 else 0
+            actual_pct = count / relation_total * 100 if relation_total > 0 else 0
+            deviation = abs(expected_pct - actual_pct)
+            relation_deviations.append(deviation)
+            
+        # Calculate overall balance score (100% = perfect balance)
+        avg_entity_deviation = sum(entity_deviations) / len(entity_deviations) if entity_deviations else 0
+        avg_relation_deviation = sum(relation_deviations) / len(relation_deviations) if relation_deviations else 0
+        avg_deviation = (avg_entity_deviation + avg_relation_deviation) / 2
+        
+        balance_score = max(0, 100 - avg_deviation)
+        return balance_score
+        
+    def generate_final_report(self):
+        """Generate comprehensive final statistics report."""
+        print("\n" + "="*80)
+        print("📊 FINAL GENERATION STATISTICS REPORT")
+        print("="*80)
+        
+        elapsed = datetime.now() - self.start_time
+        print(f"\n🎯 TOTAL RECORDS GENERATED: {self.total_records:,}")
+        print(f"⏱️  TOTAL TIME: {elapsed.total_seconds():.1f} seconds")
+        print(f"📈 GENERATION RATE: {self.total_records / elapsed.total_seconds():.1f} records/second")
+        
+        if self.entity_counts:
+            print(f"\n📋 ENTITY TYPE DISTRIBUTION ({len(self.entity_counts)} types):")
+            total_entities = sum(self.entity_counts.values())
+            for entity_type, count in sorted(self.entity_counts.items(), key=lambda x: x[1], reverse=True):
+                percentage = (count / total_entities) * 100
+                print(f"  {entity_type}: {count:,} ({percentage:.1f}%)")
+                
+        if self.relation_counts:
+            print(f"\n🔗 RELATION TYPE DISTRIBUTION ({len(self.relation_counts)} types):")
+            total_relations = sum(self.relation_counts.values())
+            for relation_type, count in sorted(self.relation_counts.items(), key=lambda x: x[1], reverse=True):
+                percentage = (count / total_relations) * 100
+                print(f"  {relation_type}: {count:,} ({percentage:.1f}%)")
+                
+        # Calculate and display balance score
+        target_per_entity = Config.TARGET_RECORDS_PER_ENTITY
+        target_per_relation = Config.TARGET_RECORDS_PER_RELATION
+        balance_score = self.calculate_balance_score(target_per_entity, target_per_relation)
+        print(f"\n✅ BALANCE SCORE: {balance_score:.1f}%")
+        
+        if balance_score >= 90:
+            print("🎉 EXCELLENT BALANCE ACHIEVED!")
+        elif balance_score >= 75:
+            print("✅ GOOD BALANCE ACHIEVED!")
+        elif balance_score >= 50:
+            print("⚠️  MODERATE BALANCE - Could be improved")
+        else:
+            print("❌ POOR BALANCE - Needs optimization")
+            
+        print("="*80)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # ENTITY AND RELATION TYPE DEFINITIONS (68 entities, 104 relations)
@@ -3882,11 +3999,14 @@ def validate_templates():
             # Validate no empty relations
             assert len(record['relations']) > 0, f"{TemplateClass.__name__} has empty relations!"
             
-            # Validate PRONOUN extraction for "I"
-            pronoun_found = any(e['type'] == 'PRONOUN' and e['text'] == 'I' 
+            # Validate PRONOUN extraction for first-person pronouns
+            # Use proper word boundaries to avoid false matches like "AI integration" or "Infinity Labs"
+            first_person_pattern = r'\b(I|me|my|myself)\b'
+            pronoun_found = any(e['type'] == 'PRONOUN' and e['text'] in ['I', 'me', 'my', 'myself'] 
                               for e in record['entities'])
-            if 'I ' in record['text'] or record['text'].startswith('I '):
-                assert pronoun_found, f"{TemplateClass.__name__} missing PRONOUN extraction for 'I'"
+            has_first_person = bool(re.search(first_person_pattern, record['text'], re.IGNORECASE))
+            if has_first_person:
+                assert pronoun_found, f"{TemplateClass.__name__} missing PRONOUN extraction for first-person pronoun"
             
             print(f"✅ {TemplateClass.__name__} validated successfully")
             
@@ -3943,8 +4063,9 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
     print(f"Total people names available: {len(ALL_PEOPLE_NAMES)}")
     print(f"All missing data pools now included ✅")
     
-    # Initialize tracker and templates
+    # Initialize trackers and templates
     tracker = PerfectBalanceTracker()
+    stats_tracker = StatisticsTracker()
     
     # ALL TEMPLATES - Original + New ones utilizing missing data pools
     template_classes = [
@@ -4020,13 +4141,22 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
             record = template.generate_balanced_record()
             dataset.append(record)
             
-            # Progress reporting
+            # Track statistics for entities and relations
+            for entity in record['entities']:
+                stats_tracker.track_entity(entity['type'])
+            for relation in record['relations']:
+                stats_tracker.track_relation(relation['type'])
+            stats_tracker.track_record()
+            
+            # Progress reporting with statistics
             if (i + 1) % Config.PROGRESS_INTERVAL == 0:
                 balance_status = tracker.get_balance_status()
+                progress_report = stats_tracker.get_progress_report(num_records)
                 print(f"Generated {i+1}/{num_records} | "
                       f"Balance: {balance_status['overall_balance']:.1f}% | "
                       f"Entity: {balance_status['entity_completion']:.1f}% | "
                       f"Relation: {balance_status['relation_completion']:.1f}%")
+                print(f"  📊 {progress_report}")
                 
         except Exception as e:
             print(f"Failed to generate record {i}: {e}")
@@ -4035,6 +4165,9 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
     # Generate final statistics
     final_balance = tracker.get_balance_status()
     
+    # Generate comprehensive final statistics report
+    stats_tracker.generate_final_report()
+    
     stats = {
         "total_generated": len(dataset),
         "failed_generations": failed_generations,
@@ -4042,17 +4175,21 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
         "balance_scores": final_balance,
         "entity_usage": dict(tracker.entity_usage),
         "relation_usage": dict(tracker.relation_usage),
+        "entity_distribution": dict(stats_tracker.entity_counts),
+        "relation_distribution": dict(stats_tracker.relation_counts),
         "templates_used": len(template_classes),
         "data_pools_complete": True,
         "total_people_names": len(ALL_PEOPLE_NAMES),
         "missing_pools_added": True,
-        "timestamp_updated": Config.CURRENT_UTC_DATETIME
+        "timestamp_updated": Config.CURRENT_UTC_DATETIME,
+        "statistics_tracker": stats_tracker
     }
     
     return {
         "dataset": dataset,
         "statistics": stats,
-        "tracker": tracker
+        "tracker": tracker,
+        "stats_tracker": stats_tracker
     }
     
 def print_balance_report(result: Dict):
@@ -4094,60 +4231,84 @@ def print_balance_report(result: Dict):
     print(f"  All missing data pools now included! 🎯")
 
 def main():
-    """Main function - Demonstrate the critical balance fix"""
-    print("🚨 CRITICAL BALANCE FIX DEMONSTRATION")
-    print("=" * 60)
-    print("Fixing the 60K perfectly balanced dataset generation blocker")
+    """Main execution function - Generate 60K perfectly balanced dataset with complete tracking."""
+    print("🚨 TRIPLE CRITICAL FIX: 60K Scaling + PRONOUN Extraction + Complete Entity/Relation Tracking")
+    print("=" * 90)
+    print("Implementing all three critical fixes for perfectly balanced dataset generation")
     print()
     
-    # Initialize the FIXED balance tracker
-    print("🔧 Initializing FIXED Balance Tracker...")
-    tracker = BalanceTracker()
-    
-    # Validate the fix
-    print("\n🧪 Testing the fix...")
-    fixed_tracker = PerfectBalanceTracker()
+    print("🔧 FIXES APPLIED:")
+    print(f"  ✅ SCALING: Updated to {Config.DEFAULT_NUM_RECORDS:,} records (was 10,400)")
+    print(f"  ✅ PRONOUN: Fixed validation logic with proper word boundaries")
+    print(f"  ✅ TRACKING: Added comprehensive StatisticsTracker with real-time monitoring")
+    print(f"  ✅ PROGRESS: Reports every {Config.PROGRESS_INTERVAL:,} records")
+    print(f"  ✅ TIMESTAMP: Updated to {Config.CURRENT_UTC_DATETIME}")
     print()
     
-    # Run validation
-    validation_success = fixed_tracker.validate_balance_fix()
-    
-    if validation_success:
-        print("\n✅ CRITICAL FIX SUCCESSFUL!")
-        print()
-        print("🎯 BEFORE vs AFTER:")
-        print("  BEFORE (Broken):")
-        print("    • Only 12/68 entity types had targets (82% MISSING)")
-        print("    • Only 10/110 relation types had targets (91% MISSING)")
-        print("    • Balance score: 15-20% (BROKEN)")
-        print("    • 60K generation: BLOCKED ❌")
-        print()
-        print("  AFTER (Fixed):")
-        print("    • ALL 68/68 entity types have balanced targets ✅")
-        print("    • ALL 110/110 relation types have balanced targets ✅")
-        print("    • Balance score: Up to 100% (PERFECT) ✅")
-        print("    • 60K generation: READY ✅")
-        print()
-        print("🚀 IMPROVEMENTS:")
-        print("    • 5.7x better balance score")
-        print("    • 100% type coverage (vs 15% before)")
-        print("    • Weighted realistic targets")
-        print("    • Perfect balance achievable")
-        print()
-        print("📊 PROVEN RESULTS:")
-        print("    • 500 record test: 55.9% balance (3.2x improvement)")
-        print("    • Simulation shows: 100% balance achievable")
-        print("    • All validation tests: PASSED")
-        print()
-        print("🎉 READY FOR 60K GENERATION!")
-        print("User can now run generate_perfectly_balanced_dataset(60000)")
-        print("and achieve 100% balanced dataset as required.")
+    # Test PRONOUN validation fix first
+    print("🧪 Testing PRONOUN validation fix...")
+    try:
+        tracker = PerfectBalanceTracker()
+        template = WorkflowTemplate(1, tracker)
+        record = template.generate_balanced_record()
         
-    else:
-        print("❌ VALIDATION FAILED - Fix needs more work")
+        # Test the fixed validation logic
+        import re
+        first_person_pattern = r'\b(I|me|my|myself)\b'
+        has_first_person = bool(re.search(first_person_pattern, record['text'], re.IGNORECASE))
+        pronoun_found = any(e['type'] == 'PRONOUN' and e['text'] in ['I', 'me', 'my', 'myself'] 
+                          for e in record['entities'])
+        
+        if has_first_person and pronoun_found:
+            print("  ✅ PRONOUN validation fix working correctly!")
+        elif not has_first_person:
+            print("  ✅ PRONOUN validation correctly ignores third-person text!")
+        else:
+            print("  ❌ PRONOUN validation still has issues")
+            return False
+            
+    except Exception as e:
+        print(f"  ❌ PRONOUN validation test failed: {e}")
+        return False
     
-    print("\n" + "="*60)
-    print("✅ CRITICAL BALANCE FIX COMPLETE")
+    print()
+    print("🎯 GENERATING 60K PERFECTLY BALANCED DATASET...")
+    print("This will demonstrate all three fixes working together:")
+    print("  • 60K record scaling")
+    print("  • Fixed PRONOUN extraction") 
+    print("  • Complete statistics tracking")
+    print()
+    
+    try:
+        # Generate the full 60K dataset
+        result = generate_perfectly_balanced_dataset()
+        
+        # Print the balance report
+        print_balance_report(result)
+        
+        # Save the dataset
+        output_path = Config.OUTPUT_FILENAME
+        with open(output_path, 'w') as f:
+            json.dump({
+                'dataset': result['dataset'],
+                'metadata': {
+                    'total_records': len(result['dataset']),
+                    'generation_timestamp': Config.CURRENT_UTC_DATETIME,
+                    'balance_scores': result['statistics']['balance_scores'],
+                    'entity_distribution': result['statistics']['entity_distribution'],
+                    'relation_distribution': result['statistics']['relation_distribution']
+                }
+            }, f, indent=2)
+        
+        print(f"\n💾 Dataset saved to: {output_path}")
+        print(f"📊 Records generated: {len(result['dataset']):,}")
+        print(f"✅ SUCCESS: All three critical fixes implemented and working!")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Generation failed: {e}")
+        return False
     print("="*60)
 
 if __name__ == "__main__":
