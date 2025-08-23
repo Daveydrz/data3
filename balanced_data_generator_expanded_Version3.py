@@ -1575,8 +1575,11 @@ class WorkExpertiseTemplate(BalancedTemplate):
             text = f"{person} works for {organization} in the {industry} industry. They have expertise in {expertise} and use {skill} with {technology}. They're currently working on {project} using their {equipment}."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "org1": (EntityTypes.ORGANIZATION, organization),
             "skill1": (EntityTypes.SKILL, skill),
             "expertise1": (EntityTypes.SKILL, expertise),  # Using SKILL type for expertise
@@ -1620,8 +1623,11 @@ class CareerProgressionTemplate(BalancedTemplate):
             text = f"{person} currently works as a {role} in the {industry} sector. Their goal is {goal} over the {timeline}. They intend to {intent} and are using {learning_method} to achieve this."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "role1": (EntityTypes.ROLE, role),
             "goal1": (EntityTypes.GOAL, goal),
             "timeline1": (EntityTypes.TIMELINE, timeline),
@@ -1664,8 +1670,11 @@ class TeamCollaborationTemplate(BalancedTemplate):
             text = f"{person1} collaborates with {person2} in their {group}. They're working on {activity} at the {location} for the {project}. {person1} uses their {skill} skills in this collaboration."
             person1_entity = person1
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person1_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person1_entity),
+            "person1": (person1_type, person1_entity),
             "person2": (EntityTypes.PERSON, person2),
             "group1": (EntityTypes.GROUP, group),
             "activity1": (EntityTypes.ACTIVITY, activity),
@@ -1708,8 +1717,11 @@ class LifeJourneyTemplate(BalancedTemplate):
             text = f"{person} is currently in their {life_stage} phase. They have {memory_type} memories from the {period} that shaped their understanding of {cultural_element}. This period brought {personal_growth} with a {sentiment} outlook."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "stage1": (EntityTypes.LIFE_STAGE, life_stage),
             "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
             "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element),
@@ -1752,8 +1764,11 @@ class RelationshipDynamicsTemplate(BalancedTemplate):
             text = f"{person1} maintains a {relationship} with {person2} based on {relationship_type}. They show {trait} in this relationship and feel {emotion}. They're both part of the {group}."
             person_entity = person1
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person1_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person1_type, person_entity),
             "person2": (EntityTypes.PERSON, person2),
             "rel1": (EntityTypes.RELATIONSHIP, relationship),
             "trait1": (EntityTypes.TRAIT, trait),
@@ -1795,8 +1810,11 @@ class HobbyInterestTemplate(BalancedTemplate):
             text = f"{person} enjoys {hobby} as their main hobby and practices it {frequency}. They use their {skill} skills and {equipment} to pursue {goal} through this activity."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "hobby1": (EntityTypes.HOBBY, hobby),
             "skill1": (EntityTypes.SKILL, skill),
             "freq1": (EntityTypes.FREQUENCY, frequency),
@@ -1837,8 +1855,11 @@ class LearningGrowthTemplate(BalancedTemplate):
             text = f"{person} is using {learning_method} to develop their {skill} abilities. This approach supports their {personal_growth} as they work toward {goal} in {topic}."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "method1": (EntityTypes.LEARNING_METHOD, learning_method),
             "growth1": (EntityTypes.PERSONAL_GROWTH, personal_growth),
             "skill1": (EntityTypes.SKILL, skill),
@@ -1879,8 +1900,11 @@ class MemoryReflectionTemplate(BalancedTemplate):
             text = f"{person} has {memory_type} memories from the {period} that evoke a {sentiment} feeling. These experiences shaped their belief that '{belief}' and make them feel {emotion} when they reflect on them."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
             "period1": (EntityTypes.PERIOD, period),
             "sentiment1": (EntityTypes.SENTIMENT, sentiment),
@@ -1921,8 +1945,11 @@ class DecisionMakingTemplate(BalancedTemplate):
             text = f"{person} intends to {intent} because their goal is {goal}. Their {opinion} opinion guides their decisions, and they value {value}. They prefer {preference} when making important choices."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "intent1": (EntityTypes.INTENT, intent),
             "goal1": (EntityTypes.GOAL, goal),
             "opinion1": (EntityTypes.OPINION, opinion),
@@ -1966,8 +1993,11 @@ class CommunityEngagementTemplate(BalancedTemplate):
             text = f"{person} serves as a {community_role} in their {group} at the {location}. They're involved in {activity} that celebrates {cultural_element} during their community {event}."
             person_entity = person
         
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "role1": (EntityTypes.COMMUNITY_ROLE, community_role),
             "group1": (EntityTypes.GROUP, group),
             "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element),
@@ -2010,8 +2040,12 @@ class MediaConsumptionTemplate(BalancedTemplate):
             text = f"{person} uses {platform} to consume {media} content, especially {genre} topics about {topic}. They engage with this content {frequency} because they prefer {preference}."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "platform1": (EntityTypes.PLATFORM, platform),
             "media1": (EntityTypes.MEDIA, media),
             "genre1": (EntityTypes.GENRE, genre),
@@ -2054,8 +2088,12 @@ class SocialSituationTemplate(BalancedTemplate):
             text = f"{person} is attending a {event} at {business} in the {room}. They're having {food} while using the {equipment}. They feel {emotion} about this social situation."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "event1": (EntityTypes.EVENT, event),
             "business1": (EntityTypes.BUSINESS, business),
             "food1": (EntityTypes.FOOD, food),
@@ -2098,8 +2136,12 @@ class WeatherActivityTemplate(BalancedTemplate):
             text = f"With {weather} weather and {condition} conditions, {person} is doing {activity} at the {location}. They use their {vehicle} to get there and bring their {equipment} for the conditions."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "weather1": (EntityTypes.WEATHER, weather),
             "condition1": (EntityTypes.CONDITION, condition),
             "activity1": (EntityTypes.ACTIVITY, activity),
@@ -2143,8 +2185,12 @@ class TimeScheduleTemplate(BalancedTemplate):
             text = f"{person} has a {recurring_schedule} schedule for {activity} at the {location}. It starts at {start_time} and runs for {duration}, ending at {end_time}."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "time1": (EntityTypes.TIME, time),
             "duration1": (EntityTypes.DURATION, duration),
             "schedule1": (EntityTypes.RECURRING_SCHEDULE, recurring_schedule),
@@ -2188,8 +2234,12 @@ class TravelExperienceTemplate(BalancedTemplate):
             text = f"{person} traveled to {geopolitical_entity} using {vehicle} for {duration}. They feel {sentiment} about the experience and enjoyed {activity} while learning about {cultural_element}."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
             "vehicle1": (EntityTypes.VEHICLE, vehicle),
             "duration1": (EntityTypes.DURATION, duration),
@@ -2234,8 +2284,12 @@ class HealthWellnessTemplate(BalancedTemplate):
             text = f"{person} focuses on {health_info} through {activity} {frequency}. Their goal is {goal} and they use {equipment} for their routine. This makes them feel {feeling}."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "health1": (EntityTypes.HEALTH_INFO, health_info),
             "activity1": (EntityTypes.ACTIVITY, activity),
             "goal1": (EntityTypes.GOAL, goal),
@@ -2277,8 +2331,12 @@ class ObjectInteractionTemplate(BalancedTemplate):
             text = f"{person1} owns a {obj} that they borrowed from {person2}. They spent {money} on a {product} from {business}, and now they're lending the {obj} to help others."
             person_entity = person1
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "person2": (EntityTypes.PERSON, person2),
             "obj1": (EntityTypes.OBJECT, obj),
             "money1": (EntityTypes.MONEY, money),
@@ -2319,8 +2377,12 @@ class NicknameIdentityTemplate(BalancedTemplate):
             text = f"People call {person} by the nickname {nickname} and their pronouns are {pronoun}. They have the attribute of being {attribute} and their {pet} reflects their {trait} nature."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "nickname1": (EntityTypes.NICKNAME, nickname),
             "pronoun1": (EntityTypes.PRONOUN, pronoun),
             "attr1": (EntityTypes.ATTRIBUTE, attribute),
@@ -2359,8 +2421,12 @@ class ConceptualThinkingTemplate(BalancedTemplate):
             text = f"{person} is thinking about the concept of {concept} and considering a new {idea}. Their {opinion} opinion on {topic} influences how they approach these abstract thoughts."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "concept1": (EntityTypes.CONCEPT, concept),
             "idea1": (EntityTypes.IDEA, idea),
             "opinion1": (EntityTypes.OPINION, opinion),
@@ -2402,8 +2468,12 @@ class FamilyConnectionTemplate(BalancedTemplate):
             text = f"{person1} is family with {person2} who lives in {geopolitical_entity}. They have {memory_type} memories from the {period} and miss their connection to {cultural_element}. This makes them feel {emotion}."
             person_entity = person1
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "person2": (EntityTypes.PERSON, person2),
             "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
             "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
@@ -2446,8 +2516,12 @@ class MentorshipTemplate(BalancedTemplate):
             text = f"{person1} mentors {person2} at {organization} and teaches them {skill} about {topic}. They follow their progress on {platform} and influence their goal of {goal}."
             person_entity = person1
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "person2": (EntityTypes.PERSON, person2),
             "skill1": (EntityTypes.SKILL, skill),
             "topic1": (EntityTypes.TOPIC, topic),
@@ -2490,8 +2564,12 @@ class EmotionalJourneyTemplate(BalancedTemplate):
             text = f"{person} dreams of {goal} and looks forward to a {event}. They have {memory_type} memories that they regret from the {period}. They hope for moving to {geopolitical_entity} and feel {emotion} about it."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "goal1": (EntityTypes.GOAL, goal),
             "event1": (EntityTypes.EVENT, event),
             "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
@@ -2534,8 +2612,12 @@ class HealthLocationTemplate(BalancedTemplate):
             text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and listen to {media}."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "health1": (EntityTypes.HEALTH_INFO, health_condition),  # Using HEALTH_INFO type
             "location1": (EntityTypes.LOCATION, location),
             "room1": (EntityTypes.ROOM, room),
@@ -2621,8 +2703,12 @@ class WorkPlanningTemplate(BalancedTemplate):
             text = f"{person} worries about their {goal} and the upcoming {event}. They plan to {intent} over the {timeline} through {activity}. This makes them feel {emotion}."
             person_entity = person
         
+        
+        # Use PRONOUN type for first-person "I", PERSON type for third-person names
+        person_type = EntityTypes.PRONOUN if use_first_person else EntityTypes.PERSON
+        
         entities = {
-            "person1": (EntityTypes.PERSON, person_entity),
+            "person1": (person_type, person_entity),
             "goal1": (EntityTypes.GOAL, goal),
             "event1": (EntityTypes.EVENT, event),
             "timeline1": (EntityTypes.TIMELINE, timeline),
