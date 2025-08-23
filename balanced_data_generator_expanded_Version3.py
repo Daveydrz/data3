@@ -1038,18 +1038,229 @@ class PerfectBalanceTracker:
         self.entity_types = self._get_all_entity_types()
         self.relation_types = self._get_all_relation_types()
         
-        # Target usage per type
+        # Create balanced targets for all 68 entity types and 110 relation types
+        self.entity_targets = self._create_entity_targets()
+        self.relation_targets = self._create_relation_targets()
+        
+        # Legacy single target values for compatibility
         self.entity_target = Config.TARGET_RECORDS_PER_ENTITY
         self.relation_target = Config.TARGET_RECORDS_PER_RELATION
         
-        print(f"🎯 Perfect Balance Tracker Initialized with Expanded Data Pools:")
+        print(f"🎯 Perfect Balance Tracker Initialized with Complete Balanced Targets:")
         print(f"   - Entity types to balance: {len(self.entity_types)}")
         print(f"   - Relation types to balance: {len(self.relation_types)}")
-        print(f"   - Target per entity: {self.entity_target}")
-        print(f"   - Target per relation: {self.relation_target}")
+        print(f"   - Total entity targets: {sum(self.entity_targets.values())}")
+        print(f"   - Total relation targets: {sum(self.relation_targets.values())}")
         print(f"   - Total people names: {len(ALL_PEOPLE_NAMES)}")
         print(f"   - Total organizations: {len(ORGANIZATIONS)}")
-        print(f"   - Data pools significantly expanded ✅")
+        print(f"   - 100% balanced targets for ALL types ✅")
+        
+        # Validate 100% coverage
+        self._validate_complete_coverage()
+    
+    def _validate_complete_coverage(self):
+        """Validate that all entity and relation types have targets defined."""
+        missing_entities = set(self.entity_types) - set(self.entity_targets.keys())
+        missing_relations = set(self.relation_types) - set(self.relation_targets.keys())
+        
+        if missing_entities:
+            raise ValueError(f"Missing entity targets for: {missing_entities}")
+        if missing_relations:
+            raise ValueError(f"Missing relation targets for: {missing_relations}")
+            
+        print(f"   - ✅ All {len(self.entity_types)} entity types have targets")
+        print(f"   - ✅ All {len(self.relation_types)} relation types have targets")
+        print(f"   - ✅ Perfect 100% coverage achieved")
+    
+    def _create_entity_targets(self):
+        """Create balanced targets for all 68 entity types with realistic weights."""
+        target_records = Config.DEFAULT_NUM_RECORDS
+        
+        # Weighted distribution based on expected usage patterns
+        entity_targets = {
+            # High-frequency core types (40% of total)
+            'PERSON': int(target_records * 0.15),      # 15% - Most common entity
+            'PRONOUN': int(target_records * 0.12),     # 12% - "I" appears frequently  
+            'ACTIVITY': int(target_records * 0.08),    # 8% - Common in templates
+            'GOAL': int(target_records * 0.05),        # 5% - Important concept
+            
+            # Medium-frequency professional types (25% of total)
+            'ORGANIZATION': int(target_records * 0.04), # 4%
+            'SKILL': int(target_records * 0.04),       # 4%
+            'ROLE': int(target_records * 0.04),        # 4%
+            'PROJECT': int(target_records * 0.03),     # 3%
+            'TECHNOLOGY': int(target_records * 0.03),  # 3%
+            'INDUSTRY': int(target_records * 0.02),    # 2%
+            'BUSINESS': int(target_records * 0.02),    # 2%
+            'PRODUCT': int(target_records * 0.03),     # 3%
+            
+            # Medium-frequency location/time types (15% of total)
+            'LOCATION': int(target_records * 0.03),    # 3%
+            'TIME': int(target_records * 0.03),        # 3%
+            'TIMELINE': int(target_records * 0.02),    # 2%
+            'EVENT': int(target_records * 0.02),       # 2%
+            'DATE': int(target_records * 0.02),        # 2%
+            'DURATION': int(target_records * 0.02),    # 2%
+            'GEOPOLITICAL_ENTITY': int(target_records * 0.01), # 1%
+            
+            # Medium-frequency personal types (10% of total)
+            'EMOTION': int(target_records * 0.02),     # 2%
+            'INTENT': int(target_records * 0.02),      # 2%
+            'TOPIC': int(target_records * 0.02),       # 2%
+            'HOBBY': int(target_records * 0.01),       # 1%
+            'PREFERENCE': int(target_records * 0.01),  # 1%
+            'TRAIT': int(target_records * 0.01),       # 1%
+            'VALUE': int(target_records * 0.01),       # 1%
+            
+            # Low-frequency specialized types (10% remaining, distributed evenly)
+            # Each gets approximately 0.24% (10% / 41 remaining types)
+            'EQUIPMENT': int(target_records * 0.0024),
+            'PLATFORM': int(target_records * 0.0024),
+            'MEDIA': int(target_records * 0.0024),
+            'GENRE': int(target_records * 0.0024),
+            'ROOM': int(target_records * 0.0024),
+            'VEHICLE': int(target_records * 0.0024),
+            'GROUP': int(target_records * 0.0024),
+            'MONEY': int(target_records * 0.0024),
+            'BUDGET': int(target_records * 0.0024),
+            'AMOUNT': int(target_records * 0.0024),
+            'OBJECT': int(target_records * 0.0024),
+            'HEALTH_INFO': int(target_records * 0.0024),
+            'SENTIMENT': int(target_records * 0.0024),
+            'FEELING': int(target_records * 0.0024),
+            'SOUND': int(target_records * 0.0024),
+            'SIGHT': int(target_records * 0.0024),
+            'TASTE': int(target_records * 0.0024),
+            'SMELL': int(target_records * 0.0024),
+            'SENSATION': int(target_records * 0.0024),
+            'RELATIONSHIP': int(target_records * 0.0024),
+            'RELATIONSHIP_TYPE': int(target_records * 0.0024),
+            'FOOD': int(target_records * 0.0024),
+            'WEATHER': int(target_records * 0.0024),
+            'CONCEPT': int(target_records * 0.0024),
+            'IDEA': int(target_records * 0.0024),
+            'OPINION': int(target_records * 0.0024),
+            'MEMORY_TYPE': int(target_records * 0.0024),
+            'LIFE_STAGE': int(target_records * 0.0024),
+            'PERIOD': int(target_records * 0.0024),
+            'LEARNING_METHOD': int(target_records * 0.0024),
+            'PERSONAL_GROWTH': int(target_records * 0.0024),
+            'COMMUNITY_ROLE': int(target_records * 0.0024),
+            'CULTURAL_ELEMENT': int(target_records * 0.0024),
+            'ATTRIBUTE': int(target_records * 0.0024),
+            'BELIEF': int(target_records * 0.0024),
+            'NICKNAME': int(target_records * 0.0024),
+            'PET': int(target_records * 0.0024),
+            'CONDITION': int(target_records * 0.0024),
+            'FREQUENCY': int(target_records * 0.0024),
+            'START_TIME': int(target_records * 0.0024),
+            'END_TIME': int(target_records * 0.0024),
+            'RECURRING_SCHEDULE': int(target_records * 0.0024)
+        }
+        
+        # Ensure we have all 68 entity types and adjust total to match target_records exactly
+        total_assigned = sum(entity_targets.values())
+        adjustment = target_records - total_assigned
+        
+        # Distribute any remaining records to the most common entity type
+        entity_targets['PERSON'] += adjustment
+        
+        return entity_targets
+    
+    def _create_relation_targets(self):
+        """Create balanced targets for all 110 relation types with realistic weights."""
+        target_records = Config.DEFAULT_NUM_RECORDS
+        
+        # Weighted distribution based on expected usage patterns
+        relation_targets = {
+            # High-frequency core relations (30% of total)
+            'HAS_SKILL': int(target_records * 0.06),       # 6% - Very common
+            'DOES_ACTIVITY': int(target_records * 0.05),   # 5% - Very common
+            'WORKS_FOR': int(target_records * 0.04),       # 4% - Professional context
+            'HAS_GOAL': int(target_records * 0.04),        # 4% - Common in planning
+            'HAS_ROLE': int(target_records * 0.04),        # 4% - Professional context
+            'AT_LOCATION': int(target_records * 0.03),     # 3% - Location context
+            'FEELS_EMOTION': int(target_records * 0.02),   # 2% - Emotional context
+            'USES': int(target_records * 0.02),            # 2% - Tool usage
+            
+            # Medium-frequency professional relations (25% of total)
+            'LEARNS': int(target_records * 0.025),         # 2.5%
+            'TEACHES': int(target_records * 0.025),        # 2.5%
+            'COLLABORATES_WITH': int(target_records * 0.02), # 2%
+            'WORKS_ON': int(target_records * 0.02),        # 2%
+            'LEADS': int(target_records * 0.02),           # 2%
+            'PARTICIPATES_IN': int(target_records * 0.02), # 2%
+            'MEMBER_OF': int(target_records * 0.02),       # 2%
+            'ORGANIZES': int(target_records * 0.015),      # 1.5%
+            'HAS_EXPERTISE': int(target_records * 0.015),  # 1.5%
+            'MENTORS': int(target_records * 0.015),        # 1.5%
+            'CREATES': int(target_records * 0.015),        # 1.5%
+            'DEVELOPS': int(target_records * 0.015),       # 1.5%
+            'IMPROVES': int(target_records * 0.015),       # 1.5%
+            
+            # Medium-frequency temporal relations (15% of total)
+            'SCHEDULED_FOR': int(target_records * 0.02),   # 2%
+            'HAPPENS_ON': int(target_records * 0.015),     # 1.5%
+            'STARTS_AT': int(target_records * 0.015),      # 1.5%
+            'ENDS_AT': int(target_records * 0.015),        # 1.5%
+            'FOR_DURATION': int(target_records * 0.015),   # 1.5%
+            'HAS_FREQUENCY': int(target_records * 0.01),   # 1%
+            'REPEATS': int(target_records * 0.01),         # 1%
+            'ON_DATE': int(target_records * 0.01),         # 1%
+            'TRAVELS_TO': int(target_records * 0.01),      # 1%
+            'MOVES_TO': int(target_records * 0.01),        # 1%
+            
+            # Medium-frequency personal relations (15% of total)
+            'HAS_PREFERENCE': int(target_records * 0.015), # 1.5%
+            'HAS_OPINION': int(target_records * 0.015),    # 1.5%
+            'BELIEVES': int(target_records * 0.015),       # 1.5%
+            'VALUES': int(target_records * 0.015),         # 1.5%
+            'LIKES': int(target_records * 0.01),           # 1%
+            'ENJOYS': int(target_records * 0.01),          # 1%
+            'PREFERS': int(target_records * 0.01),         # 1%
+            'HAS_TRAIT': int(target_records * 0.01),       # 1%
+            'HAS_ATTRIBUTE': int(target_records * 0.01),   # 1%
+            'HAS_INTENT': int(target_records * 0.01),      # 1%
+            'AIMS_FOR': int(target_records * 0.01),        # 1%
+            'PLANS': int(target_records * 0.01),           # 1%
+            'HOPES_FOR': int(target_records * 0.01),       # 1%
+            'DREAMS_OF': int(target_records * 0.01),       # 1%
+            
+            # Low-frequency specialized relations (15% remaining)
+            # Each gets approximately 0.14% (15% / 110 remaining types)
+        }
+        
+        # Add all remaining relation types with low frequency
+        low_freq_relations = [
+            'ACHIEVES', 'AFFECTS', 'ATTENDS', 'BORROWED', 'BUDGETS_FOR', 'CALLED',
+            'CARES_FOR', 'CAUSED_BY', 'CONSIDERING', 'CONTRIBUTED_TO', 'CONTRIBUTES_TO',
+            'EARNS', 'EVALUATES', 'FEELS', 'FIXES', 'FOCUSES_ON', 'FOLLOWS',
+            'GIVES', 'HAS_HEALTH_CONDITION', 'HAS_HEALTH_INFO', 'HAS_HOBBY', 'HAS_OBJECT',
+            'HEARS', 'INFLUENCES', 'INTENDS', 'INVESTIGATES', 'IS_FAMILY_WITH',
+            'IS_FRIENDS_WITH', 'IS_NEAR', 'IS_TYPE', 'KNOWN_AS', 'LEARNS_FROM',
+            'LENT', 'LISTENS_TO', 'LIVES_IN', 'LOCATED_AT', 'LOOKING_FORWARD_TO',
+            'MAINTAINS_RELATIONSHIP', 'MANAGES_HEALTH', 'MASTERS', 'MISSES',
+            'OWNS', 'PRACTICES', 'READS', 'RECEIVES', 'REFLECTS_ON', 'REGRETS',
+            'REMEMBERS', 'RESULTS_IN', 'SAVES', 'SEES', 'SMELLS', 'SPENDS',
+            'STAYS_AT', 'SUPPORTS', 'TASTES', 'THINKS', 'THINKING_OF', 'TOUCHES',
+            'TRIGGERS', 'VISITS', 'WANTS_GOAL', 'WATCHES', 'WORKS_FROM', 'WORRIES_ABOUT'
+        ]
+        
+        # Assign remaining 15% evenly among low-frequency relations
+        remaining_budget = target_records * 0.15
+        per_relation = int(remaining_budget / len(low_freq_relations))
+        
+        for relation in low_freq_relations:
+            relation_targets[relation] = per_relation
+        
+        # Ensure we have all 110 relation types and adjust total to match target_records exactly
+        total_assigned = sum(relation_targets.values())
+        adjustment = target_records - total_assigned
+        
+        # Distribute any remaining records to the most common relation type
+        relation_targets['HAS_SKILL'] += adjustment
+        
+        return relation_targets
     
     def _get_all_entity_types(self):
         return [getattr(EntityTypes, attr) for attr in dir(EntityTypes) 
@@ -1060,24 +1271,26 @@ class PerfectBalanceTracker:
                 if not attr.startswith('_')]
     
     def get_needed_entities(self, count=10):
-        """Get the most needed entity types."""
+        """Get the most needed entity types based on individual targets."""
         needed = []
         for entity_type in self.entity_types:
             current_usage = self.entity_usage[entity_type]
-            if current_usage < self.entity_target:
-                needed.append((entity_type, self.entity_target - current_usage))
+            target = self.entity_targets.get(entity_type, self.entity_target)
+            if current_usage < target:
+                needed.append((entity_type, target - current_usage))
         
         # Sort by most needed first
         needed.sort(key=lambda x: x[1], reverse=True)
         return [entity_type for entity_type, _ in needed[:count]]
     
     def get_needed_relations(self, count=10):
-        """Get the most needed relation types."""
+        """Get the most needed relation types based on individual targets."""
         needed = []
         for relation_type in self.relation_types:
             current_usage = self.relation_usage[relation_type]
-            if current_usage < self.relation_target:
-                needed.append((relation_type, self.relation_target - current_usage))
+            target = self.relation_targets.get(relation_type, self.relation_target)
+            if current_usage < target:
+                needed.append((relation_type, target - current_usage))
         
         # Sort by most needed first
         needed.sort(key=lambda x: x[1], reverse=True)
@@ -1092,26 +1305,47 @@ class PerfectBalanceTracker:
             self.relation_usage[relation_type] += 1
     
     def get_balance_status(self):
-        """Get current balance status."""
-        entity_balance = self._calculate_balance(self.entity_usage, self.entity_target)
-        relation_balance = self._calculate_balance(self.relation_usage, self.relation_target)
+        """Get current balance status using individual targets."""
+        entity_balance = self._calculate_balance(self.entity_usage, "entity")
+        relation_balance = self._calculate_balance(self.relation_usage, "relation")
+        
+        # Calculate completion percentages using individual targets
+        entity_completion = 0
+        total_entity_target = sum(self.entity_targets.values())
+        if total_entity_target > 0:
+            entity_completion = sum(min(count, self.entity_targets.get(entity_type, 0)) 
+                                  for entity_type, count in self.entity_usage.items()) / total_entity_target * 100
+        
+        relation_completion = 0
+        total_relation_target = sum(self.relation_targets.values())
+        if total_relation_target > 0:
+            relation_completion = sum(min(count, self.relation_targets.get(relation_type, 0)) 
+                                    for relation_type, count in self.relation_usage.items()) / total_relation_target * 100
         
         return {
             "entity_balance_score": entity_balance,
             "relation_balance_score": relation_balance,
             "overall_balance": (entity_balance + relation_balance) / 2,
-            "entity_completion": sum(min(count, self.entity_target) for count in self.entity_usage.values()) / (len(self.entity_types) * self.entity_target) * 100,
-            "relation_completion": sum(min(count, self.relation_target) for count in self.relation_usage.values()) / (len(self.relation_types) * self.relation_target) * 100
+            "entity_completion": entity_completion,
+            "relation_completion": relation_completion
         }
     
-    def _calculate_balance(self, usage_dict, target):
-        """Calculate balance score (0-100, where 100 is perfect balance)."""
+    def _calculate_balance(self, usage_dict, type_category):
+        """Calculate balance score (0-100, where 100 is perfect balance) using individual targets."""
         if not usage_dict:
             return 0.0
         
         scores = []
-        for expected_type in (self.entity_types if target == self.entity_target else self.relation_types):
+        if type_category == "entity":
+            targets = self.entity_targets
+            types_list = self.entity_types
+        else:
+            targets = self.relation_targets  
+            types_list = self.relation_types
+            
+        for expected_type in types_list:
             current = usage_dict.get(expected_type, 0)
+            target = targets.get(expected_type, 1)  # Default to 1 to avoid division by zero
             score = min(current / target, 1.0) * 100
             scores.append(score)
         
