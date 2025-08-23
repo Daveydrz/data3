@@ -12,14 +12,14 @@ from collections import defaultdict, Counter
 class Config:
     CURRENT_USER_LOGIN = "Daveydrz"
     CURRENT_UTC_DATETIME = "2025-08-23 10:43:23"  # Updated timestamp
-    DEFAULT_NUM_RECORDS = 10400  # 100 records per relation type for perfect balance
+    DEFAULT_NUM_RECORDS = 60000  # Scaled to 60K for perfect balance
     MAX_RETRIES = 3
-    OUTPUT_FILENAME = "perfectly_balanced_dataset.json"
-    PROGRESS_INTERVAL = 500
+    OUTPUT_FILENAME = "perfectly_balanced_60k_dataset.json"
+    PROGRESS_INTERVAL = 2000  # Progress every 2K records for 60K scale
     
-    # Perfect balance targets
-    TARGET_RECORDS_PER_RELATION = 100
-    TARGET_RECORDS_PER_ENTITY = 153  # 10400/68 ≈ 153
+    # Perfect balance targets for 60K records
+    TARGET_RECORDS_PER_RELATION = 580  # 60000/103 ≈ 580
+    TARGET_RECORDS_PER_ENTITY = 882  # 60000/68 ≈ 882
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # ENTITY AND RELATION TYPE DEFINITIONS (68 entities, 104 relations)
@@ -1041,6 +1041,9 @@ def create_entity(entity_id: int, text: str, entity_type: str, entity_text: str)
             "span": span
         }
     return None
+
+# Backward compatibility alias
+BalanceTracker = PerfectBalanceTracker
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # BALANCED TEMPLATE BASE CLASS (Keep existing implementation)

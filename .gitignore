@@ -1,6 +1,8 @@
 # Generated datasets
 balanced_expanded_dataset_*.json
 perfectly_balanced_dataset.json
+perfectly_balanced_*k_dataset*.json
+*.json
 
 # Python cache
 __pycache__/
