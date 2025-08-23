@@ -251,13 +251,14 @@ class RelationTypes:
     IMPROVES = "IMPROVES"
     MASTERS = "MASTERS"
     
-    # Additional Problem-Solving Relations (6)
+    # Additional Problem-Solving Relations (7)
     ACHIEVES = "ACHIEVES"
     EVALUATES = "EVALUATES"
     FIXES = "FIXES"
     INVESTIGATES = "INVESTIGATES"
     CREATES = "CREATES"
     FOCUSES_ON = "FOCUSES_ON"
+    CONTRIBUTES_TO = "CONTRIBUTES_TO"
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # COMPREHENSIVE EXPANDED DATA POOLS
@@ -3051,6 +3052,430 @@ class SkillAssessmentTemplate(BalancedTemplate):
         
         return text, entities, relations
 
+# Learning & Development Templates (5 new)
+
+class OnlineCourseTemplate(BalancedTemplate):
+    """Template focusing on online learning and courses"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        course = random.choice(["machine learning course", "design thinking workshop", "leadership program", "data science bootcamp"])
+        platform = random.choice(PLATFORMS)
+        skill = random.choice(SKILLS)
+        duration = random.choice(DURATIONS)
+        goal = random.choice(["skill enhancement", "career development", "knowledge expansion"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I am taking a {course} on {platform} for {duration}. I'm developing my {skill} skills and my goal is {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} is taking a {course} on {platform} for {duration}. They're developing their {skill} skills and their goal is {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "activity1": (EntityTypes.ACTIVITY, course),
+            "platform1": (EntityTypes.PLATFORM, platform),
+            "skill1": (EntityTypes.SKILL, skill),
+            "duration1": (EntityTypes.DURATION, duration),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.LEARNS, "person1", "activity1"),
+            (RelationTypes.USES, "person1", "platform1"),
+            (RelationTypes.DEVELOPS, "person1", "skill1"),
+            (RelationTypes.FOR_DURATION, "activity1", "duration1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1")
+        ]
+        
+        return text, entities, relations
+
+class BookStudyTemplate(BalancedTemplate):
+    """Template focusing on reading and research activities"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        book_topic = random.choice(TOPICS)
+        frequency = random.choice(FREQUENCY_PATTERNS)
+        location = random.choice(LOCATIONS)
+        goal = random.choice(["knowledge", "inspiration", "skill development", "personal growth"])
+        learning_method = random.choice(LEARNING_METHODS)
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I read books about {book_topic} {frequency} at the {location}. I use {learning_method} and my goal is {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} reads books about {book_topic} {frequency} at the {location}. They use {learning_method} and their goal is {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "topic1": (EntityTypes.TOPIC, book_topic),
+            "freq1": (EntityTypes.FREQUENCY, frequency),
+            "location1": (EntityTypes.LOCATION, location),
+            "goal1": (EntityTypes.GOAL, goal),
+            "method1": (EntityTypes.LEARNING_METHOD, learning_method)
+        }
+        
+        relations = [
+            (RelationTypes.READS, "person1", "topic1"),
+            (RelationTypes.HAS_FREQUENCY, "person1", "freq1"),
+            (RelationTypes.AT_LOCATION, "person1", "location1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.LEARNS_FROM, "person1", "method1"),
+            (RelationTypes.LEARNS, "person1", "topic1")
+        ]
+        
+        return text, entities, relations
+
+class PodcastTemplate(BalancedTemplate):
+    """Template focusing on podcast learning and knowledge sharing"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        podcast_topic = random.choice(TOPICS)
+        platform = random.choice(PLATFORMS)
+        frequency = random.choice(FREQUENCY_PATTERNS)
+        genre = random.choice(GENRES)
+        goal = random.choice(["stay informed", "learn new perspectives", "entertainment", "professional development"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I listen to {genre} podcasts about {podcast_topic} on {platform} {frequency}. My goal is to {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} listens to {genre} podcasts about {podcast_topic} on {platform} {frequency}. Their goal is to {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "topic1": (EntityTypes.TOPIC, podcast_topic),
+            "platform1": (EntityTypes.PLATFORM, platform),
+            "freq1": (EntityTypes.FREQUENCY, frequency),
+            "genre1": (EntityTypes.GENRE, genre),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.LISTENS_TO, "person1", "topic1"),
+            (RelationTypes.USES, "person1", "platform1"),
+            (RelationTypes.HAS_FREQUENCY, "person1", "freq1"),
+            (RelationTypes.LIKES, "person1", "genre1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.LEARNS, "person1", "topic1")
+        ]
+        
+        return text, entities, relations
+
+class TutorialTemplate(BalancedTemplate):
+    """Template focusing on tutorial following and hands-on learning"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        skill = random.choice(SKILLS)
+        platform = random.choice(PLATFORMS)
+        equipment = random.choice(EQUIPMENT_TYPES)
+        tutorial_type = random.choice(["video tutorial", "written guide", "interactive course"])
+        goal = random.choice(["hands-on practice", "skill building", "project completion"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I follow {tutorial_type} on {platform} to learn {skill} using {equipment}. My goal is {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} follows {tutorial_type} on {platform} to learn {skill} using {equipment}. Their goal is {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "skill1": (EntityTypes.SKILL, skill),
+            "platform1": (EntityTypes.PLATFORM, platform),
+            "equip1": (EntityTypes.EQUIPMENT, equipment),
+            "media1": (EntityTypes.MEDIA, tutorial_type),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.LEARNS, "person1", "skill1"),
+            (RelationTypes.USES, "person1", "platform1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.WATCHES, "person1", "media1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.FOLLOWS, "person1", "media1")
+        ]
+        
+        return text, entities, relations
+
+class ExperimentTemplate(BalancedTemplate):
+    """Template focusing on hands-on experimentation and testing"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        experiment = random.choice(["A/B testing", "prototype development", "user research", "data analysis"])
+        technology = random.choice(TECHNOLOGIES)
+        goal = random.choice(["validation", "discovery", "optimization", "innovation"])
+        location = random.choice(LOCATIONS)
+        result = random.choice(["insights", "improvements", "discoveries", "solutions"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I conduct {experiment} using {technology} at the {location}. My goal is {goal} and I achieve {result}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} conducts {experiment} using {technology} at the {location}. Their goal is {goal} and they achieve {result}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "activity1": (EntityTypes.ACTIVITY, experiment),
+            "tech1": (EntityTypes.TECHNOLOGY, technology),
+            "goal1": (EntityTypes.GOAL, goal),
+            "location1": (EntityTypes.LOCATION, location),
+            "concept1": (EntityTypes.CONCEPT, result)
+        }
+        
+        relations = [
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.USES, "person1", "tech1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.AT_LOCATION, "activity1", "location1"),
+            (RelationTypes.ACHIEVES, "person1", "concept1"),
+            (RelationTypes.RESULTS_IN, "activity1", "concept1")
+        ]
+        
+        return text, entities, relations
+
+# Problem-Solving Templates (5 new)
+
+class TroubleshootingTemplate(BalancedTemplate):
+    """Template focusing on technical problem solving"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        problem = random.choice(["bug", "performance issue", "system error", "configuration problem"])
+        technology = random.choice(TECHNOLOGIES)
+        solution = random.choice(["debugging", "optimization", "reconfiguration", "patch deployment"])
+        skill = random.choice(SKILLS)
+        goal = random.choice(["resolution", "prevention", "improvement"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I troubleshoot a {problem} in {technology} using {solution}. I apply my {skill} skills and my goal is {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} troubleshoots a {problem} in {technology} using {solution}. They apply their {skill} skills and their goal is {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "concept1": (EntityTypes.CONCEPT, problem),
+            "tech1": (EntityTypes.TECHNOLOGY, technology),
+            "activity1": (EntityTypes.ACTIVITY, solution),
+            "skill1": (EntityTypes.SKILL, skill),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.USES, "person1", "tech1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.FIXES, "person1", "concept1"),
+            (RelationTypes.RESULTS_IN, "activity1", "goal1")
+        ]
+        
+        return text, entities, relations
+
+class ProcessImprovementTemplate(BalancedTemplate):
+    """Template focusing on workflow optimization and enhancement"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        process = random.choice(["workflow", "procedure", "system", "methodology"])
+        organization = random.choice(ORGANIZATIONS)
+        improvement = random.choice(["automation", "streamlining", "optimization", "standardization"])
+        goal = random.choice(["efficiency", "quality", "speed", "consistency"])
+        skill = random.choice(SKILLS)
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I improve the {process} at {organization} through {improvement}. I use my {skill} skills and my goal is {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} improves the {process} at {organization} through {improvement}. They use their {skill} skills and their goal is {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "concept1": (EntityTypes.CONCEPT, process),
+            "org1": (EntityTypes.ORGANIZATION, organization),
+            "activity1": (EntityTypes.ACTIVITY, improvement),
+            "goal1": (EntityTypes.GOAL, goal),
+            "skill1": (EntityTypes.SKILL, skill)
+        }
+        
+        relations = [
+            (RelationTypes.IMPROVES, "person1", "concept1"),
+            (RelationTypes.WORKS_FOR, "person1", "org1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.CONTRIBUTES_TO, "activity1", "goal1")
+        ]
+        
+        return text, entities, relations
+
+class InnovationTemplate(BalancedTemplate):
+    """Template focusing on innovative solutions and creativity"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        innovation = random.choice(["new approach", "creative solution", "breakthrough idea", "novel method"])
+        technology = random.choice(TECHNOLOGIES)
+        goal = random.choice(["disruption", "advancement", "improvement", "transformation"])
+        organization = random.choice(ORGANIZATIONS)
+        result = random.choice(["patent", "prototype", "concept", "framework"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I develop a {innovation} using {technology} at {organization}. My goal is {goal} and I create a {result}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} develops a {innovation} using {technology} at {organization}. Their goal is {goal} and they create a {result}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "idea1": (EntityTypes.IDEA, innovation),
+            "tech1": (EntityTypes.TECHNOLOGY, technology),
+            "goal1": (EntityTypes.GOAL, goal),
+            "org1": (EntityTypes.ORGANIZATION, organization),
+            "concept1": (EntityTypes.CONCEPT, result)
+        }
+        
+        relations = [
+            (RelationTypes.DEVELOPS, "person1", "idea1"),
+            (RelationTypes.USES, "person1", "tech1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.WORKS_FOR, "person1", "org1"),
+            (RelationTypes.CREATES, "person1", "concept1"),
+            (RelationTypes.RESULTS_IN, "idea1", "concept1")
+        ]
+        
+        return text, entities, relations
+
+class AnalysisTemplate(BalancedTemplate):
+    """Template focusing on data analysis and investigation tasks"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        analysis_type = random.choice(["data analysis", "market research", "user behavior study", "performance review"])
+        skill = random.choice(SKILLS)
+        technology = random.choice(TECHNOLOGIES)
+        goal = random.choice(["insights", "recommendations", "understanding", "optimization"])
+        organization = random.choice(ORGANIZATIONS)
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I conduct {analysis_type} at {organization} using my {skill} skills and {technology}. My goal is to gain {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} conducts {analysis_type} at {organization} using their {skill} skills and {technology}. Their goal is to gain {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "activity1": (EntityTypes.ACTIVITY, analysis_type),
+            "org1": (EntityTypes.ORGANIZATION, organization),
+            "skill1": (EntityTypes.SKILL, skill),
+            "tech1": (EntityTypes.TECHNOLOGY, technology),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.WORKS_FOR, "person1", "org1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.USES, "person1", "tech1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.INVESTIGATES, "person1", "activity1")
+        ]
+        
+        return text, entities, relations
+
+class DebugTemplate(BalancedTemplate):
+    """Template focusing on debugging and error resolution scenarios"""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        error_type = random.choice(["syntax error", "logic error", "runtime error", "integration issue"])
+        technology = random.choice(TECHNOLOGIES)
+        solution = random.choice(["code review", "testing", "logging", "debugging tools"])
+        skill = random.choice(SKILLS)
+        goal = random.choice(["fix", "prevention", "understanding", "optimization"])
+        
+        # First person variation (50% chance)
+        use_first_person = random.choice([True, False])
+        if use_first_person:
+            text = f"I debug a {error_type} in {technology} using {solution}. I apply my {skill} skills and my goal is {goal}."
+            person_entity = "I"
+            person_type = EntityTypes.PRONOUN
+        else:
+            text = f"{person} debugs a {error_type} in {technology} using {solution}. They apply their {skill} skills and their goal is {goal}."
+            person_entity = person
+            person_type = EntityTypes.PERSON
+        
+        entities = {
+            "person1": (person_type, person_entity),
+            "concept1": (EntityTypes.CONCEPT, error_type),
+            "tech1": (EntityTypes.TECHNOLOGY, technology),
+            "activity1": (EntityTypes.ACTIVITY, solution),
+            "skill1": (EntityTypes.SKILL, skill),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.FIXES, "person1", "concept1"),
+            (RelationTypes.USES, "person1", "tech1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.RESULTS_IN, "activity1", "goal1")
+        ]
+        
+        return text, entities, relations
+
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # BALANCE ALGORITHM SETUP AND TESTING (NO EXECUTION)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -3062,16 +3487,21 @@ def setup_balanced_generation(target_records=60000):
     template_classes = [
         # Original templates
         WorkflowTemplate, PersonalLifeTemplate, ScheduleTimeTemplate, SensoryExperienceTemplate, FinancialTemplate,
-        # NEW templates for missing data pools
+        # Existing NEW templates for missing data pools
         TimelineGoalTemplate, BudgetSentimentTemplate, RelationshipTraitTemplate, MemoryLifeStageTemplate,
         GrowthCommunityTemplate, PlatformMediaTemplate, WeatherConditionTemplate, SocialBusinessTemplate,
-        # Additional templates
+        # Existing Additional templates
         WorkExpertiseTemplate, CareerProgressionTemplate, TeamCollaborationTemplate, LifeJourneyTemplate,
         RelationshipDynamicsTemplate, HobbyInterestTemplate, LearningGrowthTemplate, MemoryReflectionTemplate,
         DecisionMakingTemplate, CommunityEngagementTemplate, MediaConsumptionTemplate, SocialSituationTemplate,
         WeatherActivityTemplate, TimeScheduleTemplate, TravelExperienceTemplate, HealthWellnessTemplate,
         ObjectInteractionTemplate, NicknameIdentityTemplate, ConceptualThinkingTemplate, FamilyConnectionTemplate,
-        MentorshipTemplate, EmotionalJourneyTemplate, HealthLocationTemplate, CausalInfluenceTemplate, WorkPlanningTemplate
+        MentorshipTemplate, EmotionalJourneyTemplate, HealthLocationTemplate, CausalInfluenceTemplate, WorkPlanningTemplate,
+        # NEW 25 additional templates for 60K scaling
+        CertificationTemplate, NetworkingTemplate, MentorshipNewTemplate, ConferenceTemplate, SkillAssessmentTemplate,  # Professional Development (5)
+        OnlineCourseTemplate, BookStudyTemplate, PodcastTemplate, TutorialTemplate, ExperimentTemplate,  # Learning & Development (5)
+        TroubleshootingTemplate, ProcessImprovementTemplate, InnovationTemplate, AnalysisTemplate, DebugTemplate  # Problem-Solving (5)
+        # Note: Still need 15 more templates to reach full 25 new templates
     ]
     
     # Calculate targets
@@ -3192,7 +3622,12 @@ def get_all_templates():
         HealthWellnessTemplate, ObjectInteractionTemplate, NicknameIdentityTemplate, ConceptualThinkingTemplate,
         # Relationship templates
         FamilyConnectionTemplate, MentorshipTemplate, EmotionalJourneyTemplate, HealthLocationTemplate,
-        CausalInfluenceTemplate, WorkPlanningTemplate
+        CausalInfluenceTemplate, WorkPlanningTemplate,
+        # NEW 25 additional templates for 60K scaling
+        CertificationTemplate, NetworkingTemplate, MentorshipNewTemplate, ConferenceTemplate, SkillAssessmentTemplate,  # Professional Development (5)
+        OnlineCourseTemplate, BookStudyTemplate, PodcastTemplate, TutorialTemplate, ExperimentTemplate,  # Learning & Development (5)
+        TroubleshootingTemplate, ProcessImprovementTemplate, InnovationTemplate, AnalysisTemplate, DebugTemplate  # Problem-Solving (5)
+        # Note: Still need 15 more templates to complete the 25 new templates
     ]
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
