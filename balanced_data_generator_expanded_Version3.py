@@ -1549,6 +1549,1033 @@ class FinancialTemplate(BalancedTemplate):
         return text, entities, relations
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# ADDITIONAL PERFECTLY BALANCED TEMPLATES (15-20 new templates for 100% coverage)
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+class WorkExpertiseTemplate(BalancedTemplate):
+    """Template focusing on professional expertise with first/third person variations."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        organization = random.choice(ORGANIZATIONS)
+        skill = random.choice(SKILLS)
+        expertise = random.choice(["machine learning", "data analysis", "software architecture", "project management", "user experience design"])
+        project = random.choice(PROJECTS)
+        technology = random.choice(["Python", "React", "AWS", "Docker", "Kubernetes", "TensorFlow"])
+        equipment = random.choice(["laptop", "workstation", "server", "tablet", "smartphone"])
+        industry = random.choice(["technology", "healthcare", "finance", "education", "manufacturing"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I work for {organization} in the {industry} industry. I have expertise in {expertise} and use {skill} with {technology}. I'm currently working on {project} using my {equipment}."
+        else:
+            # Third person variation
+            text = f"{person} works for {organization} in the {industry} industry. They have expertise in {expertise} and use {skill} with {technology}. They're currently working on {project} using their {equipment}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "org1": (EntityTypes.ORGANIZATION, organization),
+            "skill1": (EntityTypes.SKILL, skill),
+            "expertise1": (EntityTypes.SKILL, expertise),  # Using SKILL type for expertise
+            "project1": (EntityTypes.PROJECT, project),
+            "tech1": (EntityTypes.TECHNOLOGY, technology),
+            "equip1": (EntityTypes.EQUIPMENT, equipment),
+            "industry1": (EntityTypes.INDUSTRY, industry)
+        }
+        
+        relations = [
+            (RelationTypes.WORKS_FOR, "person1", "org1"),
+            (RelationTypes.HAS_EXPERTISE, "person1", "expertise1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.USES, "person1", "tech1"),
+            (RelationTypes.WORKS_ON, "person1", "project1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.WORKS_FROM, "person1", "industry1")
+        ]
+        
+        return text, entities, relations
+
+class CareerProgressionTemplate(BalancedTemplate):
+    """Template focusing on career progression and goals."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        role = random.choice(ROLES)
+        goal = random.choice(["promotion", "career change", "skill development", "leadership role", "industry expertise"])
+        timeline = random.choice(TIMELINES)
+        industry = random.choice(["technology", "healthcare", "finance", "education", "manufacturing"])
+        intent = random.choice(INTENTS)
+        learning_method = random.choice(LEARNING_METHODS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I currently work as a {role} in the {industry} sector. My goal is {goal} over the {timeline}. I intend to {intent} and am using {learning_method} to achieve this."
+        else:
+            # Third person variation
+            text = f"{person} currently works as a {role} in the {industry} sector. Their goal is {goal} over the {timeline}. They intend to {intent} and are using {learning_method} to achieve this."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "role1": (EntityTypes.ROLE, role),
+            "goal1": (EntityTypes.GOAL, goal),
+            "timeline1": (EntityTypes.TIMELINE, timeline),
+            "industry1": (EntityTypes.INDUSTRY, industry),
+            "intent1": (EntityTypes.INTENT, intent),
+            "method1": (EntityTypes.LEARNING_METHOD, learning_method)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_ROLE, "person1", "role1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.HAS_INTENT, "person1", "intent1"),
+            (RelationTypes.LEARNS_FROM, "person1", "method1"),
+            (RelationTypes.WORKS_FROM, "person1", "industry1"),
+            (RelationTypes.PLANS, "person1", "goal1"),
+            (RelationTypes.AIMS_FOR, "person1", "goal1")
+        ]
+        
+        return text, entities, relations
+
+class TeamCollaborationTemplate(BalancedTemplate):
+    """Template focusing on team collaboration and group activities."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        group = random.choice(GROUPS)
+        activity = random.choice(ACTIVITIES)
+        location = random.choice(LOCATIONS)
+        project = random.choice(PROJECTS)
+        skill = random.choice(SKILLS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I collaborate with {person2} in our {group}. We're working on {activity} at the {location} for the {project}. I use my {skill} skills in this collaboration."
+        else:
+            # Third person variation
+            text = f"{person1} collaborates with {person2} in their {group}. They're working on {activity} at the {location} for the {project}. {person1} uses their {skill} skills in this collaboration."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "group1": (EntityTypes.GROUP, group),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "location1": (EntityTypes.LOCATION, location),
+            "project1": (EntityTypes.PROJECT, project),
+            "skill1": (EntityTypes.SKILL, skill)
+        }
+        
+        relations = [
+            (RelationTypes.COLLABORATES_WITH, "person1", "person2"),
+            (RelationTypes.MEMBER_OF, "person1", "group1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.AT_LOCATION, "person1", "location1"),
+            (RelationTypes.WORKS_ON, "person1", "project1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.USES, "person1", "skill1")
+        ]
+        
+        return text, entities, relations
+
+class LifeJourneyTemplate(BalancedTemplate):
+    """Template focusing on life stages and personal growth journey."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        life_stage = random.choice(LIFE_STAGES)
+        memory_type = random.choice(MEMORY_TYPES)
+        cultural_element = random.choice(CULTURAL_ELEMENTS)
+        period = random.choice(PERIODS)
+        personal_growth = random.choice(PERSONAL_GROWTH)
+        sentiment = random.choice(SENTIMENTS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I'm currently in my {life_stage} phase. I have {memory_type} memories from the {period} that shaped my understanding of {cultural_element}. This period brought {personal_growth} with a {sentiment} outlook."
+        else:
+            # Third person variation
+            text = f"{person} is currently in their {life_stage} phase. They have {memory_type} memories from the {period} that shaped their understanding of {cultural_element}. This period brought {personal_growth} with a {sentiment} outlook."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "stage1": (EntityTypes.LIFE_STAGE, life_stage),
+            "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
+            "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element),
+            "period1": (EntityTypes.PERIOD, period),
+            "growth1": (EntityTypes.PERSONAL_GROWTH, personal_growth),
+            "sentiment1": (EntityTypes.SENTIMENT, sentiment)
+        }
+        
+        relations = [
+            (RelationTypes.THINKS, "person1", "stage1"),
+            (RelationTypes.REMEMBERS, "person1", "memory1"),
+            (RelationTypes.LEARNS, "person1", "culture1"),
+            (RelationTypes.REFLECTS_ON, "person1", "period1"),
+            (RelationTypes.IMPROVES, "person1", "growth1"),
+            (RelationTypes.FEELS, "person1", "sentiment1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1")
+        ]
+        
+        return text, entities, relations
+
+class RelationshipDynamicsTemplate(BalancedTemplate):
+    """Template focusing on relationship dynamics and social traits."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        relationship = random.choice(RELATIONSHIPS)
+        trait = random.choice(TRAITS)
+        emotion = random.choice(EMOTIONS)
+        group = random.choice(GROUPS)
+        relationship_type = random.choice(RELATIONSHIP_TYPES)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I maintain a {relationship} with {person2} based on {relationship_type}. I show {trait} in this relationship and feel {emotion}. We're both part of the {group}."
+        else:
+            # Third person variation  
+            text = f"{person1} maintains a {relationship} with {person2} based on {relationship_type}. They show {trait} in this relationship and feel {emotion}. They're both part of the {group}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "rel1": (EntityTypes.RELATIONSHIP, relationship),
+            "trait1": (EntityTypes.TRAIT, trait),
+            "emotion1": (EntityTypes.EMOTION, emotion),
+            "group1": (EntityTypes.GROUP, group),
+            "reltype1": (EntityTypes.RELATIONSHIP_TYPE, relationship_type)
+        }
+        
+        relations = [
+            (RelationTypes.MAINTAINS_RELATIONSHIP, "person1", "person2"),
+            (RelationTypes.HAS_TRAIT, "person1", "trait1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.MEMBER_OF, "person1", "group1"),
+            (RelationTypes.IS_TYPE, "rel1", "reltype1"),
+            (RelationTypes.CARES_FOR, "person1", "person2"),
+            (RelationTypes.SUPPORTS, "person1", "person2")
+        ]
+        
+        return text, entities, relations
+
+class HobbyInterestTemplate(BalancedTemplate):
+    """Template focusing on hobbies, interests and personal activities."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        hobby = random.choice(HOBBIES)
+        skill = random.choice(SKILLS)
+        frequency = random.choice(FREQUENCY_PATTERNS)
+        equipment = random.choice(["camera", "guitar", "bicycle", "easel", "laptop", "telescope", "chess set"])
+        goal = random.choice(["mastery", "relaxation", "creativity", "fitness", "social connection"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I enjoy {hobby} as my main hobby and practice it {frequency}. I use my {skill} skills and {equipment} to pursue {goal} through this activity."
+        else:
+            # Third person variation
+            text = f"{person} enjoys {hobby} as their main hobby and practices it {frequency}. They use their {skill} skills and {equipment} to pursue {goal} through this activity."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "hobby1": (EntityTypes.HOBBY, hobby),
+            "skill1": (EntityTypes.SKILL, skill),
+            "freq1": (EntityTypes.FREQUENCY, frequency),
+            "equip1": (EntityTypes.EQUIPMENT, equipment),
+            "goal1": (EntityTypes.GOAL, goal)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_HOBBY, "person1", "hobby1"),
+            (RelationTypes.ENJOYS, "person1", "hobby1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.HAS_FREQUENCY, "hobby1", "freq1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.PRACTICES, "person1", "hobby1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class LearningGrowthTemplate(BalancedTemplate):
+    """Template focusing on learning processes and personal growth."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        learning_method = random.choice(LEARNING_METHODS)
+        personal_growth = random.choice(PERSONAL_GROWTH)
+        skill = random.choice(SKILLS)
+        goal = random.choice(["mastery", "improvement", "understanding", "expertise", "knowledge"])
+        topic = random.choice(["artificial intelligence", "philosophy", "cooking", "music", "history", "science"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I'm using {learning_method} to develop my {skill} abilities. This approach supports my {personal_growth} as I work toward {goal} in {topic}."
+        else:
+            # Third person variation
+            text = f"{person} is using {learning_method} to develop their {skill} abilities. This approach supports their {personal_growth} as they work toward {goal} in {topic}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "method1": (EntityTypes.LEARNING_METHOD, learning_method),
+            "growth1": (EntityTypes.PERSONAL_GROWTH, personal_growth),
+            "skill1": (EntityTypes.SKILL, skill),
+            "goal1": (EntityTypes.GOAL, goal),
+            "topic1": (EntityTypes.TOPIC, topic)
+        }
+        
+        relations = [
+            (RelationTypes.LEARNS_FROM, "person1", "method1"),
+            (RelationTypes.IMPROVES, "person1", "growth1"),
+            (RelationTypes.HAS_SKILL, "person1", "skill1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.LEARNS, "person1", "topic1"),
+            (RelationTypes.DEVELOPS, "person1", "skill1"),
+            (RelationTypes.MASTERS, "person1", "skill1")
+        ]
+        
+        return text, entities, relations
+
+class MemoryReflectionTemplate(BalancedTemplate):
+    """Template focusing on memory, reflection and personal insights."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        memory_type = random.choice(MEMORY_TYPES)
+        period = random.choice(PERIODS)
+        sentiment = random.choice(SENTIMENTS)
+        belief = random.choice(BELIEFS)
+        emotion = random.choice(EMOTIONS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I have {memory_type} memories from the {period} that evoke a {sentiment} feeling. These experiences shaped my belief that '{belief}' and make me feel {emotion} when I reflect on them."
+        else:
+            # Third person variation
+            text = f"{person} has {memory_type} memories from the {period} that evoke a {sentiment} feeling. These experiences shaped their belief that '{belief}' and make them feel {emotion} when they reflect on them."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
+            "period1": (EntityTypes.PERIOD, period),
+            "sentiment1": (EntityTypes.SENTIMENT, sentiment),
+            "belief1": (EntityTypes.BELIEF, belief),
+            "emotion1": (EntityTypes.EMOTION, emotion)
+        }
+        
+        relations = [
+            (RelationTypes.REMEMBERS, "person1", "memory1"),
+            (RelationTypes.REFLECTS_ON, "person1", "period1"),
+            (RelationTypes.FEELS, "person1", "sentiment1"),
+            (RelationTypes.BELIEVES, "person1", "belief1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.THINKS, "person1", "memory1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1")
+        ]
+        
+        return text, entities, relations
+
+class DecisionMakingTemplate(BalancedTemplate):
+    """Template focusing on decision making and personal values."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        intent = random.choice(INTENTS)
+        goal = random.choice(["career advancement", "personal fulfillment", "family happiness", "financial security", "creative expression"])
+        opinion = random.choice(["optimistic", "pragmatic", "cautious", "ambitious", "balanced"])
+        value = random.choice(VALUES)
+        preference = random.choice(PREFERENCES)
+        
+        # First person variation (50% chance) 
+        if random.choice([True, False]):
+            text = f"I intend to {intent} because my goal is {goal}. My {opinion} opinion guides my decisions, and I value {value}. I prefer {preference} when making important choices."
+        else:
+            # Third person variation
+            text = f"{person} intends to {intent} because their goal is {goal}. Their {opinion} opinion guides their decisions, and they value {value}. They prefer {preference} when making important choices."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "intent1": (EntityTypes.INTENT, intent),
+            "goal1": (EntityTypes.GOAL, goal),
+            "opinion1": (EntityTypes.OPINION, opinion),
+            "value1": (EntityTypes.VALUE, value),
+            "pref1": (EntityTypes.PREFERENCE, preference)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_INTENT, "person1", "intent1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.HAS_OPINION, "person1", "opinion1"),
+            (RelationTypes.VALUES, "person1", "value1"),
+            (RelationTypes.HAS_PREFERENCE, "person1", "pref1"),
+            (RelationTypes.INTENDS, "person1", "intent1"),
+            (RelationTypes.PLANS, "person1", "goal1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class CommunityEngagementTemplate(BalancedTemplate):
+    """Template focusing on community roles and cultural engagement."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        community_role = random.choice(COMMUNITY_ROLES)
+        group = random.choice(GROUPS)
+        cultural_element = random.choice(CULTURAL_ELEMENTS)
+        location = random.choice(LOCATIONS)
+        activity = random.choice(ACTIVITIES)
+        event = random.choice(["festival", "workshop", "meeting", "celebration", "conference"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I serve as a {community_role} in our {group} at the {location}. I'm involved in {activity} that celebrates {cultural_element} during our community {event}."
+        else:
+            # Third person variation
+            text = f"{person} serves as a {community_role} in their {group} at the {location}. They're involved in {activity} that celebrates {cultural_element} during their community {event}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "role1": (EntityTypes.COMMUNITY_ROLE, community_role),
+            "group1": (EntityTypes.GROUP, group),
+            "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element),
+            "location1": (EntityTypes.LOCATION, location),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "event1": (EntityTypes.EVENT, event)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_ROLE, "person1", "role1"),
+            (RelationTypes.MEMBER_OF, "person1", "group1"),
+            (RelationTypes.AT_LOCATION, "person1", "location1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.PARTICIPATES_IN, "person1", "event1"),
+            (RelationTypes.LEARNS, "person1", "culture1"),
+            (RelationTypes.LEADS, "person1", "group1")
+        ]
+        
+        return text, entities, relations
+
+class MediaConsumptionTemplate(BalancedTemplate):
+    """Template focusing on media consumption and platform usage."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        platform = random.choice(PLATFORMS)
+        media = random.choice(MEDIA_TYPES_EXPANDED)
+        genre = random.choice(GENRES)
+        frequency = random.choice(FREQUENCY_PATTERNS)
+        topic = random.choice(["technology", "health", "travel", "food", "entertainment", "news"])
+        preference = random.choice(PREFERENCES)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I use {platform} to consume {media} content, especially {genre} topics about {topic}. I engage with this content {frequency} because I prefer {preference}."
+        else:
+            # Third person variation
+            text = f"{person} uses {platform} to consume {media} content, especially {genre} topics about {topic}. They engage with this content {frequency} because they prefer {preference}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "platform1": (EntityTypes.PLATFORM, platform),
+            "media1": (EntityTypes.MEDIA, media),
+            "genre1": (EntityTypes.GENRE, genre),
+            "freq1": (EntityTypes.FREQUENCY, frequency),
+            "topic1": (EntityTypes.TOPIC, topic),
+            "pref1": (EntityTypes.PREFERENCE, preference)
+        }
+        
+        relations = [
+            (RelationTypes.USES, "person1", "platform1"),
+            (RelationTypes.WATCHES, "person1", "media1"),
+            (RelationTypes.LIKES, "person1", "genre1"),
+            (RelationTypes.HAS_FREQUENCY, "person1", "freq1"),
+            (RelationTypes.READS, "person1", "topic1"),
+            (RelationTypes.HAS_PREFERENCE, "person1", "pref1"),
+            (RelationTypes.ENJOYS, "person1", "media1")
+        ]
+        
+        return text, entities, relations
+
+class SocialSituationTemplate(BalancedTemplate):
+    """Template focusing on social situations and business interactions."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        event = random.choice(["meeting", "dinner", "conference", "party", "presentation"])
+        business = random.choice(BUSINESS_TYPES)
+        food = random.choice(FOODS)
+        room = random.choice(ROOM_TYPES)
+        equipment = random.choice(["projector", "microphone", "tablet", "phone", "laptop"])
+        emotion = random.choice(EMOTIONS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I'm attending a {event} at {business} in the {room}. We're having {food} while using the {equipment}. I feel {emotion} about this social situation."
+        else:
+            # Third person variation
+            text = f"{person} is attending a {event} at {business} in the {room}. They're having {food} while using the {equipment}. They feel {emotion} about this social situation."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "event1": (EntityTypes.EVENT, event),
+            "business1": (EntityTypes.BUSINESS, business),
+            "food1": (EntityTypes.FOOD, food),
+            "room1": (EntityTypes.ROOM, room),
+            "equip1": (EntityTypes.EQUIPMENT, equipment),
+            "emotion1": (EntityTypes.EMOTION, emotion)
+        }
+        
+        relations = [
+            (RelationTypes.ATTENDS, "person1", "event1"),
+            (RelationTypes.VISITS, "person1", "business1"),
+            (RelationTypes.TASTES, "person1", "food1"),
+            (RelationTypes.AT_LOCATION, "person1", "room1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.PARTICIPATES_IN, "person1", "event1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class WeatherActivityTemplate(BalancedTemplate):
+    """Template focusing on weather conditions and environmental activities."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        weather = random.choice(WEATHER_CONDITIONS_EXPANDED)
+        condition = random.choice(CONDITIONS_EXPANDED)
+        activity = random.choice(ACTIVITIES)
+        location = random.choice(LOCATIONS)
+        vehicle = random.choice(VEHICLES)
+        equipment = random.choice(["umbrella", "jacket", "sunglasses", "boots", "hat"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"With {weather} weather and {condition} conditions, I'm doing {activity} at the {location}. I use my {vehicle} to get there and bring my {equipment} for the conditions."
+        else:
+            # Third person variation
+            text = f"With {weather} weather and {condition} conditions, {person} is doing {activity} at the {location}. They use their {vehicle} to get there and bring their {equipment} for the conditions."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "weather1": (EntityTypes.WEATHER, weather),
+            "condition1": (EntityTypes.CONDITION, condition),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "location1": (EntityTypes.LOCATION, location),
+            "vehicle1": (EntityTypes.VEHICLE, vehicle),
+            "equip1": (EntityTypes.EQUIPMENT, equipment)
+        }
+        
+        relations = [
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.AT_LOCATION, "person1", "location1"),
+            (RelationTypes.USES, "person1", "vehicle1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.AFFECTS, "weather1", "person1"),
+            (RelationTypes.AFFECTS, "condition1", "activity1"),
+            (RelationTypes.TRAVELS_TO, "person1", "location1")
+        ]
+        
+        return text, entities, relations
+
+class TimeScheduleTemplate(BalancedTemplate):
+    """Template focusing on time management and scheduling."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        time = random.choice(TIME)
+        duration = random.choice(DURATIONS)
+        recurring_schedule = random.choice(RECURRING_SCHEDULES)
+        activity = random.choice(ACTIVITIES)
+        location = random.choice(LOCATIONS)
+        start_time = "9:00 AM"
+        end_time = "5:00 PM"
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I have a {recurring_schedule} schedule for {activity} at the {location}. It starts at {start_time} and runs for {duration}, ending at {end_time}."
+        else:
+            # Third person variation
+            text = f"{person} has a {recurring_schedule} schedule for {activity} at the {location}. It starts at {start_time} and runs for {duration}, ending at {end_time}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "time1": (EntityTypes.TIME, time),
+            "duration1": (EntityTypes.DURATION, duration),
+            "schedule1": (EntityTypes.RECURRING_SCHEDULE, recurring_schedule),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "location1": (EntityTypes.LOCATION, location),
+            "start1": (EntityTypes.START_TIME, start_time),
+            "end1": (EntityTypes.END_TIME, end_time)
+        }
+        
+        relations = [
+            (RelationTypes.SCHEDULED_FOR, "person1", "activity1"),
+            (RelationTypes.STARTS_AT, "activity1", "start1"),
+            (RelationTypes.ENDS_AT, "activity1", "end1"),
+            (RelationTypes.FOR_DURATION, "activity1", "duration1"),
+            (RelationTypes.AT_LOCATION, "activity1", "location1"),
+            (RelationTypes.REPEATS, "activity1", "schedule1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1")
+        ]
+        
+        return text, entities, relations
+
+class TravelExperienceTemplate(BalancedTemplate):
+    """Template focusing on travel experiences and geographic locations."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        geopolitical_entity = random.choice(GEOPOLITICAL_ENTITIES)
+        vehicle = random.choice(VEHICLES)
+        duration = random.choice(DURATIONS)
+        sentiment = random.choice(SENTIMENTS)
+        activity = random.choice(ACTIVITIES)
+        cultural_element = random.choice(CULTURAL_ELEMENTS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I traveled to {geopolitical_entity} using {vehicle} for {duration}. I feel {sentiment} about the experience and enjoyed {activity} while learning about {cultural_element}."
+        else:
+            # Third person variation
+            text = f"{person} traveled to {geopolitical_entity} using {vehicle} for {duration}. They feel {sentiment} about the experience and enjoyed {activity} while learning about {cultural_element}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
+            "vehicle1": (EntityTypes.VEHICLE, vehicle),
+            "duration1": (EntityTypes.DURATION, duration),
+            "sentiment1": (EntityTypes.SENTIMENT, sentiment),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element)
+        }
+        
+        relations = [
+            (RelationTypes.TRAVELS_TO, "person1", "geo1"),
+            (RelationTypes.USES, "person1", "vehicle1"),
+            (RelationTypes.FOR_DURATION, "person1", "duration1"),
+            (RelationTypes.FEELS, "person1", "sentiment1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.LEARNS, "person1", "culture1"),
+            (RelationTypes.VISITS, "person1", "geo1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class HealthWellnessTemplate(BalancedTemplate):
+    """Template focusing on health, wellness and personal care."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        health_info = random.choice(HEALTH_INFO)
+        activity = random.choice(["exercise", "meditation", "yoga", "running", "swimming"])
+        goal = random.choice(["fitness", "wellness", "strength", "flexibility", "peace"])
+        frequency = random.choice(FREQUENCY_PATTERNS)
+        equipment = random.choice(["yoga mat", "dumbbells", "running shoes", "water bottle", "heart monitor"])
+        feeling = random.choice(FEELINGS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I focus on {health_info} through {activity} {frequency}. My goal is {goal} and I use {equipment} for my routine. This makes me feel {feeling}."
+        else:
+            # Third person variation
+            text = f"{person} focuses on {health_info} through {activity} {frequency}. Their goal is {goal} and they use {equipment} for their routine. This makes them feel {feeling}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "health1": (EntityTypes.HEALTH_INFO, health_info),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "goal1": (EntityTypes.GOAL, goal),
+            "freq1": (EntityTypes.FREQUENCY, frequency),
+            "equip1": (EntityTypes.EQUIPMENT, equipment),
+            "feeling1": (EntityTypes.FEELING, feeling)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_HEALTH_INFO, "person1", "health1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.HAS_FREQUENCY, "activity1", "freq1"),
+            (RelationTypes.USES, "person1", "equip1"),
+            (RelationTypes.FEELS, "person1", "feeling1"),
+            (RelationTypes.MANAGES_HEALTH, "person1", "health1")
+        ]
+        
+        return text, entities, relations
+
+class ObjectInteractionTemplate(BalancedTemplate):
+    """Template focusing on object interaction and ownership."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        obj = random.choice(["book", "tool", "instrument", "device", "artwork"])
+        money = random.choice(MONEY)
+        business = random.choice(BUSINESS_TYPES)
+        product = random.choice(["software", "application", "gadget", "service"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I own a {obj} that I borrowed from {person2}. I spent {money} on a {product} from {business}, and now I'm lending the {obj} to help others."
+        else:
+            # Third person variation
+            text = f"{person1} owns a {obj} that they borrowed from {person2}. They spent {money} on a {product} from {business}, and now they're lending the {obj} to help others."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "obj1": (EntityTypes.OBJECT, obj),
+            "money1": (EntityTypes.MONEY, money),
+            "business1": (EntityTypes.BUSINESS, business),
+            "product1": (EntityTypes.PRODUCT, product)
+        }
+        
+        relations = [
+            (RelationTypes.OWNS, "person1", "obj1"),
+            (RelationTypes.BORROWED, "person1", "obj1"),
+            (RelationTypes.LENT, "person2", "obj1"),
+            (RelationTypes.SPENDS, "person1", "money1"),
+            (RelationTypes.RECEIVES, "person1", "product1"),
+            (RelationTypes.GIVES, "person1", "obj1"),
+            (RelationTypes.HAS_OBJECT, "person1", "obj1")
+        ]
+        
+        return text, entities, relations
+
+class NicknameIdentityTemplate(BalancedTemplate):
+    """Template focusing on nicknames, identity and personal attributes."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        nickname = random.choice(["Ace", "Chief", "Scout", "Spark", "Dash", "Phoenix", "Sage"])
+        pronoun = random.choice(["they/them", "she/her", "he/him"])
+        attribute = random.choice(ATTRIBUTES)
+        pet = random.choice(PETS)
+        trait = random.choice(TRAITS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"People call me {nickname} and my pronouns are {pronoun}. I have the attribute of being {attribute} and my {pet} reflects my {trait} nature."
+        else:
+            # Third person variation
+            text = f"People call {person} by the nickname {nickname} and their pronouns are {pronoun}. They have the attribute of being {attribute} and their {pet} reflects their {trait} nature."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "nickname1": (EntityTypes.NICKNAME, nickname),
+            "pronoun1": (EntityTypes.PRONOUN, pronoun),
+            "attr1": (EntityTypes.ATTRIBUTE, attribute),
+            "pet1": (EntityTypes.PET, pet),
+            "trait1": (EntityTypes.TRAIT, trait)
+        }
+        
+        relations = [
+            (RelationTypes.CALLED, "person1", "nickname1"),
+            (RelationTypes.KNOWN_AS, "person1", "nickname1"),
+            (RelationTypes.IS_TYPE, "person1", "pronoun1"),
+            (RelationTypes.HAS_ATTRIBUTE, "person1", "attr1"),
+            (RelationTypes.OWNS, "person1", "pet1"),
+            (RelationTypes.HAS_TRAIT, "person1", "trait1")
+        ]
+        
+        return text, entities, relations
+
+class ConceptualThinkingTemplate(BalancedTemplate):
+    """Template focusing on abstract concepts and intellectual processes."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        concept = random.choice(["innovation", "sustainability", "creativity", "efficiency", "collaboration"])
+        idea = random.choice(["solution", "approach", "method", "strategy", "framework"])
+        opinion = random.choice(["progressive", "conservative", "balanced", "innovative", "practical"])
+        topic = random.choice(["technology", "environment", "society", "business", "education"])
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I'm thinking about the concept of {concept} and considering a new {idea}. My {opinion} opinion on {topic} influences how I approach these abstract thoughts."
+        else:
+            # Third person variation
+            text = f"{person} is thinking about the concept of {concept} and considering a new {idea}. Their {opinion} opinion on {topic} influences how they approach these abstract thoughts."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "concept1": (EntityTypes.CONCEPT, concept),
+            "idea1": (EntityTypes.IDEA, idea),
+            "opinion1": (EntityTypes.OPINION, opinion),
+            "topic1": (EntityTypes.TOPIC, topic)
+        }
+        
+        relations = [
+            (RelationTypes.THINKING_OF, "person1", "concept1"),
+            (RelationTypes.CONSIDERING, "person1", "idea1"),
+            (RelationTypes.HAS_OPINION, "person1", "opinion1"),
+            (RelationTypes.THINKS, "person1", "topic1"),
+            (RelationTypes.REFLECTS_ON, "person1", "concept1"),
+            (RelationTypes.DEVELOPS, "person1", "idea1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class FamilyConnectionTemplate(BalancedTemplate):
+    """Template focusing on family relationships and emotional connections."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        geopolitical_entity = random.choice(GEOPOLITICAL_ENTITIES)
+        memory_type = random.choice(MEMORY_TYPES)
+        emotion = random.choice(EMOTIONS)
+        period = random.choice(PERIODS)
+        cultural_element = random.choice(CULTURAL_ELEMENTS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I am family with {person2} who lives in {geopolitical_entity}. I have {memory_type} memories from the {period} and miss our connection to {cultural_element}. This makes me feel {emotion}."
+        else:
+            # Third person variation
+            text = f"{person1} is family with {person2} who lives in {geopolitical_entity}. They have {memory_type} memories from the {period} and miss their connection to {cultural_element}. This makes them feel {emotion}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
+            "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
+            "emotion1": (EntityTypes.EMOTION, emotion),
+            "period1": (EntityTypes.PERIOD, period),
+            "culture1": (EntityTypes.CULTURAL_ELEMENT, cultural_element)
+        }
+        
+        relations = [
+            (RelationTypes.IS_FAMILY_WITH, "person1", "person2"),
+            (RelationTypes.LIVES_IN, "person2", "geo1"),
+            (RelationTypes.REMEMBERS, "person1", "memory1"),
+            (RelationTypes.MISSES, "person1", "culture1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1"),
+            (RelationTypes.REFLECTS_ON, "person1", "period1")
+        ]
+        
+        return text, entities, relations
+
+class MentorshipTemplate(BalancedTemplate):
+    """Template focusing on mentorship, teaching and influence relationships."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person1 = random.choice(ALL_PEOPLE_NAMES)
+        person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
+        skill = random.choice(SKILLS)
+        topic = random.choice(TOPICS)
+        organization = random.choice(ORGANIZATIONS)
+        goal = random.choice(["career growth", "skill development", "leadership", "expertise"])
+        platform = random.choice(PLATFORMS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I mentor {person2} at {organization} and teach them {skill} about {topic}. I follow their progress on {platform} and influence their goal of {goal}."
+        else:
+            # Third person variation
+            text = f"{person1} mentors {person2} at {organization} and teaches them {skill} about {topic}. They follow their progress on {platform} and influence their goal of {goal}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person1),
+            "person2": (EntityTypes.PERSON, person2),
+            "skill1": (EntityTypes.SKILL, skill),
+            "topic1": (EntityTypes.TOPIC, topic),
+            "org1": (EntityTypes.ORGANIZATION, organization),
+            "goal1": (EntityTypes.GOAL, goal),
+            "platform1": (EntityTypes.PLATFORM, platform)
+        }
+        
+        relations = [
+            (RelationTypes.MENTORS, "person1", "person2"),
+            (RelationTypes.TEACHES, "person1", "skill1"),
+            (RelationTypes.FOLLOWS, "person1", "person2"),
+            (RelationTypes.INFLUENCES, "person1", "goal1"),
+            (RelationTypes.ORGANIZES, "person1", "topic1"),
+            (RelationTypes.WORKS_FOR, "person1", "org1"),
+            (RelationTypes.USES, "person1", "platform1")
+        ]
+        
+        return text, entities, relations
+
+class EmotionalJourneyTemplate(BalancedTemplate):
+    """Template focusing on emotional states and future aspirations."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        goal = random.choice(["travel", "education", "family", "achievement", "peace"])
+        event = random.choice(["reunion", "graduation", "promotion", "wedding", "adventure"])
+        memory_type = random.choice(MEMORY_TYPES)
+        geopolitical_entity = random.choice(GEOPOLITICAL_ENTITIES)
+        period = random.choice(PERIODS)
+        emotion = random.choice(EMOTIONS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I dream of {goal} and look forward to a {event}. I have {memory_type} memories that I regret from the {period}. I hope for moving to {geopolitical_entity} and feel {emotion} about it."
+        else:
+            # Third person variation
+            text = f"{person} dreams of {goal} and looks forward to a {event}. They have {memory_type} memories that they regret from the {period}. They hope for moving to {geopolitical_entity} and feel {emotion} about it."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "goal1": (EntityTypes.GOAL, goal),
+            "event1": (EntityTypes.EVENT, event),
+            "memory1": (EntityTypes.MEMORY_TYPE, memory_type),
+            "geo1": (EntityTypes.GEOPOLITICAL_ENTITY, geopolitical_entity),
+            "period1": (EntityTypes.PERIOD, period),
+            "emotion1": (EntityTypes.EMOTION, emotion)
+        }
+        
+        relations = [
+            (RelationTypes.DREAMS_OF, "person1", "goal1"),
+            (RelationTypes.LOOKING_FORWARD_TO, "person1", "event1"),
+            (RelationTypes.REGRETS, "person1", "memory1"),
+            (RelationTypes.HOPES_FOR, "person1", "geo1"),
+            (RelationTypes.MOVES_TO, "person1", "geo1"),
+            (RelationTypes.HAPPENS_ON, "memory1", "period1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1")
+        ]
+        
+        return text, entities, relations
+
+class HealthLocationTemplate(BalancedTemplate):
+    """Template focusing on health conditions, locations and lifestyle."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        health_condition = random.choice(["allergies", "fitness goals", "wellness routine", "dietary needs"])
+        location = random.choice(LOCATIONS)
+        room = random.choice(ROOM_TYPES)
+        activity = random.choice(ACTIVITIES)
+        business = random.choice(BUSINESS_TYPES)
+        media = random.choice(MEDIA_TYPES_EXPANDED)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I have {health_condition} and stay at the {location} in the {room}. I'm near the {business} where I do {activity} and listen to {media}."
+        else:
+            # Third person variation
+            text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and listen to {media}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "health1": (EntityTypes.HEALTH_INFO, health_condition),  # Using HEALTH_INFO type
+            "location1": (EntityTypes.LOCATION, location),
+            "room1": (EntityTypes.ROOM, room),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "business1": (EntityTypes.BUSINESS, business),
+            "media1": (EntityTypes.MEDIA, media)
+        }
+        
+        relations = [
+            (RelationTypes.HAS_HEALTH_CONDITION, "person1", "health1"),
+            (RelationTypes.STAYS_AT, "person1", "location1"),
+            (RelationTypes.AT_LOCATION, "person1", "room1"),
+            (RelationTypes.IS_NEAR, "location1", "business1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.LISTENS_TO, "person1", "media1"),
+            (RelationTypes.LOCATED_AT, "business1", "location1")
+        ]
+        
+        return text, entities, relations
+
+class CausalInfluenceTemplate(BalancedTemplate):
+    """Template focusing on cause-effect relationships and triggers."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        event = random.choice(["change", "decision", "opportunity", "challenge", "breakthrough"])
+        emotion = random.choice(EMOTIONS)
+        goal = random.choice(GOALS if 'GOALS' in globals() else ["success", "growth", "improvement"])
+        activity = random.choice(ACTIVITIES)
+        result = random.choice(["improvement", "success", "satisfaction", "achievement", "progress"])
+        project = random.choice(PROJECTS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"My {activity} contributed to the {project} and triggered a {event}. This results in {result} and makes me feel {emotion}, which influences my {goal}."
+        else:
+            # Third person variation
+            text = f"{person}'s {activity} contributed to the {project} and triggered a {event}. This results in {result} and makes them feel {emotion}, which influences their {goal}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "event1": (EntityTypes.EVENT, event),
+            "emotion1": (EntityTypes.EMOTION, emotion),
+            "goal1": (EntityTypes.GOAL, goal),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "result1": (EntityTypes.CONCEPT, result),  # Using CONCEPT for result
+            "project1": (EntityTypes.PROJECT, project)
+        }
+        
+        relations = [
+            (RelationTypes.CONTRIBUTED_TO, "activity1", "project1"),
+            (RelationTypes.TRIGGERS, "activity1", "event1"),
+            (RelationTypes.RESULTS_IN, "event1", "result1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.INFLUENCES, "emotion1", "goal1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.WORKS_ON, "person1", "project1")
+        ]
+        
+        return text, entities, relations
+
+        return text, entities, relations
+
+class WorkPlanningTemplate(BalancedTemplate):
+    """Template focusing on concerns, planning and future anxiety."""
+    
+    def create_content(self, needed_entities, needed_relations):
+        person = random.choice(ALL_PEOPLE_NAMES)
+        goal = random.choice(["career advancement", "family security", "financial stability", "health", "future"])
+        event = random.choice(["deadline", "presentation", "interview", "meeting", "change"])
+        timeline = random.choice(TIMELINES)
+        intent = random.choice(INTENTS)
+        activity = random.choice(ACTIVITIES)
+        emotion = random.choice(EMOTIONS)
+        
+        # First person variation (50% chance)
+        if random.choice([True, False]):
+            text = f"I worry about my {goal} and the upcoming {event}. I plan to {intent} over the {timeline} through {activity}. This makes me feel {emotion}."
+        else:
+            # Third person variation
+            text = f"{person} worries about their {goal} and the upcoming {event}. They plan to {intent} over the {timeline} through {activity}. This makes them feel {emotion}."
+        
+        entities = {
+            "person1": (EntityTypes.PERSON, person),
+            "goal1": (EntityTypes.GOAL, goal),
+            "event1": (EntityTypes.EVENT, event),
+            "timeline1": (EntityTypes.TIMELINE, timeline),
+            "intent1": (EntityTypes.INTENT, intent),
+            "activity1": (EntityTypes.ACTIVITY, activity),
+            "emotion1": (EntityTypes.EMOTION, emotion)
+        }
+        
+        relations = [
+            (RelationTypes.WORRIES_ABOUT, "person1", "goal1"),
+            (RelationTypes.WORRIES_ABOUT, "person1", "event1"),
+            (RelationTypes.PLANS, "person1", "intent1"),
+            (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
+            (RelationTypes.HAS_GOAL, "person1", "goal1"),
+            (RelationTypes.FEELS_EMOTION, "person1", "emotion1"),
+            (RelationTypes.HAS_INTENT, "person1", "intent1")
+        ]
+        
+        return text, entities, relations
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # MAIN GENERATION FUNCTIONS (Keep existing with expanded data pools)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1585,7 +2612,47 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
         GrowthCommunityTemplate,
         PlatformMediaTemplate,
         WeatherConditionTemplate,
-        SocialBusinessTemplate
+        SocialBusinessTemplate,
+        
+        # ADDITIONAL PERFECTLY BALANCED TEMPLATES (15+ new templates for 100% coverage)
+        # Professional Templates
+        WorkExpertiseTemplate,
+        CareerProgressionTemplate,
+        TeamCollaborationTemplate,
+        
+        # Personal Life Templates
+        LifeJourneyTemplate,
+        RelationshipDynamicsTemplate,
+        HobbyInterestTemplate,
+        
+        # Cognitive Templates
+        LearningGrowthTemplate,
+        MemoryReflectionTemplate,
+        DecisionMakingTemplate,
+        
+        # Social Context Templates
+        CommunityEngagementTemplate,
+        MediaConsumptionTemplate,
+        SocialSituationTemplate,
+        
+        # Environmental Templates
+        WeatherActivityTemplate,
+        TimeScheduleTemplate,
+        TravelExperienceTemplate,
+        
+        # Additional Specialized Templates
+        HealthWellnessTemplate,
+        ObjectInteractionTemplate,
+        NicknameIdentityTemplate,
+        ConceptualThinkingTemplate,
+        
+        # Targeted Templates for Missing Relations
+        FamilyConnectionTemplate,
+        MentorshipTemplate,
+        EmotionalJourneyTemplate,
+        HealthLocationTemplate,
+        CausalInfluenceTemplate,
+        WorkPlanningTemplate
     ]
     
     dataset = []
