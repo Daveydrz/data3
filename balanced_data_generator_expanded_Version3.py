@@ -1502,6 +1502,279 @@ class SmartMemoryExtractor:
         return False
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# MEMORY RELATION EXTRACTOR (STEP 7)
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+class MemoryRelationExtractor:
+    """
+    Comprehensive relation extraction system with COMPLETE pattern coverage
+    for all conversation types. Extracts every logical relation without
+    creating spurious connections.
+    """
+    
+    def __init__(self):
+        self.relation_patterns = self._build_comprehensive_patterns()
+    
+    def _build_comprehensive_patterns(self):
+        """Build comprehensive relation patterns covering ALL conversation types."""
+        return {
+            # Memory and Recall Relations
+            'memory_patterns': [
+                (r'(I|you)\s+(?:remember|recall)\s+.*?(\w+(?:\s+\w+)*)', RelationTypes.REMEMBERS),
+                (r'(you|I)\s+(?:mentioned|said|told)\s+.*?(\w+(?:\s+\w+)*)', RelationTypes.MENTIONED_PREVIOUSLY),
+                (r'(?:from|in)\s+our\s+(?:conversation|chat|discussion)', RelationTypes.DISCUSSED_BEFORE),
+                (r'we\s+talked\s+about\s+(\w+(?:\s+\w+)*)', RelationTypes.DISCUSSED_BEFORE),
+                (r'didn\'t\s+we\s+discuss\s+(\w+(?:\s+\w+)*)', RelationTypes.DISCUSSED_BEFORE),
+                (r'(I|you)\s+recall\s+(\w+(?:\s+\w+)*)', RelationTypes.RECALLS),
+                (r'as\s+we\s+discussed\s+(\w+(?:\s+\w+)*)', RelationTypes.DISCUSSED_BEFORE),
+                (r'last\s+time\s+you\s+said\s+(\w+(?:\s+\w+)*)', RelationTypes.MENTIONED_PREVIOUSLY)
+            ],
+            
+            # Employment Relations (fix classification errors)
+            'employment_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+works?\s+(?:for|at)\s+(\w+(?:\s+\w+)*)', RelationTypes.WORKS_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+(?:a\s+)?(\w+(?:\s+\w+)*)\s+at', RelationTypes.HAS_ROLE),
+                (r'(\w+(?:\s+\w+)*)\s+serves?\s+as\s+(?:the\s+)?(\w+(?:\s+\w+)*)', RelationTypes.HAS_ROLE),
+                (r'(\w+(?:\s+\w+)*)\s+joined\s+(\w+(?:\s+\w+)*)\s+as', RelationTypes.WORKS_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+employed\s+(?:at|by)\s+(\w+(?:\s+\w+)*)', RelationTypes.WORKS_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+(?:the\s+)?(\w+(?:\s+\w+)*)', RelationTypes.HAS_ROLE),
+                (r'(\w+(?:\s+\w+)*)\s+leads\s+(\w+(?:\s+\w+)*)', RelationTypes.LEADS),
+                (r'(\w+(?:\s+\w+)*)\s+manages\s+(\w+(?:\s+\w+)*)', RelationTypes.LEADS)
+            ],
+            
+            # Ownership Relations (fix "I bought a car" issue)
+            'ownership_patterns': [
+                (r'(I|you|he|she|they)\s+(?:bought|purchased)\s+(?:a\s+)?(\w+(?:\s+\w+)*)', RelationTypes.OWNS),
+                (r'(I|you|he|she|they)\s+(?:own|have)\s+(?:a\s+)?(\w+(?:\s+\w+)*)', RelationTypes.OWNS),
+                (r'(\w+(?:\s+\w+)*)\s+acquired\s+(\w+(?:\s+\w+)*)', RelationTypes.OWNS),
+                (r'(\w+(?:\s+\w+)*)\s+possesses\s+(\w+(?:\s+\w+)*)', RelationTypes.OWNS),
+                (r'(\w+(?:\s+\w+)*)\s+has\s+(?:a\s+)?(\w+(?:\s+\w+)*)', RelationTypes.HAS_OBJECT),
+                (r'(\w+(?:\s+\w+)*)\s+borrowed\s+(\w+(?:\s+\w+)*)', RelationTypes.BORROWED),
+                (r'(\w+(?:\s+\w+)*)\s+lent\s+(\w+(?:\s+\w+)*)', RelationTypes.LENT),
+                (r'(\w+(?:\s+\w+)*)\s+gave\s+(\w+(?:\s+\w+)*)', RelationTypes.GIVES),
+                (r'(\w+(?:\s+\w+)*)\s+received\s+(\w+(?:\s+\w+)*)', RelationTypes.RECEIVES)
+            ],
+            
+            # Personal Relations (wants, habits, concerns, routines)
+            'personal_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+wants?\s+(?:to\s+)?(\w+(?:\s+\w+)*)', RelationTypes.WANTS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:has|have)\s+(?:a\s+)?habit\s+of\s+(\w+(?:\s+\w+)*)', RelationTypes.HAS_HABIT),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+concerned\s+about\s+(\w+(?:\s+\w+)*)', RelationTypes.HAS_CONCERN),
+                (r'(\w+(?:\s+\w+)*)\s+(?:has|have)\s+(?:a\s+)?routine\s+of\s+(\w+(?:\s+\w+)*)', RelationTypes.HAS_ROUTINE),
+                (r'(\w+(?:\s+\w+)*)\s+works?\s+toward\s+(\w+(?:\s+\w+)*)', RelationTypes.WORKS_TOWARD),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+working\s+toward\s+(\w+(?:\s+\w+)*)', RelationTypes.WORKS_TOWARD),
+                (r'(\w+(?:\s+\w+)*)\s+worries\s+about\s+(\w+(?:\s+\w+)*)', RelationTypes.WORRIES_ABOUT),
+                (r'(\w+(?:\s+\w+)*)\s+hopes\s+for\s+(\w+(?:\s+\w+)*)', RelationTypes.HOPES_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+dreams\s+of\s+(\w+(?:\s+\w+)*)', RelationTypes.DREAMS_OF)
+            ],
+            
+            # Time and Frequency Relations
+            'time_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+occurs\s+daily', RelationTypes.OCCURS_DAILY),
+                (r'(\w+(?:\s+\w+)*)\s+happens\s+daily', RelationTypes.OCCURS_DAILY),
+                (r'(\w+(?:\s+\w+)*)\s+occurs\s+weekly', RelationTypes.OCCURS_WEEKLY),
+                (r'(\w+(?:\s+\w+)*)\s+happens\s+weekly', RelationTypes.OCCURS_WEEKLY),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+scheduled\s+for\s+(\w+(?:\s+\w+)*)', RelationTypes.SCHEDULED_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+happens\s+on\s+(\w+(?:\s+\w+)*)', RelationTypes.HAPPENS_ON),
+                (r'(\w+(?:\s+\w+)*)\s+starts\s+at\s+(\w+(?:\s+\w+)*)', RelationTypes.STARTS_AT),
+                (r'(\w+(?:\s+\w+)*)\s+ends\s+at\s+(\w+(?:\s+\w+)*)', RelationTypes.ENDS_AT),
+                (r'(\w+(?:\s+\w+)*)\s+repeats\s+(\w+(?:\s+\w+)*)', RelationTypes.REPEATS)
+            ],
+            
+            # User Relations (likes/dislikes/avoids)
+            'user_patterns': [
+                (r'(I|you|he|she|they)\s+(?:like|likes)\s+(\w+(?:\s+\w+)*)', RelationTypes.LIKES),
+                (r'(I|you|he|she|they)\s+(?:dislike|dislikes)\s+(\w+(?:\s+\w+)*)', RelationTypes.DISLIKES),
+                (r'(I|you|he|she|they)\s+(?:avoid|avoids)\s+(\w+(?:\s+\w+)*)', RelationTypes.AVOIDS),
+                (r'(I|you|he|she|they)\s+(?:enjoy|enjoys)\s+(\w+(?:\s+\w+)*)', RelationTypes.ENJOYS),
+                (r'(I|you|he|she|they)\s+(?:prefer|prefers)\s+(\w+(?:\s+\w+)*)', RelationTypes.PREFERS),
+                (r'(I|you|he|she|they)\s+(?:love|loves)\s+(\w+(?:\s+\w+)*)', RelationTypes.LIKES),
+                (r'(I|you|he|she|they)\s+(?:hate|hates)\s+(\w+(?:\s+\w+)*)', RelationTypes.DISLIKES)
+            ],
+            
+            # Activity Relations (does, practices, learns, teaches)
+            'activity_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+(?:does|do)\s+(\w+(?:\s+\w+)*)', RelationTypes.DOES_ACTIVITY),
+                (r'(\w+(?:\s+\w+)*)\s+(?:practices|practice)\s+(\w+(?:\s+\w+)*)', RelationTypes.PRACTICES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:learns|learn)\s+(\w+(?:\s+\w+)*)', RelationTypes.LEARNS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:teaches|teach)\s+(\w+(?:\s+\w+)*)', RelationTypes.TEACHES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:studies|study)\s+(\w+(?:\s+\w+)*)', RelationTypes.LEARNS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:attends|attend)\s+(\w+(?:\s+\w+)*)', RelationTypes.ATTENDS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:participates|participate)\s+in\s+(\w+(?:\s+\w+)*)', RelationTypes.PARTICIPATES_IN),
+                (r'(\w+(?:\s+\w+)*)\s+(?:watches|watch)\s+(\w+(?:\s+\w+)*)', RelationTypes.WATCHES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:reads|read)\s+(\w+(?:\s+\w+)*)', RelationTypes.READS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:listens|listen)\s+to\s+(\w+(?:\s+\w+)*)', RelationTypes.LISTENS_TO)
+            ],
+            
+            # Location Relations (lives, visits, travels, stays)
+            'location_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+(?:lives|live)\s+in\s+(\w+(?:\s+\w+)*)', RelationTypes.LIVES_IN),
+                (r'(\w+(?:\s+\w+)*)\s+(?:visits|visit)\s+(\w+(?:\s+\w+)*)', RelationTypes.VISITS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:travels|travel)\s+to\s+(\w+(?:\s+\w+)*)', RelationTypes.TRAVELS_TO),
+                (r'(\w+(?:\s+\w+)*)\s+(?:stays|stay)\s+at\s+(\w+(?:\s+\w+)*)', RelationTypes.STAYS_AT),
+                (r'(\w+(?:\s+\w+)*)\s+(?:moves|move)\s+to\s+(\w+(?:\s+\w+)*)', RelationTypes.MOVES_TO),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+located\s+at\s+(\w+(?:\s+\w+)*)', RelationTypes.LOCATED_AT),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+at\s+(\w+(?:\s+\w+)*)', RelationTypes.AT_LOCATION),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+near\s+(\w+(?:\s+\w+)*)', RelationTypes.IS_NEAR)
+            ],
+            
+            # Social Relations (friends, family, relationships)
+            'social_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+friends\s+with\s+(\w+(?:\s+\w+)*)', RelationTypes.IS_FRIENDS_WITH),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+family\s+with\s+(\w+(?:\s+\w+)*)', RelationTypes.IS_FAMILY_WITH),
+                (r'(\w+(?:\s+\w+)*)\s+(?:cares|care)\s+for\s+(\w+(?:\s+\w+)*)', RelationTypes.CARES_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+(?:supports|support)\s+(\w+(?:\s+\w+)*)', RelationTypes.SUPPORTS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:mentors|mentor)\s+(\w+(?:\s+\w+)*)', RelationTypes.MENTORS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:follows|follow)\s+(\w+(?:\s+\w+)*)', RelationTypes.FOLLOWS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:influences|influence)\s+(\w+(?:\s+\w+)*)', RelationTypes.INFLUENCES),
+                (r'(\w+(?:\s+\w+)*)\s+maintains\s+(?:a\s+)?relationship\s+with\s+(\w+(?:\s+\w+)*)', RelationTypes.MAINTAINS_RELATIONSHIP)
+            ],
+            
+            # Health Relations (has condition, manages health)
+            'health_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+(?:has|have)\s+(?:a\s+)?(\w+(?:\s+\w+)*)\s+condition', RelationTypes.HAS_HEALTH_CONDITION),
+                (r'(\w+(?:\s+\w+)*)\s+(?:manages|manage)\s+(\w+(?:\s+\w+)*)\s+health', RelationTypes.MANAGES_HEALTH),
+                (r'(\w+(?:\s+\w+)*)\s+(?:has|have)\s+health\s+(?:info|information)\s+about\s+(\w+(?:\s+\w+)*)', RelationTypes.HAS_HEALTH_INFO),
+                (r'(\w+(?:\s+\w+)*)\s+suffers\s+from\s+(\w+(?:\s+\w+)*)', RelationTypes.HAS_HEALTH_CONDITION),
+                (r'(\w+(?:\s+\w+)*)\s+(?:is|am|are)\s+diagnosed\s+with\s+(\w+(?:\s+\w+)*)', RelationTypes.HAS_HEALTH_CONDITION)
+            ],
+            
+            # Financial Relations (spends, earns, saves, budgets)
+            'financial_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+(?:spends|spend)\s+(\w+(?:\s+\w+)*)', RelationTypes.SPENDS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:earns|earn)\s+(\w+(?:\s+\w+)*)', RelationTypes.EARNS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:saves|save)\s+(\w+(?:\s+\w+)*)', RelationTypes.SAVES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:budgets|budget)\s+for\s+(\w+(?:\s+\w+)*)', RelationTypes.BUDGETS_FOR),
+                (r'(\w+(?:\s+\w+)*)\s+(?:invests|invest)\s+in\s+(\w+(?:\s+\w+)*)', RelationTypes.SPENDS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:pays|pay)\s+for\s+(\w+(?:\s+\w+)*)', RelationTypes.SPENDS)
+            ],
+            
+            # Sensory Relations (sees, hears, smells, tastes, touches)
+            'sensory_patterns': [
+                (r'(\w+(?:\s+\w+)*)\s+(?:sees|see)\s+(\w+(?:\s+\w+)*)', RelationTypes.SEES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:hears|hear)\s+(\w+(?:\s+\w+)*)', RelationTypes.HEARS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:smells|smell)\s+(\w+(?:\s+\w+)*)', RelationTypes.SMELLS),
+                (r'(\w+(?:\s+\w+)*)\s+(?:tastes|taste)\s+(\w+(?:\s+\w+)*)', RelationTypes.TASTES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:touches|touch)\s+(\w+(?:\s+\w+)*)', RelationTypes.TOUCHES),
+                (r'(\w+(?:\s+\w+)*)\s+(?:feels|feel)\s+(\w+(?:\s+\w+)*)', RelationTypes.TOUCHES)
+            ]
+        }
+    
+    def extract_relations(self, text, entities):
+        """
+        Extract all relations from text using comprehensive pattern matching.
+        Returns list of relation tuples: (relation_type, subject_id, object_id)
+        """
+        relations = []
+        text_lower = text.lower()
+        
+        # Create entity lookup by text for relation extraction
+        entity_lookup = {}
+        for entity in entities:
+            entity_text = entity['text'].lower()
+            entity_lookup[entity_text] = entity['id']
+        
+        # Extract relations for each pattern category
+        for category_name, patterns in self.relation_patterns.items():
+            for pattern, relation_type in patterns:
+                matches = re.finditer(pattern, text_lower, re.IGNORECASE)
+                
+                for match in matches:
+                    # Extract subject and object from match groups
+                    if match.groups():
+                        subject_text = match.group(1).strip().lower() if len(match.groups()) >= 1 else None
+                        object_text = match.group(2).strip().lower() if len(match.groups()) >= 2 else None
+                        
+                        # Find corresponding entity IDs
+                        subject_id = self._find_entity_id(subject_text, entity_lookup, entities)
+                        object_id = self._find_entity_id(object_text, entity_lookup, entities)
+                        
+                        # Only add relation if both entities are found
+                        if subject_id is not None and object_id is not None and subject_id != object_id:
+                            relation = (relation_type, subject_id, object_id)
+                            if relation not in relations:
+                                relations.append(relation)
+        
+        return relations
+    
+    def _find_entity_id(self, text, entity_lookup, entities):
+        """Find entity ID for given text, with fuzzy matching."""
+        if not text:
+            return None
+            
+        # Direct lookup
+        if text in entity_lookup:
+            return entity_lookup[text]
+        
+        # Fuzzy matching - find entity that contains or is contained in the text
+        for entity in entities:
+            entity_text = entity['text'].lower()
+            if text in entity_text or entity_text in text:
+                return entity['id']
+        
+        return None
+    
+    def validate_relations(self, relations, entities):
+        """
+        Validate extracted relations to prevent spurious connections.
+        Returns filtered list of valid relations.
+        """
+        valid_relations = []
+        entity_dict = {e['id']: e for e in entities}
+        
+        for relation_type, subject_id, object_id in relations:
+            # Check if entities exist
+            if subject_id not in entity_dict or object_id not in entity_dict:
+                continue
+                
+            subject_entity = entity_dict[subject_id]
+            object_entity = entity_dict[object_id]
+            
+            # Validate relation makes logical sense
+            if self._is_valid_relation(relation_type, subject_entity, object_entity):
+                valid_relations.append((relation_type, subject_id, object_id))
+        
+        return valid_relations
+    
+    def _is_valid_relation(self, relation_type, subject_entity, object_entity):
+        """Check if a relation between two entities is logically valid."""
+        subject_type = subject_entity['type']
+        object_type = object_entity['type']
+        
+        # Define valid subject-relation-object patterns
+        valid_patterns = {
+            RelationTypes.WORKS_FOR: {
+                'subjects': [EntityTypes.PERSON, EntityTypes.PRONOUN],
+                'objects': [EntityTypes.ORGANIZATION, EntityTypes.BUSINESS, EntityTypes.TECH_COMPANIES]
+            },
+            RelationTypes.OWNS: {
+                'subjects': [EntityTypes.PERSON, EntityTypes.PRONOUN],
+                'objects': [EntityTypes.OBJECT, EntityTypes.VEHICLE, EntityTypes.EQUIPMENT]
+            },
+            RelationTypes.LIVES_IN: {
+                'subjects': [EntityTypes.PERSON, EntityTypes.PRONOUN],
+                'objects': [EntityTypes.LOCATION, EntityTypes.GEOPOLITICAL_ENTITY]
+            },
+            RelationTypes.HAS_HABIT: {
+                'subjects': [EntityTypes.PERSON, EntityTypes.PRONOUN],
+                'objects': [EntityTypes.HABIT, EntityTypes.ACTIVITY, EntityTypes.ROUTINE]
+            },
+            RelationTypes.REMEMBERS: {
+                'subjects': [EntityTypes.PERSON, EntityTypes.PRONOUN],
+                'objects': [EntityTypes.MEMORY, EntityTypes.CONVERSATION_REFERENCE, EntityTypes.EVENT]
+            }
+        }
+        
+        # Check if relation type has validation rules
+        if relation_type in valid_patterns:
+            pattern = valid_patterns[relation_type]
+            return (subject_type in pattern['subjects'] and 
+                   object_type in pattern['objects'])
+        
+        # Default: allow all other relations (they have their own logic)
+        return True
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # BALANCE-DRIVEN TEMPLATE SYSTEM (STEP 5)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
