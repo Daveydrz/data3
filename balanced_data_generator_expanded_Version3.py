@@ -1131,6 +1131,377 @@ USER_CONTEXTS = [
 ]
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# SMART MEMORY EXTRACTOR (STEP 6)
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+class SmartMemoryExtractor:
+    """
+    Comprehensive entity extraction system with exhaustive entity mapping
+    to catch every possible entity variation in human-AI conversations.
+    """
+    
+    def __init__(self):
+        self.entity_mapping = self._build_complete_entity_mapping()
+        self.pronoun_patterns = self._build_pronoun_patterns()
+        self.contextual_patterns = self._build_contextual_patterns()
+    
+    def _build_complete_entity_mapping(self):
+        """Build comprehensive entity mapping covering ALL possible variations."""
+        mapping = {}
+        
+        # TECH COMPANIES - All variations and common names
+        tech_companies = [
+            'Google', 'Microsoft', 'Apple', 'Amazon', 'Meta', 'Tesla', 'Netflix',
+            'GitHub', 'OpenAI', 'Anthropic', 'Stripe', 'Shopify', 'Uber', 'Airbnb',
+            'SpaceX', 'Twitter', 'LinkedIn', 'Adobe', 'Oracle', 'IBM', 'Intel',
+            'Nvidia', 'Salesforce', 'Zoom', 'Slack', 'Discord', 'Reddit', 'TikTok',
+            'Facebook', 'Instagram', 'WhatsApp', 'YouTube', 'Gmail', 'NVIDIA',
+            'AMD', 'Cisco', 'VMware', 'ServiceNow', 'Atlassian', 'Palantir',
+            'Snowflake', 'Datadog', 'MongoDB', 'Twilio', 'Square', 'PayPal',
+            'eBay', 'Roku', 'Spotify', 'Pinterest', 'Snapchat', 'Cloudflare',
+            'Okta', 'Unity', 'Autodesk', 'Intuit', 'DocuSign', 'CrowdStrike',
+            'Zscaler', 'Workday'
+        ]
+        for company in tech_companies:
+            mapping[company.lower()] = EntityTypes.ORGANIZATION
+        
+        # UNIVERSITIES - All major ones
+        universities = [
+            'Stanford University', 'MIT', 'Harvard University', 'UC Berkeley',
+            'Carnegie Mellon', 'Oxford University', 'Cambridge University',
+            'Yale University', 'Princeton University', 'Columbia University',
+            'University of Washington', 'Georgia Tech', 'Caltech', 'Cornell',
+            'University of California', 'UCLA', 'USC', 'NYU', 'Duke University',
+            'Northwestern University', 'University of Chicago', 'Johns Hopkins',
+            'Vanderbilt University', 'Rice University', 'Notre Dame', 'Georgetown',
+            'Boston University', 'University of Michigan', 'Penn State',
+            'University of Texas', 'Arizona State University', 'UC San Diego'
+        ]
+        for uni in universities:
+            mapping[uni.lower()] = EntityTypes.ORGANIZATION
+            # Also map shortened versions
+            if 'University' in uni:
+                short_name = uni.replace(' University', '').lower()
+                mapping[short_name] = EntityTypes.ORGANIZATION
+        
+        # BUSINESS LOCATIONS - All types that appear in conversations
+        businesses = [
+            'shop', 'store', 'restaurant', 'cafe', 'coffee shop', 'cinema',
+            'theater', 'gym', 'hospital', 'bank', 'hotel', 'mall', 'market',
+            'pharmacy', 'bookstore', 'gas station', 'airport', 'library',
+            'museum', 'park', 'grocery store', 'supermarket', 'bakery',
+            'salon', 'barbershop', 'clinic', 'dentist', 'bar', 'pub',
+            'office', 'workplace', 'co-working space', 'startup', 'company',
+            'corporation', 'firm', 'agency', 'studio', 'lab', 'factory',
+            'warehouse', 'showroom', 'gallery', 'spa', 'resort', 'lodge'
+        ]
+        for biz in businesses:
+            mapping[biz.lower()] = EntityTypes.BUSINESS
+        
+        # PROFESSIONAL ROLES - Complete list
+        roles = [
+            'CEO', 'CTO', 'CIO', 'CFO', 'VP', 'director', 'manager', 'lead',
+            'software engineer', 'data scientist', 'product manager', 'designer',
+            'researcher', 'professor', 'analyst', 'consultant', 'specialist',
+            'coordinator', 'developer', 'architect', 'engineer', 'scientist',
+            'teacher', 'doctor', 'nurse', 'lawyer', 'accountant', 'writer',
+            'journalist', 'photographer', 'artist', 'musician', 'chef',
+            'waiter', 'cashier', 'salesperson', 'mechanic', 'electrician',
+            'programmer', 'coder', 'tech lead', 'team lead', 'senior engineer',
+            'junior developer', 'full stack developer', 'frontend developer',
+            'backend developer', 'devops engineer', 'machine learning engineer',
+            'AI researcher', 'UX designer', 'UI designer', 'graphic designer',
+            'marketing manager', 'sales manager', 'HR manager', 'operations manager'
+        ]
+        for role in roles:
+            mapping[role.lower()] = EntityTypes.ROLE
+        
+        # TIME EXPRESSIONS - All variations
+        time_expressions = [
+            'yesterday', 'today', 'tomorrow', 'tonight', 'this morning',
+            'this afternoon', 'this evening', 'last week', 'next week',
+            'last month', 'next month', 'last year', 'next year', 'recently',
+            'soon', 'later', 'earlier', 'now', 'Monday', 'Tuesday', 'Wednesday',
+            'Thursday', 'Friday', 'Saturday', 'Sunday', 'weekend', 'weekday',
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December',
+            'spring', 'summer', 'fall', 'winter', 'autumn', 'morning',
+            'afternoon', 'evening', 'night', 'midnight', 'noon', 'dawn', 'dusk'
+        ]
+        for time_expr in time_expressions:
+            mapping[time_expr.lower()] = EntityTypes.DATE
+        
+        # LOCATIONS - Cities, places, rooms
+        locations = [
+            'San Francisco', 'New York', 'London', 'Tokyo', 'Berlin', 'Paris',
+            'Los Angeles', 'Boston', 'Seattle', 'Austin', 'Chicago', 'Miami',
+            'Atlanta', 'Denver', 'Portland', 'Phoenix', 'Las Vegas', 'Dallas',
+            'Houston', 'Philadelphia', 'Detroit', 'Minneapolis', 'Nashville',
+            'home', 'office', 'work', 'school', 'university', 'downtown',
+            'uptown', 'neighborhood', 'city', 'town', 'village', 'suburb',
+            'Silicon Valley', 'Bay Area', 'Manhattan', 'Brooklyn', 'Queens',
+            'Hollywood', 'Beverly Hills', 'Wall Street', 'Times Square'
+        ]
+        for loc in locations:
+            mapping[loc.lower()] = EntityTypes.GEOPOLITICAL_ENTITY
+        
+        # PRODUCTS - All types mentioned in conversations
+        products = [
+            'iPhone', 'iPad', 'MacBook', 'laptop', 'computer', 'phone',
+            'smartphone', 'mobile phone', 'cell phone', 'desktop',
+            'car', 'bike', 'bicycle', 'motorcycle', 'watch', 'camera',
+            'headphones', 'earbuds', 'tablet', 'TV', 'television', 'monitor',
+            'keyboard', 'mouse', 'printer', 'scanner', 'router', 'charger',
+            'cable', 'speaker', 'microphone', 'webcam', 'drone', 'smartwatch',
+            'fitness tracker', 'gaming console', 'PlayStation', 'Xbox', 'Nintendo',
+            'VR headset', 'smart home device', 'Alexa', 'Google Home', 'Siri'
+        ]
+        for prod in products:
+            mapping[prod.lower()] = EntityTypes.PRODUCT
+        
+        # FOOD ITEMS
+        foods = [
+            'coffee', 'tea', 'water', 'juice', 'soda', 'beer', 'wine',
+            'pizza', 'burger', 'sandwich', 'salad', 'pasta', 'sushi',
+            'rice', 'bread', 'cheese', 'meat', 'chicken', 'fish', 'vegetables',
+            'fruit', 'apple', 'banana', 'orange', 'grape', 'strawberry',
+            'chocolate', 'ice cream', 'cake', 'cookie', 'donut', 'bagel',
+            'cereal', 'milk', 'yogurt', 'egg', 'bacon', 'ham', 'turkey',
+            'beef', 'pork', 'lamb', 'seafood', 'shrimp', 'lobster', 'crab'
+        ]
+        for food in foods:
+            mapping[food.lower()] = EntityTypes.FOOD
+        
+        # HOBBIES AND ACTIVITIES
+        hobbies = [
+            'reading', 'writing', 'painting', 'drawing', 'photography',
+            'music', 'singing', 'dancing', 'cooking', 'baking', 'gardening',
+            'hiking', 'running', 'swimming', 'cycling', 'yoga', 'meditation',
+            'gaming', 'traveling', 'camping', 'fishing', 'hunting',
+            'skateboarding', 'surfing', 'skiing', 'snowboarding', 'rock climbing',
+            'martial arts', 'boxing', 'weightlifting', 'tennis', 'golf',
+            'basketball', 'football', 'soccer', 'baseball', 'volleyball'
+        ]
+        for hobby in hobbies:
+            mapping[hobby.lower()] = EntityTypes.HOBBY
+        
+        # MEMORY TRIGGERS - All conversation reference patterns
+        memory_triggers = [
+            'I remember', 'you mentioned', 'we talked about', 'last time you said',
+            'you told me', 'I recall', 'from our conversation', 'you said before',
+            'I think you mentioned', "didn't we discuss", 'you brought up',
+            'as we discussed', 'from what you told me', 'you previously said',
+            'we discussed earlier', 'you shared with me', 'I think you said',
+            'if I remember correctly', 'you were telling me', 'you mentioned that'
+        ]
+        for trigger in memory_triggers:
+            mapping[trigger.lower()] = EntityTypes.CONVERSATION_REFERENCE
+        
+        # EMOTIONS AND FEELINGS
+        emotions = [
+            'happy', 'sad', 'angry', 'excited', 'nervous', 'worried', 'stressed',
+            'relaxed', 'calm', 'anxious', 'confident', 'proud', 'ashamed',
+            'guilty', 'jealous', 'envious', 'grateful', 'hopeful', 'disappointed',
+            'frustrated', 'overwhelmed', 'content', 'peaceful', 'energetic',
+            'tired', 'exhausted', 'motivated', 'inspired', 'curious', 'surprised'
+        ]
+        for emotion in emotions:
+            mapping[emotion.lower()] = EntityTypes.EMOTION
+        
+        # SKILLS AND TECHNOLOGIES
+        skills = [
+            'Python', 'JavaScript', 'Java', 'C++', 'HTML', 'CSS', 'SQL',
+            'React', 'Angular', 'Vue', 'Node.js', 'Django', 'Flask',
+            'machine learning', 'AI', 'artificial intelligence', 'data science',
+            'web development', 'mobile development', 'game development',
+            'cybersecurity', 'cloud computing', 'AWS', 'Azure', 'Google Cloud',
+            'Docker', 'Kubernetes', 'Git', 'GitHub', 'DevOps', 'agile',
+            'scrum', 'project management', 'product management', 'UX design',
+            'UI design', 'graphic design', 'digital marketing', 'SEO'
+        ]
+        for skill in skills:
+            mapping[skill.lower()] = EntityTypes.TECHNOLOGY
+        
+        # HEALTH CONDITIONS
+        health_conditions = [
+            'diabetes', 'hypertension', 'asthma', 'allergies', 'arthritis',
+            'depression', 'anxiety', 'insomnia', 'migraine', 'headache',
+            'back pain', 'knee pain', 'shoulder pain', 'stress', 'fatigue',
+            'cold', 'flu', 'fever', 'cough', 'sore throat', 'stomach ache'
+        ]
+        for condition in health_conditions:
+            mapping[condition.lower()] = EntityTypes.HEALTH_CONDITION
+        
+        # BOOKS
+        books = [
+            'Harry Potter', 'Lord of the Rings', 'Game of Thrones', 'The Hobbit',
+            'Pride and Prejudice', '1984', 'To Kill a Mockingbird', 'The Great Gatsby',
+            'The Catcher in the Rye', 'Brave New World', 'The Alchemist',
+            'The Da Vinci Code', 'Gone Girl', 'The Girl with the Dragon Tattoo'
+        ]
+        for book in books:
+            mapping[book.lower()] = EntityTypes.BOOK
+        
+        # MOVIES
+        movies = [
+            'The Avengers', 'Star Wars', 'The Matrix', 'Inception', 'Titanic',
+            'The Godfather', 'Pulp Fiction', 'The Dark Knight', 'Forrest Gump',
+            'The Shawshank Redemption', 'The Lion King', 'Toy Story', 'Avatar',
+            'Jurassic Park', 'E.T.', 'Jaws', 'Rocky', 'Top Gun', 'Iron Man'
+        ]
+        for movie in movies:
+            mapping[movie.lower()] = EntityTypes.MOVIE
+        
+        # RESTAURANTS
+        restaurants = [
+            'McDonald\'s', 'Starbucks', 'Subway', 'KFC', 'Pizza Hut', 'Domino\'s',
+            'Burger King', 'Taco Bell', 'Chipotle', 'Panera Bread', 'Dunkin\'',
+            'Olive Garden', 'Applebee\'s', 'TGI Friday\'s', 'Chili\'s',
+            'restaurant', 'diner', 'bistro', 'cafe', 'eatery', 'food truck'
+        ]
+        for restaurant in restaurants:
+            mapping[restaurant.lower()] = EntityTypes.RESTAURANT
+        
+        # BRANDS
+        brands = [
+            'Nike', 'Adidas', 'Coca-Cola', 'Pepsi', 'Samsung', 'Sony',
+            'LG', 'Canon', 'Nikon', 'BMW', 'Mercedes', 'Toyota', 'Honda',
+            'Ford', 'Chevrolet', 'Walmart', 'Target', 'Amazon', 'eBay'
+        ]
+        for brand in brands:
+            mapping[brand.lower()] = EntityTypes.BRAND
+        
+        # COURSES AND SUBJECTS
+        courses = [
+            'mathematics', 'physics', 'chemistry', 'biology', 'history',
+            'English', 'literature', 'psychology', 'sociology', 'economics',
+            'computer science', 'engineering', 'business', 'marketing',
+            'accounting', 'finance', 'law', 'medicine', 'nursing', 'education'
+        ]
+        for course in courses:
+            mapping[course.lower()] = EntityTypes.SUBJECT
+        
+        return mapping
+    
+    def _build_pronoun_patterns(self):
+        """Build comprehensive pronoun patterns for all variations."""
+        return [
+            'I', 'me', 'my', 'mine', 'myself',
+            'you', 'your', 'yours', 'yourself',
+            'he', 'him', 'his', 'himself',
+            'she', 'her', 'hers', 'herself',
+            'we', 'us', 'our', 'ours', 'ourselves',
+            'they', 'them', 'their', 'theirs', 'themselves',
+            'it', 'its', 'itself'
+        ]
+    
+    def _build_contextual_patterns(self):
+        """Build contextual patterns for family and social relationships."""
+        return {
+            'friend': EntityTypes.FRIEND,
+            'buddy': EntityTypes.FRIEND,
+            'pal': EntityTypes.FRIEND,
+            'best friend': EntityTypes.FRIEND,
+            'close friend': EntityTypes.FRIEND,
+            'mom': EntityTypes.FAMILY_MEMBER,
+            'dad': EntityTypes.FAMILY_MEMBER,
+            'mother': EntityTypes.FAMILY_MEMBER,
+            'father': EntityTypes.FAMILY_MEMBER,
+            'parent': EntityTypes.FAMILY_MEMBER,
+            'parents': EntityTypes.FAMILY_MEMBER,
+            'brother': EntityTypes.FAMILY_MEMBER,
+            'sister': EntityTypes.FAMILY_MEMBER,
+            'sibling': EntityTypes.FAMILY_MEMBER,
+            'wife': EntityTypes.FAMILY_MEMBER,
+            'husband': EntityTypes.FAMILY_MEMBER,
+            'spouse': EntityTypes.FAMILY_MEMBER,
+            'partner': EntityTypes.FAMILY_MEMBER,
+            'son': EntityTypes.FAMILY_MEMBER,
+            'daughter': EntityTypes.FAMILY_MEMBER,
+            'child': EntityTypes.FAMILY_MEMBER,
+            'children': EntityTypes.FAMILY_MEMBER,
+            'grandparent': EntityTypes.FAMILY_MEMBER,
+            'grandmother': EntityTypes.FAMILY_MEMBER,
+            'grandfather': EntityTypes.FAMILY_MEMBER,
+            'aunt': EntityTypes.FAMILY_MEMBER,
+            'uncle': EntityTypes.FAMILY_MEMBER,
+            'cousin': EntityTypes.FAMILY_MEMBER,
+            'nephew': EntityTypes.FAMILY_MEMBER,
+            'niece': EntityTypes.FAMILY_MEMBER
+        }
+    
+    def extract_entities(self, text):
+        """
+        Extract all entities from text with comprehensive coverage and overlap detection.
+        Returns list of entity dictionaries with id, type, text, and span.
+        """
+        entities = []
+        entity_id = 0
+        text_lower = text.lower()
+        found_spans = []
+        
+        # Extract pronouns first (highest priority)
+        for pronoun in self.pronoun_patterns:
+            pattern = r'\b' + re.escape(pronoun.lower()) + r'\b'
+            matches = re.finditer(pattern, text_lower)
+            for match in matches:
+                start, end = match.span()
+                if not self._overlaps_existing(start, end, found_spans):
+                    entities.append({
+                        'id': entity_id,
+                        'type': EntityTypes.PRONOUN,
+                        'text': text[start:end],
+                        'span': [start, end]
+                    })
+                    found_spans.append((start, end))
+                    entity_id += 1
+        
+        # Extract contextual patterns (family/friends)
+        for pattern_text, entity_type in self.contextual_patterns.items():
+            pattern = r'\b' + re.escape(pattern_text.lower()) + r'\b'
+            matches = re.finditer(pattern, text_lower)
+            for match in matches:
+                start, end = match.span()
+                if not self._overlaps_existing(start, end, found_spans):
+                    entities.append({
+                        'id': entity_id,
+                        'type': entity_type,
+                        'text': text[start:end],
+                        'span': [start, end]
+                    })
+                    found_spans.append((start, end))
+                    entity_id += 1
+        
+        # Extract other entities (longest match first to avoid conflicts)
+        sorted_entities = sorted(self.entity_mapping.items(), 
+                                key=lambda x: len(x[0]), reverse=True)
+        
+        for entity_text, entity_type in sorted_entities:
+            pattern = r'\b' + re.escape(entity_text.lower()) + r'\b'
+            matches = re.finditer(pattern, text_lower)
+            
+            for match in matches:
+                start, end = match.span()
+                if not self._overlaps_existing(start, end, found_spans):
+                    entities.append({
+                        'id': entity_id,
+                        'type': entity_type,
+                        'text': text[start:end],
+                        'span': [start, end]
+                    })
+                    found_spans.append((start, end))
+                    entity_id += 1
+        
+        return entities
+    
+    def _overlaps_existing(self, start, end, existing_spans):
+        """Check if a span overlaps with any existing spans."""
+        for existing_start, existing_end in existing_spans:
+            if start < existing_end and end > existing_start:
+                return True
+        return False
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # BALANCE-DRIVEN TEMPLATE SYSTEM (STEP 5)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
