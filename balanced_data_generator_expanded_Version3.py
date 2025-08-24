@@ -1131,6 +1131,1206 @@ USER_CONTEXTS = [
 ]
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+# BALANCE-DRIVEN TEMPLATE SYSTEM (STEP 5)
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+# Part A: Flexible Template Functions (50+ functions)
+
+def create_memory_conversation_template(needed_entities, needed_relations):
+    """Use when CONVERSATION_REFERENCE or memory-related entities/relations are needed."""
+    person = 'I'
+    memory_trigger = random.choice(MEMORY_TRIGGERS)
+    goal = random.choice(PERSONAL_GOALS)
+    
+    text = f"{memory_trigger} you wanting to {goal}"
+    
+    entities = {
+        'pronoun1': (EntityTypes.PRONOUN, person),
+        'memory1': (EntityTypes.CONVERSATION_REFERENCE, memory_trigger),
+        'goal1': (EntityTypes.GOAL, goal)
+    }
+    
+    relations = [
+        (RelationTypes.MENTIONED_PREVIOUSLY, 'pronoun1', 'goal1')
+    ]
+    
+    return text, entities, relations
+
+def create_sensory_experience_template(needed_entities, needed_relations):
+    """Use when SMELL, TASTE, SOUND, SENSATION are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    location = random.choice(LOCATIONS)
+    smell = random.choice(SMELLS)
+    
+    text = f"At the {location}, {person} smells {smell}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'location1': (EntityTypes.LOCATION, location),
+        'smell1': (EntityTypes.SMELL, smell)
+    }
+    
+    relations = [
+        (RelationTypes.SMELLS, 'person1', 'smell1'),
+        (RelationTypes.AT_LOCATION, 'person1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_work_professional_template(needed_entities, needed_relations):
+    """Use when ORGANIZATION, ROLE, SKILL entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    company = random.choice(TECH_COMPANIES)
+    role = random.choice(ROLES)
+    skill = random.choice(SKILLS)
+    
+    text = f"{person} works as a {role} at {company} and has expertise in {skill}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'org1': (EntityTypes.ORGANIZATION, company),
+        'role1': (EntityTypes.ROLE, role),
+        'skill1': (EntityTypes.SKILL, skill)
+    }
+    
+    relations = [
+        (RelationTypes.WORKS_FOR, 'person1', 'org1'),
+        (RelationTypes.HAS_ROLE, 'person1', 'role1'),
+        (RelationTypes.HAS_SKILL, 'person1', 'skill1')
+    ]
+    
+    return text, entities, relations
+
+def create_casual_social_template(needed_entities, needed_relations):
+    """Use when FRIEND, SOCIAL relations are needed."""
+    person1 = random.choice(ALL_PEOPLE_NAMES)
+    person2 = random.choice(ALL_PEOPLE_NAMES)
+    activity = random.choice(ACTIVITIES)
+    location = random.choice(LOCATIONS)
+    
+    text = f"{person1} enjoys {activity} with their friend {person2} at the {location}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person1),
+        'friend1': (EntityTypes.FRIEND, person2),
+        'activity1': (EntityTypes.ACTIVITY, activity),
+        'location1': (EntityTypes.LOCATION, location)
+    }
+    
+    relations = [
+        (RelationTypes.IS_FRIENDS_WITH, 'person1', 'friend1'),
+        (RelationTypes.DOES_ACTIVITY, 'person1', 'activity1'),
+        (RelationTypes.AT_LOCATION, 'activity1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_goal_aspiration_template(needed_entities, needed_relations):
+    """Use when ASPIRATION, GOAL entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    aspiration = random.choice(PERSONAL_GOALS)
+    timeline = random.choice(TIMELINES)
+    
+    text = f"{person} has an aspiration to {aspiration} {timeline}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'aspiration1': (EntityTypes.ASPIRATION, aspiration),
+        'timeline1': (EntityTypes.TIMELINE, timeline)
+    }
+    
+    relations = [
+        (RelationTypes.WORKS_TOWARD, 'person1', 'aspiration1'),
+        (RelationTypes.SCHEDULED_FOR, 'aspiration1', 'timeline1')
+    ]
+    
+    return text, entities, relations
+
+def create_health_condition_template(needed_entities, needed_relations):
+    """Use when HEALTH_CONDITION entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    condition = random.choice(['diabetes', 'hypertension', 'anxiety', 'depression', 'arthritis'])
+    health_info = random.choice(HEALTH_INFO)
+    
+    text = f"{person} manages their {condition} through {health_info}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'condition1': (EntityTypes.HEALTH_CONDITION, condition),
+        'health1': (EntityTypes.HEALTH_INFO, health_info)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_HEALTH_CONDITION, 'person1', 'condition1'),
+        (RelationTypes.MANAGES_HEALTH, 'person1', 'health1')
+    ]
+    
+    return text, entities, relations
+
+def create_habit_routine_template(needed_entities, needed_relations):
+    """Use when HABIT, ROUTINE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    habit = random.choice(['morning meditation', 'evening walk', 'reading before bed', 'daily exercise'])
+    frequency = random.choice(FREQUENCY_PATTERNS)
+    
+    text = f"{person} has a habit of {habit} {frequency}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'habit1': (EntityTypes.HABIT, habit),
+        'frequency1': (EntityTypes.FREQUENCY, frequency)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_HABIT, 'person1', 'habit1'),
+        (RelationTypes.HAS_FREQUENCY, 'habit1', 'frequency1')
+    ]
+    
+    return text, entities, relations
+
+def create_brand_product_template(needed_entities, needed_relations):
+    """Use when BRAND, PRODUCT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    brand = random.choice(TECH_COMPANIES)
+    product = random.choice(PRODUCTS)
+    
+    text = f"{person} uses the {product} from {brand}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'brand1': (EntityTypes.BRAND, brand),
+        'product1': (EntityTypes.PRODUCT, product)
+    }
+    
+    relations = [
+        (RelationTypes.USES, 'person1', 'product1'),
+        (RelationTypes.CREATES, 'brand1', 'product1')
+    ]
+    
+    return text, entities, relations
+
+def create_user_context_template(needed_entities, needed_relations):
+    """Use when USER_CONTEXT entities are needed."""
+    person = 'I'
+    context = random.choice(USER_CONTEXTS)
+    concern = random.choice(CONCERNS)
+    
+    text = f"Since {person} am {context}, {person} have been concerned about {concern}"
+    
+    entities = {
+        'pronoun1': (EntityTypes.PRONOUN, person),
+        'context1': (EntityTypes.USER_CONTEXT, context),
+        'concern1': (EntityTypes.CONCERN, concern)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_CONCERN, 'pronoun1', 'concern1')
+    ]
+    
+    return text, entities, relations
+
+def create_learning_course_template(needed_entities, needed_relations):
+    """Use when COURSE, SUBJECT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    course = random.choice(['Python Fundamentals', 'Machine Learning', 'Data Analysis', 'Web Development'])
+    subject = random.choice(['programming', 'mathematics', 'data science', 'web design'])
+    
+    text = f"{person} is taking a course on {course} to learn {subject}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'course1': (EntityTypes.COURSE, course),
+        'subject1': (EntityTypes.SUBJECT, subject)
+    }
+    
+    relations = [
+        (RelationTypes.LEARNS, 'person1', 'subject1'),
+        (RelationTypes.ATTENDS, 'person1', 'course1')
+    ]
+    
+    return text, entities, relations
+
+def create_book_movie_template(needed_entities, needed_relations):
+    """Use when BOOK, MOVIE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    book = random.choice(['The Pragmatic Programmer', 'Clean Code', 'Design Patterns', 'Python Cookbook'])
+    movie = random.choice(['The Matrix', 'Inception', 'Interstellar', 'Ex Machina'])
+    
+    text = f"{person} reads {book} and watches {movie} for inspiration"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'book1': (EntityTypes.BOOK, book),
+        'movie1': (EntityTypes.MOVIE, movie)
+    }
+    
+    relations = [
+        (RelationTypes.READS, 'person1', 'book1'),
+        (RelationTypes.WATCHES, 'person1', 'movie1')
+    ]
+    
+    return text, entities, relations
+
+def create_restaurant_food_template(needed_entities, needed_relations):
+    """Use when RESTAURANT, FOOD entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    restaurant = random.choice(['Italian Bistro', 'Sushi Palace', 'Mexican Cantina', 'French Cafe'])
+    food = random.choice(FOODS)
+    
+    text = f"{person} visits {restaurant} to enjoy {food}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'restaurant1': (EntityTypes.RESTAURANT, restaurant),
+        'food1': (EntityTypes.FOOD, food)
+    }
+    
+    relations = [
+        (RelationTypes.VISITS, 'person1', 'restaurant1'),
+        (RelationTypes.ENJOYS, 'person1', 'food1')
+    ]
+    
+    return text, entities, relations
+
+def create_family_member_template(needed_entities, needed_relations):
+    """Use when FAMILY_MEMBER entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    family_member = random.choice(['mother', 'father', 'sister', 'brother', 'grandmother', 'grandfather'])
+    activity = random.choice(ACTIVITIES)
+    
+    text = f"{person} spends time with their {family_member} {activity}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'family1': (EntityTypes.FAMILY_MEMBER, family_member),
+        'activity1': (EntityTypes.ACTIVITY, activity)
+    }
+    
+    relations = [
+        (RelationTypes.IS_FAMILY_WITH, 'person1', 'family1'),
+        (RelationTypes.DOES_ACTIVITY, 'person1', 'activity1')
+    ]
+    
+    return text, entities, relations
+
+def create_personal_info_template(needed_entities, needed_relations):
+    """Use when PERSONAL_INFO entities are needed."""
+    person = 'I'
+    personal_info = random.choice(['age 32', 'birthday in March', 'from California', 'studied at MIT'])
+    
+    text = f"{person} mentioned that {person} am {personal_info}"
+    
+    entities = {
+        'pronoun1': (EntityTypes.PRONOUN, person),
+        'info1': (EntityTypes.PERSONAL_INFO, personal_info)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_ATTRIBUTE, 'pronoun1', 'info1')
+    ]
+    
+    return text, entities, relations
+
+def create_memory_recall_template(needed_entities, needed_relations):
+    """Use when MEMORY, RECALLS relation are needed."""
+    person = 'I'
+    memory = random.choice(['childhood vacation', 'first job', 'graduation day', 'learning to code'])
+    emotion = random.choice(EMOTIONS)
+    
+    text = f"{person} recall the {memory} with {emotion}"
+    
+    entities = {
+        'pronoun1': (EntityTypes.PRONOUN, person),
+        'memory1': (EntityTypes.MEMORY, memory),
+        'emotion1': (EntityTypes.EMOTION, emotion)
+    }
+    
+    relations = [
+        (RelationTypes.RECALLS, 'pronoun1', 'memory1'),
+        (RelationTypes.FEELS_EMOTION, 'pronoun1', 'emotion1')
+    ]
+    
+    return text, entities, relations
+
+def create_technology_platform_template(needed_entities, needed_relations):
+    """Use when TECHNOLOGY, PLATFORM entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    technology = random.choice(TECHNOLOGIES)
+    platform = random.choice(PLATFORMS_EXPANDED)
+    
+    text = f"{person} uses {technology} on the {platform} platform"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'tech1': (EntityTypes.TECHNOLOGY, technology),
+        'platform1': (EntityTypes.PLATFORM, platform)
+    }
+    
+    relations = [
+        (RelationTypes.USES, 'person1', 'tech1'),
+        (RelationTypes.USES, 'person1', 'platform1')
+    ]
+    
+    return text, entities, relations
+
+def create_weather_activity_template(needed_entities, needed_relations):
+    """Use when WEATHER entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    weather = random.choice(WEATHER_CONDITIONS)
+    activity = random.choice(ACTIVITIES)
+    location = random.choice(LOCATIONS)
+    
+    text = f"On a {weather} day, {person} enjoys {activity} at the {location}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'weather1': (EntityTypes.WEATHER, weather),
+        'activity1': (EntityTypes.ACTIVITY, activity),
+        'location1': (EntityTypes.LOCATION, location)
+    }
+    
+    relations = [
+        (RelationTypes.DOES_ACTIVITY, 'person1', 'activity1'),
+        (RelationTypes.AT_LOCATION, 'activity1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_time_schedule_template(needed_entities, needed_relations):
+    """Use when TIME, START_TIME, END_TIME entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    activity = random.choice(ACTIVITIES)
+    start_time = random.choice(START_TIMES)
+    end_time = random.choice(END_TIMES)
+    
+    text = f"{person} schedules {activity} from {start_time} to {end_time}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'activity1': (EntityTypes.ACTIVITY, activity),
+        'start1': (EntityTypes.START_TIME, start_time),
+        'end1': (EntityTypes.END_TIME, end_time)
+    }
+    
+    relations = [
+        (RelationTypes.SCHEDULED_FOR, 'activity1', 'start1'),
+        (RelationTypes.ENDS_AT, 'activity1', 'end1')
+    ]
+    
+    return text, entities, relations
+
+def create_equipment_object_template(needed_entities, needed_relations):
+    """Use when EQUIPMENT, OBJECT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    equipment = random.choice(EQUIPMENT_TYPES)
+    object_item = random.choice(OBJECTS)
+    
+    text = f"{person} owns {equipment} and uses {object_item} daily"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'equipment1': (EntityTypes.EQUIPMENT, equipment),
+        'object1': (EntityTypes.OBJECT, object_item)
+    }
+    
+    relations = [
+        (RelationTypes.OWNS, 'person1', 'equipment1'),
+        (RelationTypes.USES, 'person1', 'object1')
+    ]
+    
+    return text, entities, relations
+
+def create_vehicle_transportation_template(needed_entities, needed_relations):
+    """Use when VEHICLE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    vehicle = random.choice(VEHICLES)
+    location = random.choice(GEOPOLITICAL_ENTITIES)
+    
+    text = f"{person} drives their {vehicle} to {location}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'vehicle1': (EntityTypes.VEHICLE, vehicle),
+        'location1': (EntityTypes.GEOPOLITICAL_ENTITY, location)
+    }
+    
+    relations = [
+        (RelationTypes.OWNS, 'person1', 'vehicle1'),
+        (RelationTypes.TRAVELS_TO, 'person1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_business_industry_template(needed_entities, needed_relations):
+    """Use when BUSINESS, INDUSTRY entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    business = random.choice(BUSINESS_TYPES)
+    industry = random.choice(INDUSTRIES)
+    
+    text = f"{person} works in the {industry} industry at a {business}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'business1': (EntityTypes.BUSINESS, business),
+        'industry1': (EntityTypes.INDUSTRY, industry)
+    }
+    
+    relations = [
+        (RelationTypes.WORKS_FOR, 'person1', 'business1'),
+        (RelationTypes.MEMBER_OF, 'business1', 'industry1')
+    ]
+    
+    return text, entities, relations
+
+def create_money_budget_template(needed_entities, needed_relations):
+    """Use when MONEY, BUDGET entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    money = random.choice(MONEY)
+    budget = random.choice(BUDGETS)
+    
+    text = f"{person} allocates {money} for their {budget}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'money1': (EntityTypes.MONEY, money),
+        'budget1': (EntityTypes.BUDGET, budget)
+    }
+    
+    relations = [
+        (RelationTypes.BUDGETS_FOR, 'person1', 'budget1'),
+        (RelationTypes.SPENDS, 'person1', 'money1')
+    ]
+    
+    return text, entities, relations
+
+def create_date_duration_template(needed_entities, needed_relations):
+    """Use when DATE, DURATION entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    event = random.choice(EVENTS)
+    date = random.choice(DATES)
+    duration = random.choice(DURATIONS)
+    
+    text = f"{person} attends {event} on {date} for {duration}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'event1': (EntityTypes.EVENT, event),
+        'date1': (EntityTypes.DATE, date),
+        'duration1': (EntityTypes.DURATION, duration)
+    }
+    
+    relations = [
+        (RelationTypes.ATTENDS, 'person1', 'event1'),
+        (RelationTypes.ON_DATE, 'event1', 'date1'),
+        (RelationTypes.FOR_DURATION, 'event1', 'duration1')
+    ]
+    
+    return text, entities, relations
+
+def create_nickname_pet_template(needed_entities, needed_relations):
+    """Use when NICKNAME, PET entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    nickname = random.choice(NICKNAMES)
+    pet = random.choice(PETS)
+    
+    text = f"{person}, known as {nickname}, cares for their {pet}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'nickname1': (EntityTypes.NICKNAME, nickname),
+        'pet1': (EntityTypes.PET, pet)
+    }
+    
+    relations = [
+        (RelationTypes.KNOWN_AS, 'person1', 'nickname1'),
+        (RelationTypes.CARES_FOR, 'person1', 'pet1')
+    ]
+    
+    return text, entities, relations
+
+def create_group_event_template(needed_entities, needed_relations):
+    """Use when GROUP, EVENT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    group = random.choice(GROUPS)
+    event = random.choice(EVENTS)
+    
+    text = f"{person} participates in {group} and organizes {event}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'group1': (EntityTypes.GROUP, group),
+        'event1': (EntityTypes.EVENT, event)
+    }
+    
+    relations = [
+        (RelationTypes.MEMBER_OF, 'person1', 'group1'),
+        (RelationTypes.ORGANIZES, 'person1', 'event1')
+    ]
+    
+    return text, entities, relations
+
+def create_concept_idea_template(needed_entities, needed_relations):
+    """Use when CONCEPT, IDEA entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    concept = random.choice(CONCEPTS)
+    idea = random.choice(IDEAS)
+    
+    text = f"{person} explores the concept of {concept} and develops an idea for {idea}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'concept1': (EntityTypes.CONCEPT, concept),
+        'idea1': (EntityTypes.IDEA, idea)
+    }
+    
+    relations = [
+        (RelationTypes.THINKS, 'person1', 'concept1'),
+        (RelationTypes.CREATES, 'person1', 'idea1')
+    ]
+    
+    return text, entities, relations
+
+def create_media_genre_template(needed_entities, needed_relations):
+    """Use when MEDIA, GENRE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    media = random.choice(MEDIA_TYPES_EXPANDED)
+    genre = random.choice(GENRES)
+    
+    text = f"{person} enjoys watching {media} in the {genre} genre"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'media1': (EntityTypes.MEDIA, media),
+        'genre1': (EntityTypes.GENRE, genre)
+    }
+    
+    relations = [
+        (RelationTypes.WATCHES, 'person1', 'media1'),
+        (RelationTypes.PREFERS, 'person1', 'genre1')
+    ]
+    
+    return text, entities, relations
+
+def create_room_location_template(needed_entities, needed_relations):
+    """Use when ROOM entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    room = random.choice(ROOM_TYPES)
+    activity = random.choice(ACTIVITIES)
+    
+    text = f"{person} performs {activity} in the {room}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'room1': (EntityTypes.ROOM, room),
+        'activity1': (EntityTypes.ACTIVITY, activity)
+    }
+    
+    relations = [
+        (RelationTypes.DOES_ACTIVITY, 'person1', 'activity1'),
+        (RelationTypes.AT_LOCATION, 'activity1', 'room1')
+    ]
+    
+    return text, entities, relations
+
+def create_trait_attribute_template(needed_entities, needed_relations):
+    """Use when TRAIT, ATTRIBUTE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    trait = random.choice(TRAITS)
+    attribute = random.choice(ATTRIBUTES)
+    
+    text = f"{person} demonstrates {trait} and is known for being {attribute}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'trait1': (EntityTypes.TRAIT, trait),
+        'attribute1': (EntityTypes.ATTRIBUTE, attribute)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_TRAIT, 'person1', 'trait1'),
+        (RelationTypes.HAS_ATTRIBUTE, 'person1', 'attribute1')
+    ]
+    
+    return text, entities, relations
+
+def create_belief_value_template(needed_entities, needed_relations):
+    """Use when BELIEF, VALUE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    belief = random.choice(BELIEFS)
+    value = random.choice(VALUES)
+    
+    text = f"{person} believes that {belief} and values {value}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'belief1': (EntityTypes.BELIEF, belief),
+        'value1': (EntityTypes.VALUE, value)
+    }
+    
+    relations = [
+        (RelationTypes.BELIEVES, 'person1', 'belief1'),
+        (RelationTypes.VALUES, 'person1', 'value1')
+    ]
+    
+    return text, entities, relations
+
+def create_preference_opinion_template(needed_entities, needed_relations):
+    """Use when PREFERENCE, OPINION entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    preference = random.choice(PREFERENCES)
+    topic = random.choice(TOPICS)
+    opinion = random.choice(OPINIONS)
+    
+    text = f"{person} has a preference for {preference} and finds {topic} {opinion}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'preference1': (EntityTypes.PREFERENCE, preference),
+        'topic1': (EntityTypes.TOPIC, topic),
+        'opinion1': (EntityTypes.OPINION, opinion)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_PREFERENCE, 'person1', 'preference1'),
+        (RelationTypes.HAS_OPINION, 'person1', 'opinion1')
+    ]
+    
+    return text, entities, relations
+
+def create_hobby_interest_template(needed_entities, needed_relations):
+    """Use when HOBBY entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    hobby = random.choice(HOBBIES)
+    location = random.choice(LOCATIONS)
+    frequency = random.choice(FREQUENCY_PATTERNS)
+    
+    text = f"{person} enjoys {hobby} at the {location} {frequency}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'hobby1': (EntityTypes.HOBBY, hobby),
+        'location1': (EntityTypes.LOCATION, location),
+        'frequency1': (EntityTypes.FREQUENCY, frequency)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_HOBBY, 'person1', 'hobby1'),
+        (RelationTypes.AT_LOCATION, 'hobby1', 'location1'),
+        (RelationTypes.HAS_FREQUENCY, 'hobby1', 'frequency1')
+    ]
+    
+    return text, entities, relations
+
+def create_learning_method_template(needed_entities, needed_relations):
+    """Use when LEARNING_METHOD entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    method = random.choice(LEARNING_METHODS_EXPANDED)
+    subject = random.choice(['programming', 'design', 'data analysis', 'project management'])
+    
+    text = f"{person} learns {subject} through {method}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'method1': (EntityTypes.LEARNING_METHOD, method),
+        'subject1': (EntityTypes.SUBJECT, subject)
+    }
+    
+    relations = [
+        (RelationTypes.LEARNS_FROM, 'person1', 'method1'),
+        (RelationTypes.LEARNS, 'person1', 'subject1')
+    ]
+    
+    return text, entities, relations
+
+def create_personal_growth_template(needed_entities, needed_relations):
+    """Use when PERSONAL_GROWTH entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    growth = random.choice(PERSONAL_GROWTH_EXPANDED)
+    timeline = random.choice(TIMELINES)
+    
+    text = f"{person} focuses on developing {growth} {timeline}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'growth1': (EntityTypes.PERSONAL_GROWTH, growth),
+        'timeline1': (EntityTypes.TIMELINE, timeline)
+    }
+    
+    relations = [
+        (RelationTypes.DEVELOPS, 'person1', 'growth1'),
+        (RelationTypes.SCHEDULED_FOR, 'growth1', 'timeline1')
+    ]
+    
+    return text, entities, relations
+
+def create_community_role_template(needed_entities, needed_relations):
+    """Use when COMMUNITY_ROLE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    role = random.choice(COMMUNITY_ROLES_EXPANDED)
+    location = random.choice(GEOPOLITICAL_ENTITIES)
+    
+    text = f"{person} serves as a {role} in {location}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'role1': (EntityTypes.COMMUNITY_ROLE, role),
+        'location1': (EntityTypes.GEOPOLITICAL_ENTITY, location)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_ROLE, 'person1', 'role1'),
+        (RelationTypes.LOCATED_AT, 'role1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_cultural_element_template(needed_entities, needed_relations):
+    """Use when CULTURAL_ELEMENT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    element = random.choice(CULTURAL_ELEMENTS_EXPANDED)
+    location = random.choice(GEOPOLITICAL_ENTITIES)
+    
+    text = f"{person} practices {element} from {location}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'element1': (EntityTypes.CULTURAL_ELEMENT, element),
+        'location1': (EntityTypes.GEOPOLITICAL_ENTITY, location)
+    }
+    
+    relations = [
+        (RelationTypes.PRACTICES, 'person1', 'element1'),
+        (RelationTypes.LOCATED_AT, 'element1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_memory_type_template(needed_entities, needed_relations):
+    """Use when MEMORY_TYPE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    memory_type = random.choice(MEMORY_TYPES_EXPANDED)
+    emotion = random.choice(EMOTIONS)
+    
+    text = f"{person} experiences {memory_type} with {emotion}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'memory1': (EntityTypes.MEMORY_TYPE, memory_type),
+        'emotion1': (EntityTypes.EMOTION, emotion)
+    }
+    
+    relations = [
+        (RelationTypes.FEELS_EMOTION, 'person1', 'emotion1'),
+        (RelationTypes.REMEMBERS, 'person1', 'memory1')
+    ]
+    
+    return text, entities, relations
+
+def create_life_stage_template(needed_entities, needed_relations):
+    """Use when LIFE_STAGE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    stage = random.choice(LIFE_STAGES_EXPANDED)
+    activity = random.choice(ACTIVITIES)
+    
+    text = f"During {stage}, {person} focused on {activity}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'stage1': (EntityTypes.LIFE_STAGE, stage),
+        'activity1': (EntityTypes.ACTIVITY, activity)
+    }
+    
+    relations = [
+        (RelationTypes.FOCUSES_ON, 'person1', 'activity1')
+    ]
+    
+    return text, entities, relations
+
+def create_period_timeline_template(needed_entities, needed_relations):
+    """Use when PERIOD entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    period = random.choice(PERIODS)
+    goal = random.choice(GOALS)
+    
+    text = f"{period}, {person} worked toward {goal}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'period1': (EntityTypes.PERIOD, period),
+        'goal1': (EntityTypes.GOAL, goal)
+    }
+    
+    relations = [
+        (RelationTypes.WORKS_TOWARD, 'person1', 'goal1')
+    ]
+    
+    return text, entities, relations
+
+def create_condition_sentiment_template(needed_entities, needed_relations):
+    """Use when CONDITION, SENTIMENT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    condition = random.choice(CONDITIONS_EXPANDED)
+    sentiment = random.choice(SENTIMENTS)
+    
+    text = f"{person} feels {sentiment} despite experiencing {condition}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'condition1': (EntityTypes.CONDITION, condition),
+        'sentiment1': (EntityTypes.SENTIMENT, sentiment)
+    }
+    
+    relations = [
+        (RelationTypes.FEELS, 'person1', 'sentiment1')
+    ]
+    
+    return text, entities, relations
+
+def create_feeling_emotion_template(needed_entities, needed_relations):
+    """Use when FEELING, EMOTION entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    feeling = random.choice(FEELINGS)
+    emotion = random.choice(EMOTIONS)
+    activity = random.choice(ACTIVITIES)
+    
+    text = f"{person} feels {feeling} and experiences {emotion} while {activity}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'feeling1': (EntityTypes.FEELING, feeling),
+        'emotion1': (EntityTypes.EMOTION, emotion),
+        'activity1': (EntityTypes.ACTIVITY, activity)
+    }
+    
+    relations = [
+        (RelationTypes.FEELS, 'person1', 'feeling1'),
+        (RelationTypes.FEELS_EMOTION, 'person1', 'emotion1'),
+        (RelationTypes.DOES_ACTIVITY, 'person1', 'activity1')
+    ]
+    
+    return text, entities, relations
+
+def create_taste_sound_template(needed_entities, needed_relations):
+    """Use when TASTE, SOUND entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    taste = random.choice(TASTES)
+    sound = random.choice(SOUNDS)
+    location = random.choice(LOCATIONS)
+    
+    text = f"At the {location}, {person} tastes something {taste} and hears {sound}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'taste1': (EntityTypes.TASTE, taste),
+        'sound1': (EntityTypes.SOUND, sound),
+        'location1': (EntityTypes.LOCATION, location)
+    }
+    
+    relations = [
+        (RelationTypes.TASTES, 'person1', 'taste1'),
+        (RelationTypes.HEARS, 'person1', 'sound1'),
+        (RelationTypes.AT_LOCATION, 'person1', 'location1')
+    ]
+    
+    return text, entities, relations
+
+def create_sight_sensation_template(needed_entities, needed_relations):
+    """Use when SIGHT, SENSATION entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    sight = random.choice(SIGHTS)
+    sensation = random.choice(SENSATIONS)
+    
+    text = f"{person} sees {sight} and feels a sensation of {sensation}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'sight1': (EntityTypes.SIGHT, sight),
+        'sensation1': (EntityTypes.SENSATION, sensation)
+    }
+    
+    relations = [
+        (RelationTypes.SEES, 'person1', 'sight1'),
+        (RelationTypes.TOUCHES, 'person1', 'sensation1')
+    ]
+    
+    return text, entities, relations
+
+def create_relationship_type_template(needed_entities, needed_relations):
+    """Use when RELATIONSHIP, RELATIONSHIP_TYPE entities are needed."""
+    person1 = random.choice(ALL_PEOPLE_NAMES)
+    person2 = random.choice(ALL_PEOPLE_NAMES)
+    relationship = random.choice(RELATIONSHIPS)
+    rel_type = random.choice(RELATIONSHIP_TYPES)
+    
+    text = f"{person1} has a {relationship} with {person2}, which is a {rel_type} relationship"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person1),
+        'person2': (EntityTypes.PERSON, person2),
+        'relationship1': (EntityTypes.RELATIONSHIP, relationship),
+        'type1': (EntityTypes.RELATIONSHIP_TYPE, rel_type)
+    }
+    
+    relations = [
+        (RelationTypes.MAINTAINS_RELATIONSHIP, 'person1', 'person2'),
+        (RelationTypes.IS_TYPE, 'relationship1', 'type1')
+    ]
+    
+    return text, entities, relations
+
+def create_recurring_schedule_template(needed_entities, needed_relations):
+    """Use when RECURRING_SCHEDULE entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    schedule = random.choice(RECURRING_SCHEDULES)
+    activity = random.choice(ACTIVITIES)
+    
+    text = f"{person} follows a {schedule} schedule for {activity}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'schedule1': (EntityTypes.RECURRING_SCHEDULE, schedule),
+        'activity1': (EntityTypes.ACTIVITY, activity)
+    }
+    
+    relations = [
+        (RelationTypes.REPEATS, 'schedule1', 'activity1'),
+        (RelationTypes.DOES_ACTIVITY, 'person1', 'activity1')
+    ]
+    
+    return text, entities, relations
+
+def create_amount_intent_template(needed_entities, needed_relations):
+    """Use when AMOUNT, INTENT entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    amount = random.choice(AMOUNTS)
+    intent = random.choice(INTENTS)
+    
+    text = f"{person} dedicates {amount} with the intent to {intent}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'amount1': (EntityTypes.AMOUNT, amount),
+        'intent1': (EntityTypes.INTENT, intent)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_INTENT, 'person1', 'intent1')
+    ]
+    
+    return text, entities, relations
+
+def create_project_collaboration_template(needed_entities, needed_relations):
+    """Use when PROJECT entities and collaboration relations are needed."""
+    person1 = random.choice(ALL_PEOPLE_NAMES)
+    person2 = random.choice(ALL_PEOPLE_NAMES)
+    project = random.choice(PROJECTS)
+    
+    text = f"{person1} collaborates with {person2} on the {project}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person1),
+        'person2': (EntityTypes.PERSON, person2),
+        'project1': (EntityTypes.PROJECT, project)
+    }
+    
+    relations = [
+        (RelationTypes.COLLABORATES_WITH, 'person1', 'person2'),
+        (RelationTypes.WORKS_ON, 'person1', 'project1'),
+        (RelationTypes.WORKS_ON, 'person2', 'project1')
+    ]
+    
+    return text, entities, relations
+
+def create_concern_worry_template(needed_entities, needed_relations):
+    """Use when concern-related entities and relations are needed."""
+    person = 'I'
+    concern = random.choice(CONCERNS)
+    
+    text = f"{person} have been worrying about {concern} lately"
+    
+    entities = {
+        'pronoun1': (EntityTypes.PRONOUN, person),
+        'concern1': (EntityTypes.CONCERN, concern)
+    }
+    
+    relations = [
+        (RelationTypes.WORRIES_ABOUT, 'pronoun1', 'concern1')
+    ]
+    
+    return text, entities, relations
+
+def create_aspiration_goal_template(needed_entities, needed_relations):
+    """Use when aspiration and goal entities are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    aspiration = random.choice(PERSONAL_GOALS)
+    timeline = random.choice(TIMELINES)
+    
+    text = f"{person} has an aspiration to {aspiration} {timeline}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'aspiration1': (EntityTypes.ASPIRATION, aspiration),
+        'timeline1': (EntityTypes.TIMELINE, timeline)
+    }
+    
+    relations = [
+        (RelationTypes.HOPES_FOR, 'person1', 'aspiration1'),
+        (RelationTypes.SCHEDULED_FOR, 'aspiration1', 'timeline1')
+    ]
+    
+    return text, entities, relations
+
+def create_routine_frequency_template(needed_entities, needed_relations):
+    """Use when routine and frequency relations are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    routine = random.choice(['morning workout', 'evening meditation', 'weekly planning', 'daily review'])
+    
+    text = f"{person} maintains a routine that occurs daily"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'routine1': (EntityTypes.ROUTINE, routine)
+    }
+    
+    relations = [
+        (RelationTypes.HAS_ROUTINE, 'person1', 'routine1'),
+        (RelationTypes.OCCURS_DAILY, 'routine1', 'person1')
+    ]
+    
+    return text, entities, relations
+
+def create_dislikes_avoids_template(needed_entities, needed_relations):
+    """Use when DISLIKES, AVOIDS relations are needed."""
+    person = random.choice(ALL_PEOPLE_NAMES)
+    disliked_activity = random.choice(['public speaking', 'long meetings', 'traffic jams', 'loud environments'])
+    avoided_situation = random.choice(['conflict', 'stress', 'negativity', 'distractions'])
+    
+    text = f"{person} dislikes {disliked_activity} and avoids {avoided_situation}"
+    
+    entities = {
+        'person1': (EntityTypes.PERSON, person),
+        'activity1': (EntityTypes.ACTIVITY, disliked_activity),
+        'condition1': (EntityTypes.CONDITION, avoided_situation)
+    }
+    
+    relations = [
+        (RelationTypes.DISLIKES, 'person1', 'activity1'),
+        (RelationTypes.AVOIDS, 'person1', 'condition1')
+    ]
+    
+    return text, entities, relations
+
+# Part B: Smart Template Selector
+
+class BalancedTemplateSelector:
+    """Selects templates based on current balance needs from PerfectBalanceTracker."""
+    
+    def __init__(self, tracker):
+        self.tracker = tracker
+        self.template_functions = [
+            create_memory_conversation_template,
+            create_sensory_experience_template,
+            create_work_professional_template,
+            create_casual_social_template,
+            create_goal_aspiration_template,
+            create_health_condition_template,
+            create_habit_routine_template,
+            create_brand_product_template,
+            create_user_context_template,
+            create_learning_course_template,
+            create_book_movie_template,
+            create_restaurant_food_template,
+            create_family_member_template,
+            create_personal_info_template,
+            create_memory_recall_template,
+            create_technology_platform_template,
+            create_weather_activity_template,
+            create_time_schedule_template,
+            create_equipment_object_template,
+            create_vehicle_transportation_template,
+            create_business_industry_template,
+            create_money_budget_template,
+            create_date_duration_template,
+            create_nickname_pet_template,
+            create_group_event_template,
+            create_concept_idea_template,
+            create_media_genre_template,
+            create_room_location_template,
+            create_trait_attribute_template,
+            create_belief_value_template,
+            create_preference_opinion_template,
+            create_hobby_interest_template,
+            create_learning_method_template,
+            create_personal_growth_template,
+            create_community_role_template,
+            create_cultural_element_template,
+            create_memory_type_template,
+            create_life_stage_template,
+            create_period_timeline_template,
+            create_condition_sentiment_template,
+            create_feeling_emotion_template,
+            create_taste_sound_template,
+            create_sight_sensation_template,
+            create_relationship_type_template,
+            create_recurring_schedule_template,
+            create_amount_intent_template,
+            create_project_collaboration_template,
+            create_concern_worry_template,
+            create_aspiration_goal_template,
+            create_routine_frequency_template,
+            create_dislikes_avoids_template
+        ]
+        
+        print(f"🎯 BalancedTemplateSelector initialized with {len(self.template_functions)} template functions")
+    
+    def select_template_for_record(self, record_id):
+        """Select the best template based on current tracker needs."""
+        # Get most needed types from tracker
+        needed_entities = self.tracker.get_needed_entities(5)
+        needed_relations = self.tracker.get_needed_relations(5)
+        
+        # Score each template function based on how well it serves current needs
+        template_scores = []
+        for i, template_func in enumerate(self.template_functions):
+            score = self.calculate_template_usefulness(template_func, needed_entities, needed_relations)
+            # Add index as tiebreaker to avoid comparing functions directly
+            template_scores.append((score, i, template_func))
+        
+        # Select highest-scoring template
+        template_scores.sort(reverse=True)
+        best_template = template_scores[0][2]  # Get the template function (index 2)
+        
+        return best_template(needed_entities, needed_relations)
+    
+    def calculate_template_usefulness(self, template_func, needed_entities, needed_relations):
+        """Score templates based on how well they serve current balance needs."""
+        try:
+            # Sample the template to see what it would produce
+            sample_text, sample_entities, sample_relations = template_func(needed_entities, needed_relations)
+            
+            score = 0
+            
+            # Higher score for templates that generate needed entity types
+            for entity_key, (entity_type, entity_text) in sample_entities.items():
+                if entity_type in needed_entities[:3]:  # Top 3 most needed
+                    score += 10
+                elif entity_type in needed_entities:
+                    score += 5
+            
+            # Higher score for templates that generate needed relation types  
+            for relation_type, head, tail in sample_relations:
+                if relation_type in needed_relations[:3]:  # Top 3 most needed
+                    score += 10
+                elif relation_type in needed_relations:
+                    score += 5
+            
+            return score
+            
+        except Exception as e:
+            # If template fails, give it a low score
+            return 0
+
+# --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # BALANCE TRACKER (Simple interface for user requirements)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1449,7 +2649,7 @@ class PerfectBalanceTracker:
             # Each gets approximately 0.14% (15% / 110 remaining types)
         }
         
-        # Add all remaining relation types with low frequency
+        # Add all remaining relation types with low frequency (including new memory-specific ones)
         low_freq_relations = [
             'ACHIEVES', 'AFFECTS', 'ATTENDS', 'BORROWED', 'BUDGETS_FOR', 'CALLED',
             'CARES_FOR', 'CAUSED_BY', 'CONSIDERING', 'CONTRIBUTED_TO', 'CONTRIBUTES_TO',
@@ -1462,7 +2662,11 @@ class PerfectBalanceTracker:
             'OWNS', 'PRACTICES', 'READS', 'RECEIVES', 'REFLECTS_ON', 'REGRETS',
             'REMEMBERS', 'RESULTS_IN', 'SAVES', 'SEES', 'SMELLS', 'SPENDS',
             'STAYS_AT', 'SUPPORTS', 'TASTES', 'THINKS', 'THINKING_OF', 'TOUCHES',
-            'TRIGGERS', 'VISITS', 'WANTS_GOAL', 'WATCHES', 'WORKS_FROM', 'WORRIES_ABOUT'
+            'TRIGGERS', 'VISITS', 'WANTS_GOAL', 'WATCHES', 'WORKS_FROM', 'WORRIES_ABOUT',
+            # NEW MEMORY-SPECIFIC RELATIONS (STEP 3)
+            'MENTIONED_PREVIOUSLY', 'DISCUSSED_BEFORE', 'RECALLS', 'WANTS', 'HAS_HABIT',
+            'HAS_CONCERN', 'HAS_ROUTINE', 'WORKS_TOWARD', 'OCCURS_DAILY', 'OCCURS_WEEKLY',
+            'DISLIKES', 'AVOIDS'
         ]
         
         # Assign remaining 15% evenly among low-frequency relations
@@ -4651,98 +5855,66 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
     print(f"Total people names available: {len(ALL_PEOPLE_NAMES)}")
     print(f"All missing data pools now included ✅")
     
-    # Initialize trackers and templates
+    # Initialize trackers and NEW balance-driven template system
     tracker = PerfectBalanceTracker()
     stats_tracker = StatisticsTracker()
     
-    # ALL TEMPLATES - Original + New ones utilizing missing data pools
-    template_classes = [
-        # Original templates
-        WorkflowTemplate,
-        PersonalLifeTemplate,
-        ScheduleTimeTemplate,
-        SensoryExperienceTemplate,
-        FinancialTemplate,
-        
-        # NEW templates for missing data pools
-        TimelineGoalTemplate,
-        BudgetSentimentTemplate,
-        RelationshipTraitTemplate,
-        MemoryLifeStageTemplate,
-        GrowthCommunityTemplate,
-        PlatformMediaTemplate,
-        WeatherConditionTemplate,
-        SocialBusinessTemplate,
-        
-        # ADDITIONAL PERFECTLY BALANCED TEMPLATES (15+ new templates for 100% coverage)
-        # Professional Templates
-        WorkExpertiseTemplate,
-        CareerProgressionTemplate,
-        TeamCollaborationTemplate,
-        
-        # Personal Life Templates
-        LifeJourneyTemplate,
-        RelationshipDynamicsTemplate,
-        HobbyInterestTemplate,
-        
-        # Cognitive Templates
-        LearningGrowthTemplate,
-        MemoryReflectionTemplate,
-        DecisionMakingTemplate,
-        
-        # Social Context Templates
-        CommunityEngagementTemplate,
-        MediaConsumptionTemplate,
-        SocialSituationTemplate,
-        
-        # Environmental Templates
-        WeatherActivityTemplate,
-        TimeScheduleTemplate,
-        TravelExperienceTemplate,
-        
-        # Additional Specialized Templates
-        HealthWellnessTemplate,
-        ObjectInteractionTemplate,
-        NicknameIdentityTemplate,
-        ConceptualThinkingTemplate,
-        
-        # Targeted Templates for Missing Relations
-        FamilyConnectionTemplate,
-        MentorshipTemplate,
-        EmotionalJourneyTemplate,
-        HealthLocationTemplate,
-        CausalInfluenceTemplate,
-        WorkPlanningTemplate,
-        
-        # NEW Templates for 7 Missing Relation Types (FIXES, ACHIEVES, CREATES, etc.)
-        AchievementTemplate,
-        ContributionTemplate,
-        CreationTemplate,
-        EvaluationTemplate,
-        FixTemplate,
-        FocusTemplate,
-        InvestigationTemplate
-    ]
+    # STEP 5: Initialize Balance-Driven Template Selector
+    template_selector = BalancedTemplateSelector(tracker)
+    
+    print(f"🎯 BALANCE-DRIVEN TEMPLATE SYSTEM ACTIVE")
+    print(f"   - Using dynamic template selection based on current needs")
+    print(f"   - {len(template_selector.template_functions)} template functions available")
+    print(f"   - Templates will be selected to enforce minimum thresholds:")
+    print(f"     * MIN_EXAMPLES_PER_ENTITY: {Config.MIN_EXAMPLES_PER_ENTITY}")
+    print(f"     * MIN_EXAMPLES_PER_RELATION: {Config.MIN_EXAMPLES_PER_RELATION}")
+    print(f"   - Perfect balance enforcement: No type exceeds minimum until ALL reach minimum ✅")
+    print(f"   - This prevents classification errors in memory extraction models ✅")
+    
+    # STEP 5: Template classes replaced with balance-driven template functions
+    # Old template classes are no longer used - now using dynamic template selection
     
     dataset = []
     failed_generations = 0
     
-    print(f"Using {len(template_classes)} templates for perfect balance")
+    print(f"Using balance-driven template selection with {len(template_selector.template_functions)} template functions")
     
     for i in range(num_records):
-        # Cycle through templates
-        TemplateClass = template_classes[i % len(template_classes)]
-        template = TemplateClass(i, tracker)
-        
         try:
-            record = template.generate_balanced_record()
-            dataset.append(record)
+            # STEP 5: Use balance-driven template selection instead of cycling
+            text, entities, relations = template_selector.select_template_for_record(i)
             
-            # Track statistics for entities and relations
-            for entity in record['entities']:
-                stats_tracker.track_entity(entity['type'])
-            for relation in record['relations']:
-                stats_tracker.track_relation(relation['type'])
+            # Convert to the expected record format
+            record = {
+                'id': str(uuid.uuid4()),
+                'text': text,
+                'entities': [],
+                'relations': []
+            }
+            
+            # Convert entities to expected format
+            for entity_key, (entity_type, entity_text) in entities.items():
+                record['entities'].append({
+                    'id': entity_key,
+                    'text': entity_text,
+                    'type': entity_type
+                })
+                # Track entity usage for balance
+                tracker.entity_usage[entity_type] += 1
+                stats_tracker.track_entity(entity_type)
+            
+            # Convert relations to expected format
+            for relation_type, head_key, tail_key in relations:
+                record['relations'].append({
+                    'type': relation_type,
+                    'head': head_key,
+                    'tail': tail_key
+                })
+                # Track relation usage for balance
+                tracker.relation_usage[relation_type] += 1
+                stats_tracker.track_relation(relation_type)
+            
+            dataset.append(record)
             stats_tracker.track_record()
             
             # Progress reporting with statistics and coverage
@@ -4794,7 +5966,7 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
         "relation_usage": dict(tracker.relation_usage),
         "entity_distribution": dict(stats_tracker.entity_counts),
         "relation_distribution": dict(stats_tracker.relation_counts),
-        "templates_used": len(template_classes),
+        "templates_used": len(template_selector.template_functions),
         "data_pools_complete": True,
         "total_people_names": len(ALL_PEOPLE_NAMES),
         "missing_pools_added": True,
