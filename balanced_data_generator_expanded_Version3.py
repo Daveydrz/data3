@@ -13,14 +13,16 @@ from collections import defaultdict, Counter
 class Config:
     CURRENT_USER_LOGIN = "Daveydrz"
     CURRENT_UTC_DATETIME = "2025-08-23 13:10:48"  # Updated timestamp
-    DEFAULT_NUM_RECORDS = 60000  # 60K records for optimal DeBERTa training
+    TARGET_RECORDS = 80000
+    MIN_EXAMPLES_PER_ENTITY = 750  
+    MIN_EXAMPLES_PER_RELATION = 400
+    OUTPUT_FILENAME = "memory_extraction_dataset.json"
     MAX_RETRIES = 3
-    OUTPUT_FILENAME = "perfectly_balanced_dataset_60k.json"
-    PROGRESS_INTERVAL = 1000  # Show progress every 1000 records for 60K
+    PROGRESS_INTERVAL = 1000  # Show progress every 1000 records
     
-    # Perfect balance targets for 60K
-    TARGET_RECORDS_PER_RELATION = 545  # 60000/110 relations ≈ 545
-    TARGET_RECORDS_PER_ENTITY = 882    # 60000/68 entities ≈ 882
+    # Balance targets for memory extraction dataset
+    TARGET_RECORDS_PER_RELATION = 727  # 80000/110 relations ≈ 727
+    TARGET_RECORDS_PER_ENTITY = 941    # 80000/85 entities ≈ 941
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # STATISTICS TRACKER FOR COMPREHENSIVE MONITORING
@@ -139,7 +141,7 @@ class StatisticsTracker:
         print("="*80)
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-# ENTITY AND RELATION TYPE DEFINITIONS (68 entities, 104 relations)
+# ENTITY AND RELATION TYPE DEFINITIONS (85 entities, 110 relations)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 class EntityTypes:
@@ -234,6 +236,29 @@ class EntityTypes:
     # Media & Entertainment Types (2)
     MEDIA = "MEDIA"
     GENRE = "GENRE"
+    
+    # Memory-Specific Entities (REQUIRED for human-AI memory extraction)
+    MEMORY = "MEMORY"
+    CONVERSATION_REFERENCE = "CONVERSATION_REFERENCE" 
+    USER_CONTEXT = "USER_CONTEXT"
+    PERSONAL_INFO = "PERSONAL_INFO"
+    HABIT = "HABIT"
+    ROUTINE = "ROUTINE"
+    CONCERN = "CONCERN"
+    ASPIRATION = "ASPIRATION"
+    
+    # Social Relationships (separate from generic RELATIONSHIP)
+    FAMILY_MEMBER = "FAMILY_MEMBER"
+    FRIEND = "FRIEND"
+    
+    # Specialized Content
+    HEALTH_CONDITION = "HEALTH_CONDITION"
+    BOOK = "BOOK" 
+    MOVIE = "MOVIE"
+    RESTAURANT = "RESTAURANT"
+    BRAND = "BRAND"
+    COURSE = "COURSE"
+    SUBJECT = "SUBJECT"
 
 class RelationTypes:
     # Professional Relations (12)
@@ -1163,7 +1188,7 @@ class PerfectBalanceTracker:
         self.entity_types = self._get_all_entity_types()
         self.relation_types = self._get_all_relation_types()
         
-        # Create balanced targets for all 68 entity types and 110 relation types
+        # Create balanced targets for all 85 entity types and 110 relation types
         self.entity_targets = self._create_entity_targets()
         self.relation_targets = self._create_relation_targets()
         
@@ -1198,8 +1223,8 @@ class PerfectBalanceTracker:
         print(f"   - ✅ Perfect 100% coverage achieved")
     
     def _create_entity_targets(self):
-        """Create balanced targets for all 68 entity types with realistic weights."""
-        target_records = Config.DEFAULT_NUM_RECORDS
+        """Create balanced targets for all 85 entity types with realistic weights."""
+        target_records = Config.TARGET_RECORDS
         
         # Weighted distribution based on expected usage patterns
         entity_targets = {
@@ -1238,7 +1263,7 @@ class PerfectBalanceTracker:
             'VALUE': int(target_records * 0.01),       # 1%
             
             # Low-frequency specialized types (10% remaining, distributed evenly)
-            # Each gets approximately 0.24% (10% / 41 remaining types)
+            # Each gets approximately 0.24% (10% / 58 remaining types)
             'EQUIPMENT': int(target_records * 0.0024),
             'PLATFORM': int(target_records * 0.0024),
             'MEDIA': int(target_records * 0.0024),
@@ -1280,10 +1305,33 @@ class PerfectBalanceTracker:
             'FREQUENCY': int(target_records * 0.0024),
             'START_TIME': int(target_records * 0.0024),
             'END_TIME': int(target_records * 0.0024),
-            'RECURRING_SCHEDULE': int(target_records * 0.0024)
+            'RECURRING_SCHEDULE': int(target_records * 0.0024),
+            
+            # Memory-Specific Entities (CRITICAL for human-AI memory extraction)
+            'MEMORY': int(target_records * 0.0024),
+            'CONVERSATION_REFERENCE': int(target_records * 0.0024),
+            'USER_CONTEXT': int(target_records * 0.0024),
+            'PERSONAL_INFO': int(target_records * 0.0024),
+            'HABIT': int(target_records * 0.0024),
+            'ROUTINE': int(target_records * 0.0024),
+            'CONCERN': int(target_records * 0.0024),
+            'ASPIRATION': int(target_records * 0.0024),
+            
+            # Social Relationships (separate from generic RELATIONSHIP)
+            'FAMILY_MEMBER': int(target_records * 0.0024),
+            'FRIEND': int(target_records * 0.0024),
+            
+            # Specialized Content
+            'HEALTH_CONDITION': int(target_records * 0.0024),
+            'BOOK': int(target_records * 0.0024),
+            'MOVIE': int(target_records * 0.0024),
+            'RESTAURANT': int(target_records * 0.0024),
+            'BRAND': int(target_records * 0.0024),
+            'COURSE': int(target_records * 0.0024),
+            'SUBJECT': int(target_records * 0.0024)
         }
         
-        # Ensure we have all 68 entity types and adjust total to match target_records exactly
+        # Ensure we have all 85 entity types and adjust total to match target_records exactly
         total_assigned = sum(entity_targets.values())
         adjustment = target_records - total_assigned
         
@@ -1294,7 +1342,7 @@ class PerfectBalanceTracker:
     
     def _create_relation_targets(self):
         """Create balanced targets for all 110 relation types with realistic weights."""
-        target_records = Config.DEFAULT_NUM_RECORDS
+        target_records = Config.TARGET_RECORDS
         
         # Weighted distribution based on expected usage patterns
         relation_targets = {
@@ -1396,80 +1444,68 @@ class PerfectBalanceTracker:
                 if not attr.startswith('_')]
     
     def get_needed_entities(self, count=10):
-        """Get the most needed entity types, prioritizing completely missing types for 100% coverage."""
-        # First priority: completely missing types (guarantee 100% coverage)
-        missing_types = []
-        under_target_types = []
+        """Get the most needed entity types, enforcing minimum thresholds before allowing excess."""
+        # CRITICAL: Enforce minimum threshold - no entity gets more than MIN_EXAMPLES_PER_ENTITY 
+        # before ALL entities reach MIN_EXAMPLES_PER_ENTITY
+        min_threshold = Config.MIN_EXAMPLES_PER_ENTITY
+        
+        # Check if any entity is below minimum threshold
+        below_minimum = []
+        at_or_above_minimum = []
         
         for entity_type in self.entity_types:
             current_usage = self.entity_usage[entity_type]
-            target = self.entity_targets.get(entity_type, self.entity_target)
-            
-            if current_usage == 0:
-                # Completely missing - highest priority
-                missing_types.append((entity_type, target))
-            elif current_usage < target:
-                # Under target - second priority
-                under_target_types.append((entity_type, target - current_usage))
+            if current_usage < min_threshold:
+                below_minimum.append((entity_type, min_threshold - current_usage))
+            else:
+                target = self.entity_targets.get(entity_type, self.entity_target)
+                if current_usage < target:
+                    at_or_above_minimum.append((entity_type, target - current_usage))
         
-        # Sort missing types by target (higher targets first)
-        missing_types.sort(key=lambda x: x[1], reverse=True)
-        # Sort under-target types by deficit (higher deficits first)
-        under_target_types.sort(key=lambda x: x[1], reverse=True)
+        # If ANY entity is below minimum, ONLY return those
+        if below_minimum:
+            # Sort by deficit (highest deficits first)
+            below_minimum.sort(key=lambda x: x[1], reverse=True)
+            result = [entity_type for entity_type, _ in below_minimum[:count]]
+            return result
         
-        # Combine: missing types first, then under-target types
-        result = []
-        
-        # Add all missing types first (for 100% coverage)
-        for entity_type, _ in missing_types:
-            result.append(entity_type)
-            if len(result) >= count:
-                return result
-        
-        # Add under-target types to fill remaining slots
-        for entity_type, _ in under_target_types:
-            result.append(entity_type)
-            if len(result) >= count:
-                return result
+        # All entities at minimum, now allow normal targeting
+        # Sort by deficit (higher deficits first)
+        at_or_above_minimum.sort(key=lambda x: x[1], reverse=True)
+        result = [entity_type for entity_type, _ in at_or_above_minimum[:count]]
         
         return result
     
     def get_needed_relations(self, count=10):
-        """Get the most needed relation types, prioritizing completely missing types for 100% coverage."""
-        # First priority: completely missing types (guarantee 100% coverage)
-        missing_types = []
-        under_target_types = []
+        """Get the most needed relation types, enforcing minimum thresholds before allowing excess."""
+        # CRITICAL: Enforce minimum threshold - no relation gets more than MIN_EXAMPLES_PER_RELATION 
+        # before ALL relations reach MIN_EXAMPLES_PER_RELATION
+        min_threshold = Config.MIN_EXAMPLES_PER_RELATION
+        
+        # Check if any relation is below minimum threshold
+        below_minimum = []
+        at_or_above_minimum = []
         
         for relation_type in self.relation_types:
             current_usage = self.relation_usage[relation_type]
-            target = self.relation_targets.get(relation_type, self.relation_target)
-            
-            if current_usage == 0:
-                # Completely missing - highest priority
-                missing_types.append((relation_type, target))
-            elif current_usage < target:
-                # Under target - second priority
-                under_target_types.append((relation_type, target - current_usage))
+            if current_usage < min_threshold:
+                below_minimum.append((relation_type, min_threshold - current_usage))
+            else:
+                target = self.relation_targets.get(relation_type, self.relation_target)
+                if current_usage < target:
+                    at_or_above_minimum.append((relation_type, target - current_usage))
         
-        # Sort missing types by target (higher targets first)
-        missing_types.sort(key=lambda x: x[1], reverse=True)
-        # Sort under-target types by deficit (higher deficits first)
-        under_target_types.sort(key=lambda x: x[1], reverse=True)
+        # If ANY relation is below minimum, ONLY return those
+        if below_minimum:
+            # Sort by deficit (highest deficits first)
+            below_minimum.sort(key=lambda x: x[1], reverse=True)
+            result = [relation_type for relation_type, _ in below_minimum[:count]]
+            return result
         
-        # Combine: missing types first, then under-target types
-        result = []
-        
-        # Add all missing types first (for 100% coverage)
-        for relation_type, _ in missing_types:
-            result.append(relation_type)
-            if len(result) >= count:
-                return result
-        
-        # Add under-target types to fill remaining slots
-        for relation_type, _ in under_target_types:
-            result.append(relation_type)
-            if len(result) >= count:
-                return result
+        # All relations at minimum, now allow normal targeting
+        # Sort by deficit (higher deficits first)
+        at_or_above_minimum.sort(key=lambda x: x[1], reverse=True)
+        result = [relation_type for relation_type, _ in at_or_above_minimum[:count]]
         
         return result
     
@@ -1565,7 +1601,7 @@ class PerfectBalanceTracker:
         # Check 2: Targets sum correctly
         entity_sum = sum(self.entity_targets.values())
         relation_sum = sum(self.relation_targets.values())
-        target_records = Config.DEFAULT_NUM_RECORDS
+        target_records = Config.TARGET_RECORDS
         
         print(f"✅ Entity targets sum: {entity_sum} (target: {target_records})")
         print(f"✅ Relation targets sum: {relation_sum} (target: {target_records})")
@@ -4560,7 +4596,7 @@ def generate_perfectly_balanced_dataset(num_records: int = None) -> Dict:
     """Generate a perfectly balanced dataset with even distribution using all data pools."""
     
     if num_records is None:
-        num_records = Config.DEFAULT_NUM_RECORDS
+        num_records = Config.TARGET_RECORDS
     
     print(f"🎯 PERFECTLY BALANCED DATASET GENERATION - ALL DATA POOLS COMPLETE")
     print(f"=" * 75)
@@ -4773,7 +4809,7 @@ def main():
     print()
     
     print("🔧 FIXES APPLIED:")
-    print(f"  ✅ SCALING: Updated to {Config.DEFAULT_NUM_RECORDS:,} records (was 10,400)")
+    print(f"  ✅ SCALING: Updated to {Config.TARGET_RECORDS:,} records (was 10,400)")
     print(f"  ✅ PRONOUN: Fixed validation logic with proper word boundaries")
     print(f"  ✅ TRACKING: Added comprehensive StatisticsTracker with real-time monitoring")
     print(f"  ✅ PROGRESS: Reports every {Config.PROGRESS_INTERVAL:,} records")
@@ -4848,7 +4884,7 @@ def main():
         print("    result = generate_perfectly_balanced_dataset(60000)")
         print()
         print("  Or modify main() to call generate_perfectly_balanced_dataset(60000) directly")
-        print(f"  The system is now configured for {Config.DEFAULT_NUM_RECORDS:,} records by default")
+        print(f"  The system is now configured for {Config.TARGET_RECORDS:,} records by default")
         
         return True
         
