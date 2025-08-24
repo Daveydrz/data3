@@ -401,6 +401,26 @@ class RelationTypes:
     CREATES = "CREATES"
     FOCUSES_ON = "FOCUSES_ON"
     CONTRIBUTES_TO = "CONTRIBUTES_TO"
+    
+    # Memory Relations (4)
+    MENTIONED_PREVIOUSLY = "MENTIONED_PREVIOUSLY"
+    DISCUSSED_BEFORE = "DISCUSSED_BEFORE"
+    RECALLS = "RECALLS"
+    
+    # Personal Relations (5)
+    WANTS = "WANTS"
+    HAS_HABIT = "HAS_HABIT"
+    HAS_CONCERN = "HAS_CONCERN"
+    HAS_ROUTINE = "HAS_ROUTINE"
+    WORKS_TOWARD = "WORKS_TOWARD"
+    
+    # Frequency Relations (2)
+    OCCURS_DAILY = "OCCURS_DAILY"
+    OCCURS_WEEKLY = "OCCURS_WEEKLY"
+    
+    # User Relations (2)
+    DISLIKES = "DISLIKES"
+    AVOIDS = "AVOIDS"
 
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # COMPREHENSIVE EXPANDED DATA POOLS
@@ -447,21 +467,16 @@ SINGLE_NAMES = [
 # Combine for random selection
 ALL_PEOPLE_NAMES = PEOPLE_NAMES + SINGLE_NAMES
 
-# ORGANIZATIONS (50+)
-ORGANIZATIONS = [
-    "TechFlow Systems", "DataSolutions Inc.", "Innovate Corp", "GreenScape Environmental",
-    "Starlight Studios", "Apex Health", "QuantumLeap AI", "Helios Energy",
-    "BlueSky Dynamics", "NovaTech Solutions", "Meridian Analytics", "Vertex Innovations",
-    "Catalyst Labs", "Prism Technologies", "Nexus Enterprises", "Zenith Consulting",
-    "Horizon Networks", "Eclipse Systems", "Aurora Designs", "Phoenix Rising LLC",
-    "Digital Frontier", "CloudWorks", "NextGen Solutions", "Global Innovations",
-    "Future Systems", "Bright Ideas Co", "Swift Solutions", "Peak Performance",
-    "Synergy Partners", "Quantum Technologies", "Infinity Labs", "Stellar Dynamics",
-    "Cosmic Ventures", "Galaxy Systems", "Universe Corp", "Orbital Solutions",
-    "Lunar Technologies", "Solar Innovations", "Comet Labs", "Meteor Systems",
-    "Astro Dynamics", "Space Age Solutions", "Rocket Labs", "Satellite Systems",
-    "Pioneer Technologies", "Explorer Corp", "Discovery Labs", "Venture Solutions",
-    "Quest Systems", "Adventure Technologies", "Journey Labs", "Destination Corp"
+# TECH COMPANIES (Real company names for proper classification)
+TECH_COMPANIES = [
+    'Google', 'Microsoft', 'Apple', 'Amazon', 'Meta', 'Tesla', 'Netflix', 
+    'GitHub', 'OpenAI', 'Anthropic', 'Stripe', 'Shopify', 'Uber', 'Airbnb',
+    'SpaceX', 'Twitter', 'LinkedIn', 'Adobe', 'Oracle', 'IBM', 'Intel',
+    'Salesforce', 'NVIDIA', 'AMD', 'Cisco', 'VMware', 'ServiceNow', 'Zoom',
+    'Slack', 'Atlassian', 'Palantir', 'Snowflake', 'Datadog', 'MongoDB',
+    'Twilio', 'Square', 'PayPal', 'eBay', 'Roku', 'Spotify', 'Pinterest',
+    'Snapchat', 'TikTok', 'Discord', 'Reddit', 'Cloudflare', 'Okta', 'Unity',
+    'Autodesk', 'Intuit', 'DocuSign', 'CrowdStrike', 'Zscaler', 'Workday'
 ]
 
 # SKILLS (30+)
@@ -1084,6 +1099,37 @@ COMMUNITY_ROLES_EXPANDED = [
     "social worker", "community mediator", "local historian", "civic leader"
 ]
 
+# MEMORY-SPECIFIC DATA POOLS FOR HUMAN-AI INTERACTION
+
+# MEMORY_TRIGGERS (11+)
+MEMORY_TRIGGERS = [
+    'I remember', 'you mentioned', 'we talked about', 'last time you said',
+    'you told me', 'I recall', 'from our conversation', 'you said before',
+    'I think you mentioned', 'didn\'t we discuss', 'as we discussed'
+]
+
+# PERSONAL_GOALS (13+)
+PERSONAL_GOALS = [
+    'learn Python programming', 'get promoted', 'start my own business',
+    'lose weight', 'run a marathon', 'learn Spanish', 'travel to Japan',
+    'buy a house', 'save for retirement', 'improve work-life balance',
+    'learn machine learning', 'write a book', 'get an MBA'
+]
+
+# CONCERNS (10+)
+CONCERNS = [
+    'work stress', 'time management', 'job security', 'health issues',
+    'relationship problems', 'financial worries', 'career direction',
+    'work-life balance', 'learning new skills', 'staying motivated'
+]
+
+# USER_CONTEXTS (10+)
+USER_CONTEXTS = [
+    'working remotely', 'new job', 'recently moved', 'planning wedding',
+    'expecting baby', 'caring for parents', 'going through divorce',
+    'starting school', 'changing careers', 'health recovery'
+]
+
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 # BALANCE TRACKER (Simple interface for user requirements)
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
@@ -1202,7 +1248,7 @@ class PerfectBalanceTracker:
         print(f"   - Total entity targets: {sum(self.entity_targets.values())}")
         print(f"   - Total relation targets: {sum(self.relation_targets.values())}")
         print(f"   - Total people names: {len(ALL_PEOPLE_NAMES)}")
-        print(f"   - Total organizations: {len(ORGANIZATIONS)}")
+        print(f"   - Total organizations: {len(TECH_COMPANIES)}")
         print(f"   - 100% balanced targets for ALL types ✅")
         
         # Validate 100% coverage
@@ -1908,7 +1954,7 @@ class BudgetSentimentTemplate(BalancedTemplate):
         sentiment = random.choice(SENTIMENTS)
         amount = random.choice(AMOUNTS)
         money = random.choice(MONEY)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         
         text = f"{person} manages the {budget} at {organization} with {sentiment} sentiment. They allocated {amount} and spent {money} on improvements."
         
@@ -2007,7 +2053,7 @@ class GrowthCommunityTemplate(BalancedTemplate):
         growth = random.choice(PERSONAL_GROWTH_EXPANDED)
         community_role = random.choice(COMMUNITY_ROLES_EXPANDED)
         learning_method = random.choice(LEARNING_METHODS_EXPANDED)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         skill = random.choice(SKILLS)
         
         text = f"{person} develops {growth} through {learning_method} in their role as {community_role} at {organization}. They master {skill} skills."
@@ -2136,7 +2182,7 @@ class WorkflowTemplate(BalancedTemplate):
     
     def create_content(self, needed_entities, needed_relations):
         person = random.choice(ALL_PEOPLE_NAMES)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         skill = random.choice(SKILLS)
         activity = random.choice(ACTIVITIES)
         location = random.choice(LOCATIONS)
@@ -2318,7 +2364,7 @@ class WorkExpertiseTemplate(BalancedTemplate):
     
     def create_content(self, needed_entities, needed_relations):
         person = random.choice(ALL_PEOPLE_NAMES)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         skill = random.choice(SKILLS)
         expertise = random.choice(["machine learning", "data analysis", "software architecture", "project management", "user experience design"])
         project = random.choice(PROJECTS)
@@ -3263,7 +3309,7 @@ class MentorshipTemplate(BalancedTemplate):
         person2 = random.choice([n for n in ALL_PEOPLE_NAMES if n != person1])
         skill = random.choice(SKILLS)
         topic = random.choice(TOPICS)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         goal = random.choice(["career growth", "skill development", "leadership", "expertise"])
         platform = random.choice(PLATFORMS)
         
@@ -3542,7 +3588,7 @@ class NetworkingTemplate(BalancedTemplate):
     def create_content(self, needed_entities, needed_relations):
         person = random.choice(ALL_PEOPLE_NAMES)
         event = random.choice(["conference", "meetup", "networking event", "professional gathering", "industry summit"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         role = random.choice(ROLES)
         location = random.choice(LOCATIONS)
         goal = random.choice(["build connections", "find opportunities", "share knowledge"])
@@ -3587,7 +3633,7 @@ class MentorshipNewTemplate(BalancedTemplate):
         skill = random.choice(SKILLS)
         topic = random.choice(TOPICS)
         goal = random.choice(["career growth", "skill development", "leadership"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         
         # First person variation (50% chance)
         use_first_person = random.choice([True, False])
@@ -3669,7 +3715,7 @@ class SkillAssessmentTemplate(BalancedTemplate):
         person = random.choice(ALL_PEOPLE_NAMES)
         skill = random.choice(SKILLS)
         assessment = random.choice(["evaluation", "review", "test", "certification exam", "skills assessment"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         result = random.choice(["excellent", "proficient", "advanced", "expert level"])
         goal = random.choice(["validation", "improvement", "certification"])
         
@@ -3966,7 +4012,7 @@ class ProcessImprovementTemplate(BalancedTemplate):
     def create_content(self, needed_entities, needed_relations):
         person = random.choice(ALL_PEOPLE_NAMES)
         process = random.choice(["workflow", "procedure", "system", "methodology"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         improvement = random.choice(["automation", "streamlining", "optimization", "standardization"])
         goal = random.choice(["efficiency", "quality", "speed", "consistency"])
         skill = random.choice(SKILLS)
@@ -4010,7 +4056,7 @@ class InnovationTemplate(BalancedTemplate):
         innovation = random.choice(["new approach", "creative solution", "breakthrough idea", "novel method"])
         technology = random.choice(TECHNOLOGIES)
         goal = random.choice(["disruption", "advancement", "improvement", "transformation"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         result = random.choice(["patent", "prototype", "concept", "framework"])
         
         # First person variation (50% chance)
@@ -4053,7 +4099,7 @@ class AnalysisTemplate(BalancedTemplate):
         skill = random.choice(SKILLS)
         technology = random.choice(TECHNOLOGIES)
         goal = random.choice(["insights", "recommendations", "understanding", "optimization"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         
         # First person variation (50% chance)
         use_first_person = random.choice([True, False])
@@ -4137,7 +4183,7 @@ class AchievementTemplate(BalancedTemplate):
         skill = random.choice(SKILLS)
         activity = random.choice(ACTIVITIES)
         role = random.choice(ROLES)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         
         # First person variation (50% chance)
         use_first_person = random.choice([True, False])
@@ -4177,7 +4223,7 @@ class ContributionTemplate(BalancedTemplate):
     def create_content(self, needed_entities, needed_relations):
         person = random.choice(ALL_PEOPLE_NAMES)
         project = random.choice(["community development", "research initiative", "product launch", "team success", "organizational growth"])
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         skill = random.choice(SKILLS)
         activity = random.choice(ACTIVITIES)
         role = random.choice(ROLES)
@@ -4222,7 +4268,7 @@ class CreationTemplate(BalancedTemplate):
         product = random.choice(PRODUCTS)
         technology = random.choice(TECHNOLOGIES)
         skill = random.choice(SKILLS)
-        organization = random.choice(ORGANIZATIONS)
+        organization = random.choice(TECH_COMPANIES)
         project = random.choice(["innovation project", "development initiative", "creative venture", "design project", "tech solution"])
         
         # First person variation (50% chance)
