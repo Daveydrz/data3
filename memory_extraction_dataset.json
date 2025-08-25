@@ -1,0 +1,2315 @@
+{
+  "dataset_info": {
+    "name": "Memory Extraction Dataset",
+    "version": "1.0",
+    "description": "Balanced dataset for human-AI memory extraction training",
+    "generation_timestamp": "2025-08-25T00:57:08.141965",
+    "total_records": 50,
+    "target_records": 80000,
+    "configuration": {
+      "min_examples_per_entity": 750,
+      "min_examples_per_relation": 400,
+      "balance_enforcement": true,
+      "real_world_data": true,
+      "memory_specialized": true
+    }
+  },
+  "balance_statistics": {
+    "entity_balance_score": 0.07065818152966787,
+    "relation_balance_score": 0.11515071390798522,
+    "overall_balance": 0.09290444771882654,
+    "entity_completion": 0.10250000000000001,
+    "relation_completion": 0.03875,
+    "entity_coverage": 100.0,
+    "relation_coverage": 100.0,
+    "entities_used": 85,
+    "entities_total": 85,
+    "relations_used": 122,
+    "relations_total": 122
+  },
+  "entity_types_covered": 9,
+  "relation_types_covered": 2,
+  "total_entity_types": 85,
+  "total_relation_types": 122,
+  "dataset": [
+    {
+      "id": "memory_0_5ec969b9",
+      "text": "Justice Smith performs reading in the basement",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Justice Smith",
+          "span": [
+            0,
+            13
+          ]
+        },
+        {
+          "id": 1,
+          "type": "ROOM",
+          "text": "basement",
+          "span": [
+            38,
+            46
+          ]
+        },
+        {
+          "id": 2,
+          "type": "HOBBY",
+          "text": "reading",
+          "span": [
+            23,
+            30
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 1,
+        "generation_timestamp": "2025-08-25T00:57:06.187435"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON",
+          "ROOM",
+          "HOBBY"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_1_9be3a799",
+      "text": "Amy Foster performs building in the balcony",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Amy Foster",
+          "span": [
+            0,
+            10
+          ]
+        },
+        {
+          "id": 1,
+          "type": "ACTIVITY",
+          "text": "building",
+          "span": [
+            20,
+            28
+          ]
+        },
+        {
+          "id": 2,
+          "type": "ROOM",
+          "text": "balcony",
+          "span": [
+            36,
+            43
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 2,
+        "generation_timestamp": "2025-08-25T00:57:06.224999"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON",
+          "ACTIVITY",
+          "ROOM"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_2_9ed05b73",
+      "text": "Birch has an aspiration to get promoted within weeks",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Birch",
+          "span": [
+            0,
+            5
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 3,
+        "generation_timestamp": "2025-08-25T00:57:06.263569"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_3_989c5bc6",
+      "text": "Casey has an aspiration to save for retirement by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Casey",
+          "span": [
+            0,
+            5
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 4,
+        "generation_timestamp": "2025-08-25T00:57:06.302145"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_4_cf8f19bb",
+      "text": "Amber has an aspiration to learn machine learning by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "machine learning",
+          "span": [
+            33,
+            49
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Amber",
+          "span": [
+            0,
+            5
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 5,
+        "generation_timestamp": "2025-08-25T00:57:06.341630"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_5_2725d6f4",
+      "text": "Gabriel Lopez has an aspiration to travel to Japan within 6 months",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Gabriel Lopez",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 6,
+        "generation_timestamp": "2025-08-25T00:57:06.382889"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_6_fa296db5",
+      "text": "Cedar Kim has an aspiration to improve work-life balance long-term",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Cedar Kim",
+          "span": [
+            0,
+            9
+          ]
+        },
+        {
+          "id": 1,
+          "type": "GEOPOLITICAL_ENTITY",
+          "text": "work",
+          "span": [
+            39,
+            43
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 7,
+        "generation_timestamp": "2025-08-25T00:57:06.421038"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 1,
+        "entity_types": [
+          "PERSON",
+          "GEOPOLITICAL_ENTITY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_7_b2ed42fb",
+      "text": "Moss has an aspiration to learn Python programming near future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "Python",
+          "span": [
+            32,
+            38
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Moss",
+          "span": [
+            0,
+            4
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 8,
+        "generation_timestamp": "2025-08-25T00:57:06.461006"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_8_527a5809",
+      "text": "Cherry Chen has an aspiration to buy a house by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Cherry Chen",
+          "span": [
+            0,
+            11
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 9,
+        "generation_timestamp": "2025-08-25T00:57:06.499262"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_9_a2ca6575",
+      "text": "Zara Ahmed has an aspiration to start my own business 5-year plan",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PRONOUN",
+          "text": "my",
+          "span": [
+            38,
+            40
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Zara Ahmed",
+          "span": [
+            0,
+            10
+          ]
+        },
+        {
+          "id": 2,
+          "type": "SUBJECT",
+          "text": "business",
+          "span": [
+            45,
+            53
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 10,
+        "generation_timestamp": "2025-08-25T00:57:06.538489"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 1,
+        "entity_types": [
+          "PRONOUN",
+          "PERSON",
+          "SUBJECT"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_10_5a79ea19",
+      "text": "Morgan Taylor has an aspiration to write a book long-term",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Morgan Taylor",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 11,
+        "generation_timestamp": "2025-08-25T00:57:06.577674"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_11_bef83aa1",
+      "text": "Kenji Tanaka has an aspiration to lose weight short-term",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Kenji Tanaka",
+          "span": [
+            0,
+            12
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 12,
+        "generation_timestamp": "2025-08-25T00:57:06.616677"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_12_11a3bde9",
+      "text": "Berry Park has an aspiration to write a book immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Berry Park",
+          "span": [
+            0,
+            10
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 13,
+        "generation_timestamp": "2025-08-25T00:57:06.656469"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_13_c7eb9404",
+      "text": "Amber has an aspiration to get an MBA by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Amber",
+          "span": [
+            0,
+            5
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 14,
+        "generation_timestamp": "2025-08-25T00:57:06.693751"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_14_44dbf669",
+      "text": "Reed Kim has an aspiration to save for retirement immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Reed Kim",
+          "span": [
+            0,
+            8
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 15,
+        "generation_timestamp": "2025-08-25T00:57:06.734940"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_15_c3b6c694",
+      "text": "Luna Martinez has an aspiration to start my own business by summer",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PRONOUN",
+          "text": "my",
+          "span": [
+            41,
+            43
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Luna Martinez",
+          "span": [
+            0,
+            13
+          ]
+        },
+        {
+          "id": 2,
+          "type": "SUBJECT",
+          "text": "business",
+          "span": [
+            48,
+            56
+          ]
+        },
+        {
+          "id": 3,
+          "type": "DATE",
+          "text": "summer",
+          "span": [
+            60,
+            66
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 16,
+        "generation_timestamp": "2025-08-25T00:57:06.776566"
+      },
+      "metadata": {
+        "entity_count": 4,
+        "relation_count": 1,
+        "entity_types": [
+          "PRONOUN",
+          "PERSON",
+          "SUBJECT",
+          "DATE"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_16_58242ff9",
+      "text": "Luna has an aspiration to write a book short-term",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Luna",
+          "span": [
+            0,
+            4
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 17,
+        "generation_timestamp": "2025-08-25T00:57:06.813846"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_17_9e62b229",
+      "text": "Amber Park has an aspiration to start my own business next quarter",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PRONOUN",
+          "text": "my",
+          "span": [
+            38,
+            40
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Amber Park",
+          "span": [
+            0,
+            10
+          ]
+        },
+        {
+          "id": 2,
+          "type": "SUBJECT",
+          "text": "business",
+          "span": [
+            45,
+            53
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 18,
+        "generation_timestamp": "2025-08-25T00:57:06.855537"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 1,
+        "entity_types": [
+          "PRONOUN",
+          "PERSON",
+          "SUBJECT"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_18_ec6a5ab7",
+      "text": "Sage Miller has an aspiration to learn machine learning immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "machine learning",
+          "span": [
+            39,
+            55
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Sage Miller",
+          "span": [
+            0,
+            11
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 19,
+        "generation_timestamp": "2025-08-25T00:57:06.897823"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_19_6096524f",
+      "text": "Blake Thompson has an aspiration to get promoted by summer",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Blake Thompson",
+          "span": [
+            0,
+            14
+          ]
+        },
+        {
+          "id": 1,
+          "type": "DATE",
+          "text": "summer",
+          "span": [
+            52,
+            58
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 20,
+        "generation_timestamp": "2025-08-25T00:57:06.937298"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 1,
+        "entity_types": [
+          "PERSON",
+          "DATE"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_20_b0c98fdc",
+      "text": "Felix Rodriguez has an aspiration to save for retirement immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Felix Rodriguez",
+          "span": [
+            0,
+            15
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 21,
+        "generation_timestamp": "2025-08-25T00:57:06.980108"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_21_6d91b5ad",
+      "text": "Avery Rodriguez has an aspiration to learn Python programming next quarter",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Avery Rodriguez",
+          "span": [
+            0,
+            15
+          ]
+        },
+        {
+          "id": 1,
+          "type": "TECHNOLOGY",
+          "text": "Python",
+          "span": [
+            43,
+            49
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 22,
+        "generation_timestamp": "2025-08-25T00:57:07.023100"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "PERSON",
+          "TECHNOLOGY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_22_1dcbb19b",
+      "text": "Aspen Park has an aspiration to buy a house near future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Aspen Park",
+          "span": [
+            0,
+            10
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 23,
+        "generation_timestamp": "2025-08-25T00:57:07.062179"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_23_3c927151",
+      "text": "Adrian Zhou has an aspiration to start my own business by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PRONOUN",
+          "text": "my",
+          "span": [
+            39,
+            41
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Adrian Zhou",
+          "span": [
+            0,
+            11
+          ]
+        },
+        {
+          "id": 2,
+          "type": "SUBJECT",
+          "text": "business",
+          "span": [
+            46,
+            54
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 24,
+        "generation_timestamp": "2025-08-25T00:57:07.102284"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 1,
+        "entity_types": [
+          "PRONOUN",
+          "PERSON",
+          "SUBJECT"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_24_92fd9e82",
+      "text": "Lily Chen has an aspiration to improve work-life balance within weeks",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Lily Chen",
+          "span": [
+            0,
+            9
+          ]
+        },
+        {
+          "id": 1,
+          "type": "GEOPOLITICAL_ENTITY",
+          "text": "work",
+          "span": [
+            39,
+            43
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 25,
+        "generation_timestamp": "2025-08-25T00:57:07.140027"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 1,
+        "entity_types": [
+          "PERSON",
+          "GEOPOLITICAL_ENTITY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_25_af6f74e3",
+      "text": "Felix Rodriguez has an aspiration to improve work-life balance next fiscal year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Felix Rodriguez",
+          "span": [
+            0,
+            15
+          ]
+        },
+        {
+          "id": 1,
+          "type": "GEOPOLITICAL_ENTITY",
+          "text": "work",
+          "span": [
+            45,
+            49
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 26,
+        "generation_timestamp": "2025-08-25T00:57:07.179492"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 1,
+        "entity_types": [
+          "PERSON",
+          "GEOPOLITICAL_ENTITY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_26_3ae39d71",
+      "text": "Sage Park has an aspiration to get promoted within 6 months",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Sage Park",
+          "span": [
+            0,
+            9
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 27,
+        "generation_timestamp": "2025-08-25T00:57:07.218711"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_27_f86fc8a3",
+      "text": "Luna Kim has an aspiration to travel to Japan distant future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Luna Kim",
+          "span": [
+            0,
+            8
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 28,
+        "generation_timestamp": "2025-08-25T00:57:07.258027"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_28_05ec5a1f",
+      "text": "Hazel Martinez has an aspiration to start my own business next fiscal year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PRONOUN",
+          "text": "my",
+          "span": [
+            42,
+            44
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Hazel Martinez",
+          "span": [
+            0,
+            14
+          ]
+        },
+        {
+          "id": 2,
+          "type": "SUBJECT",
+          "text": "business",
+          "span": [
+            49,
+            57
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 29,
+        "generation_timestamp": "2025-08-25T00:57:07.300724"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 1,
+        "entity_types": [
+          "PRONOUN",
+          "PERSON",
+          "SUBJECT"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_29_8760c6f8",
+      "text": "Rain Chen has an aspiration to learn machine learning next quarter",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "machine learning",
+          "span": [
+            37,
+            53
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Rain Chen",
+          "span": [
+            0,
+            9
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 30,
+        "generation_timestamp": "2025-08-25T00:57:07.340727"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_30_45574e14",
+      "text": "Alex has an aspiration to run a marathon next decade",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Alex",
+          "span": [
+            0,
+            4
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 31,
+        "generation_timestamp": "2025-08-25T00:57:07.378661"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_31_1fd71126",
+      "text": "Zoe Park has an aspiration to learn Python programming long-term",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Zoe Park",
+          "span": [
+            0,
+            8
+          ]
+        },
+        {
+          "id": 1,
+          "type": "TECHNOLOGY",
+          "text": "Python",
+          "span": [
+            36,
+            42
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 32,
+        "generation_timestamp": "2025-08-25T00:57:07.417938"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "PERSON",
+          "TECHNOLOGY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_32_08a28ac2",
+      "text": "Diamond Garcia has an aspiration to learn Python programming immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Diamond Garcia",
+          "span": [
+            0,
+            14
+          ]
+        },
+        {
+          "id": 1,
+          "type": "TECHNOLOGY",
+          "text": "Python",
+          "span": [
+            42,
+            48
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 33,
+        "generation_timestamp": "2025-08-25T00:57:07.461266"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "PERSON",
+          "TECHNOLOGY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_33_47515e93",
+      "text": "Riley Zhang has an aspiration to write a book within weeks",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Riley Zhang",
+          "span": [
+            0,
+            11
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 34,
+        "generation_timestamp": "2025-08-25T00:57:07.500387"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_34_f6840426",
+      "text": "Ethan Foster has an aspiration to improve work-life balance next quarter",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Ethan Foster",
+          "span": [
+            0,
+            12
+          ]
+        },
+        {
+          "id": 1,
+          "type": "GEOPOLITICAL_ENTITY",
+          "text": "work",
+          "span": [
+            42,
+            46
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 0,
+          "tail": 1
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 35,
+        "generation_timestamp": "2025-08-25T00:57:07.539014"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 1,
+        "entity_types": [
+          "PERSON",
+          "GEOPOLITICAL_ENTITY"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_35_3f43f2bd",
+      "text": "Sequoia Kim has an aspiration to learn Spanish within 6 months",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Sequoia Kim",
+          "span": [
+            0,
+            11
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 36,
+        "generation_timestamp": "2025-08-25T00:57:07.578643"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_36_f7b374fb",
+      "text": "Willow Garcia has an aspiration to write a book this year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Willow Garcia",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 37,
+        "generation_timestamp": "2025-08-25T00:57:07.617649"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_37_22aef321",
+      "text": "Justice Smith has an aspiration to get an MBA next fiscal year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Justice Smith",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 38,
+        "generation_timestamp": "2025-08-25T00:57:07.657934"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_38_71cfa442",
+      "text": "Dakota Johnson has an aspiration to learn Spanish this year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Dakota Johnson",
+          "span": [
+            0,
+            14
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 39,
+        "generation_timestamp": "2025-08-25T00:57:07.697398"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_39_16c89f0d",
+      "text": "Aria Singh has an aspiration to save for retirement by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Aria Singh",
+          "span": [
+            0,
+            10
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 40,
+        "generation_timestamp": "2025-08-25T00:57:07.736715"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_40_b2a5349a",
+      "text": "Lily Chen has an aspiration to learn machine learning by 2025",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "machine learning",
+          "span": [
+            37,
+            53
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Lily Chen",
+          "span": [
+            0,
+            9
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 41,
+        "generation_timestamp": "2025-08-25T00:57:07.776443"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_41_12bf841a",
+      "text": "Ruby Williams has an aspiration to save for retirement immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Ruby Williams",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 42,
+        "generation_timestamp": "2025-08-25T00:57:07.818556"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_42_ba2514f3",
+      "text": "Apple Garcia has an aspiration to get an MBA next quarter",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Apple Garcia",
+          "span": [
+            0,
+            12
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 43,
+        "generation_timestamp": "2025-08-25T00:57:07.857518"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_43_bc443647",
+      "text": "Sequoia Kim has an aspiration to learn Spanish next quarter",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Sequoia Kim",
+          "span": [
+            0,
+            11
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 44,
+        "generation_timestamp": "2025-08-25T00:57:07.897171"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_44_7d2a0f84",
+      "text": "Blake Thompson has an aspiration to get promoted near future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Blake Thompson",
+          "span": [
+            0,
+            14
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 45,
+        "generation_timestamp": "2025-08-25T00:57:07.936984"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_45_71a2f019",
+      "text": "Nora Thompson has an aspiration to learn machine learning next fiscal year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "machine learning",
+          "span": [
+            41,
+            57
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Nora Thompson",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 46,
+        "generation_timestamp": "2025-08-25T00:57:07.979575"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_46_c0297b9b",
+      "text": "Isla Martinez has an aspiration to lose weight within 6 months",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Isla Martinez",
+          "span": [
+            0,
+            13
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 47,
+        "generation_timestamp": "2025-08-25T00:57:08.019675"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_47_8c4a51ee",
+      "text": "Emery has an aspiration to learn Spanish end of year",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PERSON",
+          "text": "Emery",
+          "span": [
+            0,
+            5
+          ]
+        }
+      ],
+      "relations": [],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 48,
+        "generation_timestamp": "2025-08-25T00:57:08.057600"
+      },
+      "metadata": {
+        "entity_count": 1,
+        "relation_count": 0,
+        "entity_types": [
+          "PERSON"
+        ],
+        "relation_types": [],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_48_af5bf25d",
+      "text": "Ruby Williams has an aspiration to start my own business immediate future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "PRONOUN",
+          "text": "my",
+          "span": [
+            41,
+            43
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Ruby Williams",
+          "span": [
+            0,
+            13
+          ]
+        },
+        {
+          "id": 2,
+          "type": "SUBJECT",
+          "text": "business",
+          "span": [
+            48,
+            56
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 49,
+        "generation_timestamp": "2025-08-25T00:57:08.099963"
+      },
+      "metadata": {
+        "entity_count": 3,
+        "relation_count": 1,
+        "entity_types": [
+          "PRONOUN",
+          "PERSON",
+          "SUBJECT"
+        ],
+        "relation_types": [
+          "HAS_OBJECT"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    },
+    {
+      "id": "memory_49_7ce311f6",
+      "text": "Aspen Park has an aspiration to learn machine learning distant future",
+      "entities": [
+        {
+          "id": 0,
+          "type": "TECHNOLOGY",
+          "text": "machine learning",
+          "span": [
+            38,
+            54
+          ]
+        },
+        {
+          "id": 1,
+          "type": "PERSON",
+          "text": "Aspen Park",
+          "span": [
+            0,
+            10
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "id": 0,
+          "type": "HAS_OBJECT",
+          "head": 1,
+          "tail": 0
+        },
+        {
+          "id": 1,
+          "type": "LEARNS",
+          "head": 1,
+          "tail": 0
+        }
+      ],
+      "context": {
+        "conversation_type": "human_ai_memory",
+        "extraction_method": "smart_memory_extractor",
+        "relation_method": "memory_relation_extractor",
+        "template_balanced": true,
+        "record_number": 50,
+        "generation_timestamp": "2025-08-25T00:57:08.141440"
+      },
+      "metadata": {
+        "entity_count": 2,
+        "relation_count": 2,
+        "entity_types": [
+          "TECHNOLOGY",
+          "PERSON"
+        ],
+        "relation_types": [
+          "HAS_OBJECT",
+          "LEARNS"
+        ],
+        "template_source": "balanced_template_selector",
+        "balance_enforced": true
+      }
+    }
+  ]
+}
