@@ -1,0 +1,5 @@
+axis,bucket,count,percentage
+turns,single,1000,1.0
+updates,False,1000,1.0
+quality,clean,1000,1.0
+perspective,third,1000,1.0
