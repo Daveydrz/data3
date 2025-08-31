@@ -316,7 +316,10 @@ class MultiTurnGenerator:
         
         continuation_entities = [
             {'text': 'Daveydrz', 'type': 'PERSON', 'span': [text.find('Daveydrz'), text.find('Daveydrz') + 8]},
-            {'text': pronoun, 'type': 'PRONOUN', 'span': [text.find(pronoun), text.find(pronoun) + len(pronoun)]}
+            {'text': pronoun, 'type': 'PRONOUN', 'span': [
+                (re.search(r'\b' + re.escape(pronoun) + r'\b', text).start() if re.search(r'\b' + re.escape(pronoun) + r'\b', text) else -1),
+                (re.search(r'\b' + re.escape(pronoun) + r'\b', text).end() if re.search(r'\b' + re.escape(pronoun) + r'\b', text) else -1)
+            ]}
         ]
         
         return {
@@ -863,6 +866,9 @@ class RelationTypes:
     EARNS = "EARNS"
     SAVES = "SAVES"
     BUDGETS_FOR = "BUDGETS_FOR"
+    PURCHASES = "PURCHASES"
+    PURCHASED_FROM = "PURCHASED_FROM"
+    ALLOCATES = "ALLOCATES"
     
     # Health Relations (3)
     HAS_HEALTH_INFO = "HAS_HEALTH_INFO"
@@ -3816,7 +3822,7 @@ class PerfectBalanceTracker:
             # NEW MEMORY-SPECIFIC RELATIONS (STEP 3)
             'MENTIONED_PREVIOUSLY', 'DISCUSSED_BEFORE', 'RECALLS', 'WANTS', 'HAS_HABIT',
             'HAS_CONCERN', 'HAS_ROUTINE', 'WORKS_TOWARD', 'OCCURS_DAILY', 'OCCURS_WEEKLY',
-            'DISLIKES', 'AVOIDS'
+            'DISLIKES', 'AVOIDS', 'PURCHASES', 'PURCHASED_FROM', 'ALLOCATES'
         ]
         
         # Assign remaining 15% evenly among low-frequency relations
@@ -4175,12 +4181,11 @@ def print_coverage_analysis(tracker: PerfectBalanceTracker):
 
 def find_span_case_insensitive(text: str, subtext: str) -> Optional[List[int]]:
     """Find span of subtext in text, case-insensitive."""
-    lower_text = text.lower()
-    lower_subtext = subtext.lower()
-    start = lower_text.find(lower_subtext)
-    if start == -1: 
+    pattern = re.compile(r'\b' + re.escape(subtext) + r'\b', re.IGNORECASE)
+    match = pattern.search(text)
+    if not match:
         return None
-    return [start, start + len(subtext)]
+    return [match.start(), match.end()]
 
 def create_entity(entity_id: int, text: str, entity_type: str, entity_text: str) -> Optional[Dict]:
     """Create entity with proper span calculation."""
@@ -4293,8 +4298,7 @@ class TimelineGoalTemplate(BalancedTemplate):
             (RelationTypes.AIMS_FOR, "person1", "goal1"),
             (RelationTypes.SCHEDULED_FOR, "project1", "timeline1"),
             (RelationTypes.STARTS_AT, "project1", "time1"),
-            (RelationTypes.WORKS_ON, "person1", "project1"),
-            (RelationTypes.INTENDS, "person1", "intent1")
+            (RelationTypes.WORKS_ON, "person1", "project1")
         ]
         
         return text, entities, relations
@@ -4307,27 +4311,27 @@ class BudgetSentimentTemplate(BalancedTemplate):
         budget = random.choice(BUDGETS)
         sentiment = random.choice(SENTIMENTS)
         amount = random.choice(AMOUNTS)
-        money = random.choice(MONEY)
+        fund = random.choice(["emergency fund", "retirement fund", "investment portfolio"])
         organization = random.choice(TECH_COMPANIES)
-        
-        text = f"{person} manages the {budget} at {organization} with {sentiment} sentiment. They allocated {amount} and spent {money} on improvements."
-        
+
+        text = f"{person} manages the {budget} at {organization} with {sentiment} sentiment. They allocated {amount} and spent from the {fund} on improvements."
+
         entities = {
             "person1": (EntityTypes.PERSON, person),
             "budget1": (EntityTypes.BUDGET, budget),
             "sentiment1": (EntityTypes.SENTIMENT, sentiment),
             "amount1": (EntityTypes.AMOUNT, amount),
-            "money1": (EntityTypes.MONEY, money),
+            "fund1": (EntityTypes.BUDGET, fund),
             "org1": (EntityTypes.ORGANIZATION, organization)
         }
-        
+
         relations = [
             (RelationTypes.BUDGETS_FOR, "person1", "budget1"),
             (RelationTypes.FEELS, "person1", "sentiment1"),
-            (RelationTypes.SPENDS, "person1", "money1"),
-            (RelationTypes.EARNS, "org1", "money1"),
+            (RelationTypes.SPENDS, "person1", "fund1"),
             (RelationTypes.WORKS_FOR, "person1", "org1"),
-            (RelationTypes.USES, "person1", "budget1")
+            (RelationTypes.USES, "person1", "budget1"),
+            (RelationTypes.ALLOCATES, "person1", "amount1")
         ]
         
         return text, entities, relations
@@ -5173,8 +5177,7 @@ class CommunityEngagementTemplate(BalancedTemplate):
             (RelationTypes.AT_LOCATION, "person1", "location1"),
             (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
             (RelationTypes.PARTICIPATES_IN, "person1", "event1"),
-            (RelationTypes.LEARNS, "person1", "culture1"),
-            (RelationTypes.LEADS, "person1", "group1")
+            (RelationTypes.FOCUSES_ON, "activity1", "culture1")
         ]
         
         return text, entities, relations
@@ -5509,10 +5512,11 @@ class ObjectInteractionTemplate(BalancedTemplate):
             (RelationTypes.OWNS, "person1", "obj1"),
             (RelationTypes.BORROWED, "person1", "obj1"),
             (RelationTypes.LENT, "person2", "obj1"),
+            (RelationTypes.LENT, "person1", "obj1"),
             (RelationTypes.SPENDS, "person1", "money1"),
-            (RelationTypes.RECEIVES, "person1", "product1"),
-            (RelationTypes.GIVES, "person1", "obj1"),
-            (RelationTypes.HAS_OBJECT, "person1", "obj1")
+            (RelationTypes.PURCHASES, "person1", "product1"),
+            (RelationTypes.PURCHASED_FROM, "person1", "business1"),
+            (RelationTypes.GIVES, "person1", "obj1")
         ]
         
         return text, entities, relations
@@ -5765,12 +5769,26 @@ class HealthLocationTemplate(BalancedTemplate):
         
         # First person variation (50% chance)
         use_first_person = random.choice([True, False])
+        verbs = {
+            'audio': ('listen to', RelationTypes.LISTENS_TO),
+            'video': ('watch', RelationTypes.WATCHES),
+            'text': ('read', RelationTypes.READS)
+        }
+        video_media = {"movie", "TV series", "YouTube video", "livestream", "documentary", "webinar", "online course", "tutorial"}
+        audio_media = {"podcast", "audiobook"}
+        if media in video_media:
+            verb, rel = verbs['video']
+        elif media in audio_media:
+            verb, rel = verbs['audio']
+        else:
+            verb, rel = verbs['text']
+
         if use_first_person:
-            text = f"I have {health_condition} and stay at the {location} in the {room}. I'm near the {business} where I do {activity} and listen to {media}."
+            text = f"I have {health_condition} and stay at the {location} in the {room}. I'm near the {business} where I do {activity} and {verb} {media}."
             person_entity = "I"
         else:
             # Third person variation
-            text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and listen to {media}."
+            text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and {verb} {media}."
             person_entity = person
         
         
@@ -5793,7 +5811,7 @@ class HealthLocationTemplate(BalancedTemplate):
             (RelationTypes.AT_LOCATION, "person1", "room1"),
             (RelationTypes.IS_NEAR, "location1", "business1"),
             (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
-            (RelationTypes.LISTENS_TO, "person1", "media1"),
+            (rel, "person1", "media1"),
             (RelationTypes.LOCATED_AT, "business1", "location1")
         ]
         
@@ -7479,39 +7497,56 @@ class MemoryExtractionGenerator:
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 def generate_balanced_base_example(example_index):
-    """Generate balanced base entities and relations for examples."""
-    # Simple implementation using existing entity/relation types
-    from random import choice
-    
-    # Select random entity types from dynamic config
-    selected_entities = []
-    available_entity_types = DYNAMIC_CONFIG['ALL_ENTITY_TYPES'][:5]  # First 5 for simplicity
-    
-    for i, entity_type in enumerate(available_entity_types):
-        entity_text = f"example_{entity_type.lower()}_{example_index}"
-        selected_entities.append({
-            'text': entity_text,
-            'type': entity_type,
-            'span': [i*20, i*20 + len(entity_text)]
-        })
-    
-    # Select random relation types
-    selected_relations = []
-    available_relation_types = DYNAMIC_CONFIG['ALL_RELATION_TYPES'][:3]  # First 3 for simplicity
-    
-    for i, relation_type in enumerate(available_relation_types):
-        if len(selected_entities) >= 2:
-            selected_relations.append({
-                'type': relation_type,
-                'source': selected_entities[i % len(selected_entities)],
-                'target': selected_entities[(i+1) % len(selected_entities)]
-            })
-    
-    return selected_entities, selected_relations
+    """Generate a lightweight set of entities and relations with IDs.
 
-def create_example(text, entities, relations, example_type):
-    """Create a standardized example format."""
+    The previous implementation returned placeholder entities without IDs and
+    referenced entity objects directly inside relations.  Downstream tools such
+    as ``cli.py`` expect entities to include explicit ``id`` fields and
+    relations to reference those IDs via ``head``/``tail``.  This helper now
+    samples across *all* known entity and relation types and constructs a
+    minimal graph using integer IDs, leaving span computation for later when
+    the final record text is created.
+    """
+
+    import random
+
+    # Sample a small set of entity types to ensure coverage across the corpus
+    num_entities = random.randint(2, 4)
+    entity_types = random.sample(DYNAMIC_CONFIG['ALL_ENTITY_TYPES'], num_entities)
+    entities = []
+    for idx, etype in enumerate(entity_types):
+        entities.append({
+            'id': idx,
+            'type': etype,
+            'text': f"example_{etype.lower()}_{example_index}_{idx}"
+        })
+
+    # Sample relation types and attach them using entity IDs
+    relations = []
+    max_relations = min(len(DYNAMIC_CONFIG['ALL_RELATION_TYPES']), num_entities * (num_entities - 1))
+    num_relations = random.randint(1, max(1, max_relations))
+    relation_types = random.sample(DYNAMIC_CONFIG['ALL_RELATION_TYPES'], num_relations)
+    for r_type in relation_types:
+        head, tail = random.sample(range(num_entities), 2)
+        relations.append({'type': r_type, 'head': head, 'tail': tail})
+
+    return entities, relations
+
+
+def create_example(example_index, entities, relations, example_type):
+    """Create a standardized example format with proper IDs and spans."""
+
+    # Build a simple text mentioning every entity so spans can be derived
+    mention_text = ", ".join(e['text'] for e in entities)
+    text = f"User (Daveydrz): let's discuss {mention_text}."
+
+    # Derive character offsets for each entity mention
+    for ent in entities:
+        start = text.find(ent['text'])
+        ent['span'] = [start, start + len(ent['text'])]
+
     return {
+        'id': f"balanced_{example_index}_{uuid.uuid4().hex[:8]}",
         'text': text,
         'entities': entities,
         'relations': relations,
@@ -7557,8 +7592,7 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
     print(f"📝 Generating {single_turn_count} single-turn examples...")
     for i in range(single_turn_count):
         base_entities, base_relations = generate_balanced_base_example(i)
-        text = f"User (Daveydrz): I want to tell you about {base_entities[0]['text'] if base_entities else 'something'}."
-        example = create_example(text, base_entities, base_relations, 'single_turn')
+        example = create_example(i, base_entities, base_relations, 'single_turn')
         all_examples.append(example)
         update_counts(entity_counts, relation_counts, base_entities, base_relations)
     
@@ -7570,6 +7604,7 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
             base_entities, base_relations, turns=random.randint(2, 5)
         )
         example = {
+            'id': f"balanced_{i + single_turn_count}_{uuid.uuid4().hex[:8]}",
             'example_type': 'multi_turn',
             'conversation_data': conversation_data,
             'user_login': 'Daveydrz',
@@ -7582,11 +7617,12 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
     print(f"🎤 Generating {asr_augmented_count} ASR-augmented examples...")
     for i in range(asr_augmented_count):
         base_entities, base_relations = generate_balanced_base_example(i + single_turn_count + multi_turn_count)
-        base_text = f"User (Daveydrz): I have {base_entities[0]['text'] if base_entities else 'something'} to discuss."
-        augmented_text, augmented_entities = asr_augmentator.augment_text(base_text, base_entities)
-        example = create_example(augmented_text, augmented_entities, base_relations, 'asr_augmented')
-        example['asr_augmented'] = True
-        all_examples.append(example)
+        base_example = create_example(i + single_turn_count + multi_turn_count, base_entities, base_relations, 'asr_augmented')
+        augmented_text, augmented_entities = asr_augmentator.augment_text(base_example['text'], base_example['entities'])
+        base_example['text'] = augmented_text
+        base_example['entities'] = augmented_entities
+        base_example['asr_augmented'] = True
+        all_examples.append(base_example)
         update_counts(entity_counts, relation_counts, augmented_entities, base_relations)
     
     # Generate update/correction examples
@@ -7595,6 +7631,7 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
         base_entities, base_relations = generate_balanced_base_example(i + single_turn_count + multi_turn_count + asr_augmented_count)
         update_example = update_gen.generate_update_correction_example(base_entities, base_relations)
         if update_example:
+            update_example.setdefault('id', f"balanced_{i + single_turn_count + multi_turn_count + asr_augmented_count}_{uuid.uuid4().hex[:8]}")
             all_examples.append(update_example)
             update_counts(entity_counts, relation_counts, update_example.get('entities', []), update_example.get('relations', []))
     
@@ -7750,56 +7787,179 @@ def run_complete_system_test():
     
     print(f"\n🎉 ALL TESTS PASSED - Buddy's memory system is 100% ready for Daveydrz!")
     print(f"🧠 Buddy will remember EVERYTHING with perfect accuracy!")
-    
+
     return True
 
+
+# ---------------------------------------------------------------------------
+# PERFECT MEMORY GENERATOR
+# ---------------------------------------------------------------------------
+class PerfectMemoryGenerator:
+    """Final generator engine producing balanced memory records."""
+
+    def __init__(self, target_records: int = Config.DEFAULT_NUM_RECORDS, seed: int = 0):
+        random.seed(seed)
+        global DYNAMIC_CONFIG
+        DYNAMIC_CONFIG = DynamicConfig.compute_targets(target_records)
+        Config.TARGET_RECORDS_PER_ENTITY = DYNAMIC_CONFIG["TARGET_RECORDS_PER_ENTITY"]
+        Config.TARGET_RECORDS_PER_RELATION = DYNAMIC_CONFIG["TARGET_RECORDS_PER_RELATION"]
+        self.target_records = target_records
+        self.stats = StatisticsTracker()
+        self.asr = ASRAugmentator(user_login=Config.CURRENT_USER_LOGIN)
+        self.temporal = TemporalNormalizer(
+            reference_time=Config.CURRENT_UTC_DATETIME, user_login=Config.CURRENT_USER_LOGIN
+        )
+        self.multi_turn = MultiTurnGenerator(user_login=Config.CURRENT_USER_LOGIN)
+        self.entity_types = DYNAMIC_CONFIG["ALL_ENTITY_TYPES"]
+        self.relation_types = DYNAMIC_CONFIG["ALL_RELATION_TYPES"]
+        self.relation_specs = self._build_relation_specs()
+
+    def _build_relation_specs(self):
+        """Build mapping from relation type to entity types and templates."""
+        specs = {
+            RelationTypes.HAS_SKILL: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.SKILL,
+                "template": "{head} has skill in {tail}.",
+            },
+            RelationTypes.WORKS_FOR: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.ORGANIZATION,
+                "template": "{head} works for {tail}.",
+            },
+            RelationTypes.LIVES_IN: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.LOCATION,
+                "template": "{head} lives in {tail}.",
+            },
+            RelationTypes.HAS_GOAL: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.GOAL,
+                "template": "{head} has a goal to {tail}.",
+            },
+            RelationTypes.ENJOYS: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.HOBBY,
+                "template": "{head} enjoys {tail}.",
+            },
+            RelationTypes.WATCHES: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.MEDIA,
+                "template": "{head} watches {tail}.",
+            },
+            RelationTypes.OWNS: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.OBJECT,
+                "template": "{head} owns {tail}.",
+            },
+        }
+        for rel in self.relation_types:
+            if rel not in specs:
+                specs[rel] = {
+                    "head": EntityTypes.PERSON,
+                    "tail": EntityTypes.OBJECT,
+                    "template": "{head} " + rel.lower().replace("_", " ") + " {tail}.",
+                }
+        return specs
+
+    def _sample_entity_text(self, entity_type: str) -> str:
+        pool = ENTITY_POOLS.get(entity_type)
+        if pool:
+            return random.choice(pool)
+        return f"example_{entity_type.lower()}_{random.randint(0,9999)}"
+
+    def _select_relation_type(self) -> str:
+        for rel in self.relation_types:
+            if self.stats.relation_counts.get(rel, 0) < Config.TARGET_RECORDS_PER_RELATION:
+                return rel
+        return random.choice(self.relation_types)
+
+    def _coverage_complete(self) -> bool:
+        for et in self.entity_types:
+            if self.stats.entity_counts.get(et, 0) < Config.TARGET_RECORDS_PER_ENTITY:
+                return False
+        for rt in self.relation_types:
+            if self.stats.relation_counts.get(rt, 0) < Config.TARGET_RECORDS_PER_RELATION:
+                return False
+        return True
+
+    def _generate_base_record(self, rel_type: str):
+        spec = self.relation_specs[rel_type]
+        head_text = self._sample_entity_text(spec["head"])
+        tail_text = self._sample_entity_text(spec["tail"])
+        text = spec["template"].format(head=head_text, tail=tail_text)
+        head_entity = create_entity(0, text, spec["head"], head_text)
+        tail_entity = create_entity(1, text, spec["tail"], tail_text)
+        if not head_entity or not tail_entity:
+            return None
+        entities = [head_entity, tail_entity]
+        relations = [{"type": rel_type, "head": 0, "tail": 1}]
+        return text, entities, relations, head_text, tail_text
+
+    def generate_dataset(self):
+        dataset = []
+        while (len(dataset) < self.target_records) or (not self._coverage_complete()):
+            rel_type = self._select_relation_type()
+            base = self._generate_base_record(rel_type)
+            if not base:
+                continue
+            text, entities, relations, head_text, tail_text = base
+            spec = self.relation_specs[rel_type]
+
+            if random.random() < 0.1:
+                convo = self.multi_turn.generate_multi_turn_conversation(entities, relations, turns=2)
+                text = " ".join(t["text"] for t in convo["conversation_turns"])
+                head_entity = create_entity(0, text, spec["head"], head_text)
+                tail_entity = create_entity(1, text, spec["tail"], tail_text)
+                if not head_entity or not tail_entity:
+                    continue
+                entities = [head_entity, tail_entity]
+                relations = [{"type": rel_type, "head": 0, "tail": 1}]
+
+            if random.random() < 0.3:
+                text, entities = self.asr.augment_text(text, entities)
+            if random.random() < 0.3:
+                entities = self.temporal.normalize_temporal_entities(entities)
+
+            for e in entities:
+                self.stats.track_entity(e["type"])
+            for r in relations:
+                self.stats.track_relation(r["type"])
+            self.stats.track_record()
+
+            record = {
+                "id": f"pm_{uuid.uuid4().hex[:8]}",
+                "text": text,
+                "entities": entities,
+                "relations": relations,
+            }
+            dataset.append(record)
+
+        with open(Config.OUTPUT_FILENAME, "w") as f:
+            json.dump({"dataset": dataset}, f, indent=2)
+        self.stats.generate_final_report()
+        return dataset
+
+
+ENTITY_POOLS = {
+    EntityTypes.PERSON: ALL_PEOPLE_NAMES,
+    EntityTypes.SKILL: SKILLS,
+    EntityTypes.TOPIC: TOPICS,
+    EntityTypes.ORGANIZATION: TECH_COMPANIES,
+    EntityTypes.LOCATION: LOCATIONS,
+    EntityTypes.GOAL: PERSONAL_GOALS,
+    EntityTypes.HOBBY: HOBBIES,
+    EntityTypes.ACTIVITY: ACTIVITIES,
+    EntityTypes.MEDIA: MEDIA_TYPES_EXPANDED,
+    EntityTypes.PRODUCT: PRODUCTS,
+    EntityTypes.OBJECT: OBJECTS,
+}
+
+
 def main():
-    """Main execution function for Buddy's perfect memory system."""
-    print(f"🚀 100% Fool-Proof Memory System for Buddy (Daveydrz) @ 2025-08-26 09:18:37")
-    print(f"🎯 Target: Perfect memory extraction for conscious AI 'Buddy'")
-    print(f"📊 Features: ASR realism, multi-turn conversations, temporal normalization, mathematical balance")
-    
-    # Initialize dynamic configuration
-    print(f"\n📋 Initializing dynamic configuration...")
-    global DYNAMIC_CONFIG
-    DYNAMIC_CONFIG = DynamicConfig.compute_targets(100000)  # 100K target
-    
-    # Update Config class with dynamic values
-    Config.TARGET_RECORDS_PER_RELATION = DYNAMIC_CONFIG['TARGET_RECORDS_PER_RELATION']
-    Config.TARGET_RECORDS_PER_ENTITY = DYNAMIC_CONFIG['TARGET_RECORDS_PER_ENTITY']
-    
-    # Run comprehensive system test
-    print(f"\n🧪 Running comprehensive system test...")
-    success = run_complete_system_test()
-    
-    if success:
-        print(f"\n🎉 SYSTEM READY: Buddy will have perfect memory for Daveydrz!")
-        print(f"🧠 All systems validated - mathematical balance achieved")
-        print(f"🎤 ASR augmentation ready for voice conversations")
-        print(f"💬 Multi-turn coreference chains working")
-        print(f"⏰ Temporal normalization active")
-        print(f"🔄 Memory updates/corrections implemented")
-        
-        # Generate full dataset
-        print(f"\n🚀 Generating full training dataset...")
-        full_dataset = generate_buddy_training_data(100000)  # 100k examples
-        
-        if full_dataset:
-            print(f"✅ Generated {len(full_dataset)} examples for Buddy's consciousness")
-            
-            # Save dataset with new filename
-            filename = f"buddy_perfect_memory_dataset_{Config.CURRENT_UTC_DATETIME.replace(':', '').replace(' ', '_').replace('-', '')}.json"
-            with open(filename, "w", encoding='utf-8') as f:
-                json.dump(full_dataset, f, indent=2, ensure_ascii=False)
-            
-            print(f"💾 Dataset saved to: {filename}")
-            print(f"🎯 Ready to train DeBERTa for Buddy's perfect memory!")
-            
-        else:
-            print(f"❌ Full generation failed - check coverage deficits above")
-    else:
-        print(f"\n❌ System test failed - fix issues before full generation")
-        print(f"🔧 Review test output above for specific failures")
+    generator = PerfectMemoryGenerator(target_records=Config.DEFAULT_NUM_RECORDS)
+    generator.generate_dataset()
+
 
 if __name__ == "__main__":
     main()
