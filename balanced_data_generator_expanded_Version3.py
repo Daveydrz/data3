@@ -7497,39 +7497,56 @@ class MemoryExtractionGenerator:
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 def generate_balanced_base_example(example_index):
-    """Generate balanced base entities and relations for examples."""
-    # Simple implementation using existing entity/relation types
-    from random import choice
-    
-    # Select random entity types from dynamic config
-    selected_entities = []
-    available_entity_types = DYNAMIC_CONFIG['ALL_ENTITY_TYPES'][:5]  # First 5 for simplicity
-    
-    for i, entity_type in enumerate(available_entity_types):
-        entity_text = f"example_{entity_type.lower()}_{example_index}"
-        selected_entities.append({
-            'text': entity_text,
-            'type': entity_type,
-            'span': [i*20, i*20 + len(entity_text)]
-        })
-    
-    # Select random relation types
-    selected_relations = []
-    available_relation_types = DYNAMIC_CONFIG['ALL_RELATION_TYPES'][:3]  # First 3 for simplicity
-    
-    for i, relation_type in enumerate(available_relation_types):
-        if len(selected_entities) >= 2:
-            selected_relations.append({
-                'type': relation_type,
-                'source': selected_entities[i % len(selected_entities)],
-                'target': selected_entities[(i+1) % len(selected_entities)]
-            })
-    
-    return selected_entities, selected_relations
+    """Generate a lightweight set of entities and relations with IDs.
 
-def create_example(text, entities, relations, example_type):
-    """Create a standardized example format."""
+    The previous implementation returned placeholder entities without IDs and
+    referenced entity objects directly inside relations.  Downstream tools such
+    as ``cli.py`` expect entities to include explicit ``id`` fields and
+    relations to reference those IDs via ``head``/``tail``.  This helper now
+    samples across *all* known entity and relation types and constructs a
+    minimal graph using integer IDs, leaving span computation for later when
+    the final record text is created.
+    """
+
+    import random
+
+    # Sample a small set of entity types to ensure coverage across the corpus
+    num_entities = random.randint(2, 4)
+    entity_types = random.sample(DYNAMIC_CONFIG['ALL_ENTITY_TYPES'], num_entities)
+    entities = []
+    for idx, etype in enumerate(entity_types):
+        entities.append({
+            'id': idx,
+            'type': etype,
+            'text': f"example_{etype.lower()}_{example_index}_{idx}"
+        })
+
+    # Sample relation types and attach them using entity IDs
+    relations = []
+    max_relations = min(len(DYNAMIC_CONFIG['ALL_RELATION_TYPES']), num_entities * (num_entities - 1))
+    num_relations = random.randint(1, max(1, max_relations))
+    relation_types = random.sample(DYNAMIC_CONFIG['ALL_RELATION_TYPES'], num_relations)
+    for r_type in relation_types:
+        head, tail = random.sample(range(num_entities), 2)
+        relations.append({'type': r_type, 'head': head, 'tail': tail})
+
+    return entities, relations
+
+
+def create_example(example_index, entities, relations, example_type):
+    """Create a standardized example format with proper IDs and spans."""
+
+    # Build a simple text mentioning every entity so spans can be derived
+    mention_text = ", ".join(e['text'] for e in entities)
+    text = f"User (Daveydrz): let's discuss {mention_text}."
+
+    # Derive character offsets for each entity mention
+    for ent in entities:
+        start = text.find(ent['text'])
+        ent['span'] = [start, start + len(ent['text'])]
+
     return {
+        'id': f"balanced_{example_index}_{uuid.uuid4().hex[:8]}",
         'text': text,
         'entities': entities,
         'relations': relations,
@@ -7575,8 +7592,7 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
     print(f"📝 Generating {single_turn_count} single-turn examples...")
     for i in range(single_turn_count):
         base_entities, base_relations = generate_balanced_base_example(i)
-        text = f"User (Daveydrz): I want to tell you about {base_entities[0]['text'] if base_entities else 'something'}."
-        example = create_example(text, base_entities, base_relations, 'single_turn')
+        example = create_example(i, base_entities, base_relations, 'single_turn')
         all_examples.append(example)
         update_counts(entity_counts, relation_counts, base_entities, base_relations)
     
@@ -7588,6 +7604,7 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
             base_entities, base_relations, turns=random.randint(2, 5)
         )
         example = {
+            'id': f"balanced_{i + single_turn_count}_{uuid.uuid4().hex[:8]}",
             'example_type': 'multi_turn',
             'conversation_data': conversation_data,
             'user_login': 'Daveydrz',
@@ -7600,11 +7617,12 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
     print(f"🎤 Generating {asr_augmented_count} ASR-augmented examples...")
     for i in range(asr_augmented_count):
         base_entities, base_relations = generate_balanced_base_example(i + single_turn_count + multi_turn_count)
-        base_text = f"User (Daveydrz): I have {base_entities[0]['text'] if base_entities else 'something'} to discuss."
-        augmented_text, augmented_entities = asr_augmentator.augment_text(base_text, base_entities)
-        example = create_example(augmented_text, augmented_entities, base_relations, 'asr_augmented')
-        example['asr_augmented'] = True
-        all_examples.append(example)
+        base_example = create_example(i + single_turn_count + multi_turn_count, base_entities, base_relations, 'asr_augmented')
+        augmented_text, augmented_entities = asr_augmentator.augment_text(base_example['text'], base_example['entities'])
+        base_example['text'] = augmented_text
+        base_example['entities'] = augmented_entities
+        base_example['asr_augmented'] = True
+        all_examples.append(base_example)
         update_counts(entity_counts, relation_counts, augmented_entities, base_relations)
     
     # Generate update/correction examples
@@ -7613,6 +7631,7 @@ def generate_buddy_training_data(num_examples=100000, test_mode=False):
         base_entities, base_relations = generate_balanced_base_example(i + single_turn_count + multi_turn_count + asr_augmented_count)
         update_example = update_gen.generate_update_correction_example(base_entities, base_relations)
         if update_example:
+            update_example.setdefault('id', f"balanced_{i + single_turn_count + multi_turn_count + asr_augmented_count}_{uuid.uuid4().hex[:8]}")
             all_examples.append(update_example)
             update_counts(entity_counts, relation_counts, update_example.get('entities', []), update_example.get('relations', []))
     
