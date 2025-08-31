@@ -7787,56 +7787,179 @@ def run_complete_system_test():
     
     print(f"\n🎉 ALL TESTS PASSED - Buddy's memory system is 100% ready for Daveydrz!")
     print(f"🧠 Buddy will remember EVERYTHING with perfect accuracy!")
-    
+
     return True
 
+
+# ---------------------------------------------------------------------------
+# PERFECT MEMORY GENERATOR
+# ---------------------------------------------------------------------------
+class PerfectMemoryGenerator:
+    """Final generator engine producing balanced memory records."""
+
+    def __init__(self, target_records: int = Config.DEFAULT_NUM_RECORDS, seed: int = 0):
+        random.seed(seed)
+        global DYNAMIC_CONFIG
+        DYNAMIC_CONFIG = DynamicConfig.compute_targets(target_records)
+        Config.TARGET_RECORDS_PER_ENTITY = DYNAMIC_CONFIG["TARGET_RECORDS_PER_ENTITY"]
+        Config.TARGET_RECORDS_PER_RELATION = DYNAMIC_CONFIG["TARGET_RECORDS_PER_RELATION"]
+        self.target_records = target_records
+        self.stats = StatisticsTracker()
+        self.asr = ASRAugmentator(user_login=Config.CURRENT_USER_LOGIN)
+        self.temporal = TemporalNormalizer(
+            reference_time=Config.CURRENT_UTC_DATETIME, user_login=Config.CURRENT_USER_LOGIN
+        )
+        self.multi_turn = MultiTurnGenerator(user_login=Config.CURRENT_USER_LOGIN)
+        self.entity_types = DYNAMIC_CONFIG["ALL_ENTITY_TYPES"]
+        self.relation_types = DYNAMIC_CONFIG["ALL_RELATION_TYPES"]
+        self.relation_specs = self._build_relation_specs()
+
+    def _build_relation_specs(self):
+        """Build mapping from relation type to entity types and templates."""
+        specs = {
+            RelationTypes.HAS_SKILL: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.SKILL,
+                "template": "{head} has skill in {tail}.",
+            },
+            RelationTypes.WORKS_FOR: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.ORGANIZATION,
+                "template": "{head} works for {tail}.",
+            },
+            RelationTypes.LIVES_IN: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.LOCATION,
+                "template": "{head} lives in {tail}.",
+            },
+            RelationTypes.HAS_GOAL: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.GOAL,
+                "template": "{head} has a goal to {tail}.",
+            },
+            RelationTypes.ENJOYS: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.HOBBY,
+                "template": "{head} enjoys {tail}.",
+            },
+            RelationTypes.WATCHES: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.MEDIA,
+                "template": "{head} watches {tail}.",
+            },
+            RelationTypes.OWNS: {
+                "head": EntityTypes.PERSON,
+                "tail": EntityTypes.OBJECT,
+                "template": "{head} owns {tail}.",
+            },
+        }
+        for rel in self.relation_types:
+            if rel not in specs:
+                specs[rel] = {
+                    "head": EntityTypes.PERSON,
+                    "tail": EntityTypes.OBJECT,
+                    "template": "{head} " + rel.lower().replace("_", " ") + " {tail}.",
+                }
+        return specs
+
+    def _sample_entity_text(self, entity_type: str) -> str:
+        pool = ENTITY_POOLS.get(entity_type)
+        if pool:
+            return random.choice(pool)
+        return f"example_{entity_type.lower()}_{random.randint(0,9999)}"
+
+    def _select_relation_type(self) -> str:
+        for rel in self.relation_types:
+            if self.stats.relation_counts.get(rel, 0) < Config.TARGET_RECORDS_PER_RELATION:
+                return rel
+        return random.choice(self.relation_types)
+
+    def _coverage_complete(self) -> bool:
+        for et in self.entity_types:
+            if self.stats.entity_counts.get(et, 0) < Config.TARGET_RECORDS_PER_ENTITY:
+                return False
+        for rt in self.relation_types:
+            if self.stats.relation_counts.get(rt, 0) < Config.TARGET_RECORDS_PER_RELATION:
+                return False
+        return True
+
+    def _generate_base_record(self, rel_type: str):
+        spec = self.relation_specs[rel_type]
+        head_text = self._sample_entity_text(spec["head"])
+        tail_text = self._sample_entity_text(spec["tail"])
+        text = spec["template"].format(head=head_text, tail=tail_text)
+        head_entity = create_entity(0, text, spec["head"], head_text)
+        tail_entity = create_entity(1, text, spec["tail"], tail_text)
+        if not head_entity or not tail_entity:
+            return None
+        entities = [head_entity, tail_entity]
+        relations = [{"type": rel_type, "head": 0, "tail": 1}]
+        return text, entities, relations, head_text, tail_text
+
+    def generate_dataset(self):
+        dataset = []
+        while (len(dataset) < self.target_records) or (not self._coverage_complete()):
+            rel_type = self._select_relation_type()
+            base = self._generate_base_record(rel_type)
+            if not base:
+                continue
+            text, entities, relations, head_text, tail_text = base
+            spec = self.relation_specs[rel_type]
+
+            if random.random() < 0.1:
+                convo = self.multi_turn.generate_multi_turn_conversation(entities, relations, turns=2)
+                text = " ".join(t["text"] for t in convo["conversation_turns"])
+                head_entity = create_entity(0, text, spec["head"], head_text)
+                tail_entity = create_entity(1, text, spec["tail"], tail_text)
+                if not head_entity or not tail_entity:
+                    continue
+                entities = [head_entity, tail_entity]
+                relations = [{"type": rel_type, "head": 0, "tail": 1}]
+
+            if random.random() < 0.3:
+                text, entities = self.asr.augment_text(text, entities)
+            if random.random() < 0.3:
+                entities = self.temporal.normalize_temporal_entities(entities)
+
+            for e in entities:
+                self.stats.track_entity(e["type"])
+            for r in relations:
+                self.stats.track_relation(r["type"])
+            self.stats.track_record()
+
+            record = {
+                "id": f"pm_{uuid.uuid4().hex[:8]}",
+                "text": text,
+                "entities": entities,
+                "relations": relations,
+            }
+            dataset.append(record)
+
+        with open(Config.OUTPUT_FILENAME, "w") as f:
+            json.dump({"dataset": dataset}, f, indent=2)
+        self.stats.generate_final_report()
+        return dataset
+
+
+ENTITY_POOLS = {
+    EntityTypes.PERSON: ALL_PEOPLE_NAMES,
+    EntityTypes.SKILL: SKILLS,
+    EntityTypes.TOPIC: TOPICS,
+    EntityTypes.ORGANIZATION: TECH_COMPANIES,
+    EntityTypes.LOCATION: LOCATIONS,
+    EntityTypes.GOAL: PERSONAL_GOALS,
+    EntityTypes.HOBBY: HOBBIES,
+    EntityTypes.ACTIVITY: ACTIVITIES,
+    EntityTypes.MEDIA: MEDIA_TYPES_EXPANDED,
+    EntityTypes.PRODUCT: PRODUCTS,
+    EntityTypes.OBJECT: OBJECTS,
+}
+
+
 def main():
-    """Main execution function for Buddy's perfect memory system."""
-    print(f"🚀 100% Fool-Proof Memory System for Buddy (Daveydrz) @ 2025-08-26 09:18:37")
-    print(f"🎯 Target: Perfect memory extraction for conscious AI 'Buddy'")
-    print(f"📊 Features: ASR realism, multi-turn conversations, temporal normalization, mathematical balance")
-    
-    # Initialize dynamic configuration
-    print(f"\n📋 Initializing dynamic configuration...")
-    global DYNAMIC_CONFIG
-    DYNAMIC_CONFIG = DynamicConfig.compute_targets(100000)  # 100K target
-    
-    # Update Config class with dynamic values
-    Config.TARGET_RECORDS_PER_RELATION = DYNAMIC_CONFIG['TARGET_RECORDS_PER_RELATION']
-    Config.TARGET_RECORDS_PER_ENTITY = DYNAMIC_CONFIG['TARGET_RECORDS_PER_ENTITY']
-    
-    # Run comprehensive system test
-    print(f"\n🧪 Running comprehensive system test...")
-    success = run_complete_system_test()
-    
-    if success:
-        print(f"\n🎉 SYSTEM READY: Buddy will have perfect memory for Daveydrz!")
-        print(f"🧠 All systems validated - mathematical balance achieved")
-        print(f"🎤 ASR augmentation ready for voice conversations")
-        print(f"💬 Multi-turn coreference chains working")
-        print(f"⏰ Temporal normalization active")
-        print(f"🔄 Memory updates/corrections implemented")
-        
-        # Generate full dataset
-        print(f"\n🚀 Generating full training dataset...")
-        full_dataset = generate_buddy_training_data(100000)  # 100k examples
-        
-        if full_dataset:
-            print(f"✅ Generated {len(full_dataset)} examples for Buddy's consciousness")
-            
-            # Save dataset with new filename
-            filename = f"buddy_perfect_memory_dataset_{Config.CURRENT_UTC_DATETIME.replace(':', '').replace(' ', '_').replace('-', '')}.json"
-            with open(filename, "w", encoding='utf-8') as f:
-                json.dump(full_dataset, f, indent=2, ensure_ascii=False)
-            
-            print(f"💾 Dataset saved to: {filename}")
-            print(f"🎯 Ready to train DeBERTa for Buddy's perfect memory!")
-            
-        else:
-            print(f"❌ Full generation failed - check coverage deficits above")
-    else:
-        print(f"\n❌ System test failed - fix issues before full generation")
-        print(f"🔧 Review test output above for specific failures")
+    generator = PerfectMemoryGenerator(target_records=Config.DEFAULT_NUM_RECORDS)
+    generator.generate_dataset()
+
 
 if __name__ == "__main__":
     main()
