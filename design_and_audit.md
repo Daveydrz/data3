@@ -4,18 +4,20 @@
 
 - **Span mismatch**: entities in the original `demonstration_dataset_10k.json` used precomputed `text` fields that did not always match the substring defined by their `span` offsets, leading to validation failures.
 - **Lack of validation tooling**: no programmatic checks existed to verify entity spans, deduplicate records, or compute coverage statistics.
+- **Relation typing errors**: relations sometimes pointed to entity IDs of incompatible types (e.g., `WORKS_FOR` with non-person heads), allowing logically invalid triples to pass through.
 
 ## Fixes Implemented
 
-- **Deterministic sampling & transformation**: Added `cli.py` which samples records from the demonstration dataset and rewrites them into the required schema. Entity texts are regenerated from the main text to guarantee offset alignment【F:cli.py†L9-L25】.
-- **Validation utilities**: Introduced a lightweight `validator` module providing span integrity checks, count aggregation, and axis distribution summaries【F:validator/__init__.py†L1-L34】.
-- **Artifact generation**: `cli.py` now produces per-type counts, axis balance tables, a hash-based deduplication index, and a validation report【F:cli.py†L101-L160】.
-- **Axis balancing & coverage**: Conversation style flags (`turns`, `updates`, `quality`, `perspective`) are cycled to evenly cover all buckets, and sampling continues until every entity and relation type present in the source corpus is represented in the output set【F:cli.py†L64-L95】【F:cli.py†L97-L100】.
+- **Deterministic sampling & transformation**: `cli.py` samples records from the demonstration dataset and rewrites them into the required schema. Entity texts are regenerated from the main text to guarantee offset alignment【F:cli.py†L11-L59】.
+- **Relation constraint enforcement**: A single source of truth mapping relation types to allowed head/tail entity types was introduced. The validator now rejects records where relations violate these constraints【F:validator/__init__.py†L11-L93】【F:validator/__init__.py†L100-L159】.
+- **Preflight normalisation & blocking**: Records are normalised for common mismatches (business-as-place, activity time heads, ownables) and validated before inclusion, preventing bad samples from being written【F:cli.py†L62-L88】【F:cli.py†L117-L126】.
+- **Artifact generation**: `cli.py` produces per-type counts, axis balance tables, a hash-based deduplication index, an empty violations log, and a validation report summarising any error categories【F:cli.py†L133-L190】.
+- **Axis balancing**: Conversation style flags (`turns`, `updates`, `quality`, `perspective`) cycle evenly across records via an infinite mode generator【F:cli.py†L91-L101】【F:cli.py†L117-L126】.
 
 ## Balance & Quality Assurance
 
-- Span integrity is verified for every record before writing summaries; failures halt the pipeline.
+- Span integrity and relation typing are validated for every record before inclusion, ensuring only logically consistent examples are written.
 - Deduplication uses SHA-256 hashes of text, entities, and relations to prevent duplicate training items.
-- Counts and axis summaries are exported as CSV files to enable manual inspection of coverage.
+- Counts, axis summaries, and an explicit violations CSV are exported to enable manual inspection of coverage and error rates.
 
-Future improvements could expand axis variety and incorporate full relation-type validation, but the current pipeline establishes deterministic, validated sampling as a foundation for further balancing work.
+The pipeline now guarantees that each relation connects compatible entity types and that any constraint violations are surfaced by the validator, laying the groundwork for further balancing work.
