@@ -9,7 +9,8 @@
 
 - **Deterministic sampling & transformation**: Added `cli.py` which samples records from the demonstration dataset and rewrites them into the required schema. Entity texts are regenerated from the main text to guarantee offset alignment【F:cli.py†L9-L25】.
 - **Validation utilities**: Introduced a lightweight `validator` module providing span integrity checks, count aggregation, and axis distribution summaries【F:validator/__init__.py†L1-L34】.
-- **Artifact generation**: `cli.py` now produces per-type counts, axis balance tables, a hash-based deduplication index, and a validation report【F:cli.py†L41-L105】.
+- **Artifact generation**: `cli.py` now produces per-type counts, axis balance tables, a hash-based deduplication index, and a validation report【F:cli.py†L101-L160】.
+- **Axis balancing & coverage**: Conversation style flags (`turns`, `updates`, `quality`, `perspective`) are cycled to evenly cover all buckets, and sampling continues until every entity and relation type present in the source corpus is represented in the output set【F:cli.py†L64-L95】【F:cli.py†L97-L100】.
 
 ## Balance & Quality Assurance
 

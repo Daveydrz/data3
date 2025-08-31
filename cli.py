@@ -3,10 +3,13 @@ import json
 import random
 import hashlib
 import csv
+import itertools
+from collections import Counter
 from validator import validate_record, compute_counts, compute_axis_distribution
 
 
-def transform_record(rec, seed):
+def transform_record(rec, seed, mode):
+    """Rewrite a raw record into the target schema and attach mode info."""
     text = rec['text']
     entities = []
     for ent in rec.get('entities', []):
@@ -23,11 +26,24 @@ def transform_record(rec, seed):
     relations = []
     for i, rel in enumerate(rec.get('relations', [])):
         relations.append({'id': i, 'type': rel['type'], 'head': rel['head'], 'tail': rel['tail']})
+
+    # Assemble turns based on conversation style. We keep original text so
+    # entity offsets remain valid; for multi-turn we append a simple AI
+    # acknowledgement after the source text.
+    if mode['turns'] == 'multi':
+        turns = [
+            {'speaker': 'human', 'text': text, 'ts': None},
+            {'speaker': 'ai', 'text': 'Acknowledged.', 'ts': None},
+        ]
+        text = text + '\nAI: Acknowledged.'
+    else:
+        turns = [{'speaker': 'human', 'text': text, 'ts': None}]
+
     return {
         'id': rec['id'],
-        'mode': {'turns': 'single', 'updates': False, 'quality': 'clean', 'perspective': 'third'},
+        'mode': mode,
         'text': text,
-        'turns': [],
+        'turns': turns,
         'entities': entities,
         'relations': relations,
         'meta': {
@@ -37,6 +53,21 @@ def transform_record(rec, seed):
             'final_state_only': True
         }
     }
+
+
+def generate_balanced_modes(n):
+    """Produce a list of mode dicts balanced across conversation axes."""
+    axes = {
+        'turns': ['single', 'multi'],
+        'updates': [False, True],
+        'quality': ['clean', 'asr'],
+        'perspective': ['first', 'third'],
+    }
+    cycles = {axis: itertools.cycle(opts) for axis, opts in axes.items()}
+    modes = []
+    for _ in range(n):
+        modes.append({axis: next(cycle) for axis, cycle in cycles.items()})
+    return modes
 
 
 def main():
@@ -51,9 +82,24 @@ def main():
 
     rnd = random.Random(args.seed)
     rnd.shuffle(data)
-    sample = data[:args.records]
 
-    records = [transform_record(r, args.seed) for r in sample]
+    # Determine coverage targets across full dataset
+    all_entity_types = {e['type'] for rec in data for e in rec.get('entities', [])}
+    all_relation_types = {r['type'] for rec in data for r in rec.get('relations', [])}
+
+    selected = []
+    ent_counter = Counter()
+    rel_counter = Counter()
+    for rec in data:
+        selected.append(rec)
+        ent_counter.update(e['type'] for e in rec.get('entities', []))
+        rel_counter.update(r['type'] for r in rec.get('relations', []))
+        if len(selected) >= args.records and all_entity_types <= set(ent_counter) and all_relation_types <= set(rel_counter):
+            break
+
+    selected = selected[:args.records]
+    modes = generate_balanced_modes(len(selected))
+    records = [transform_record(r, args.seed, m) for r, m in zip(selected, modes)]
 
     with open(args.out, 'w') as f:
         for r in records:
