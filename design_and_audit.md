@@ -14,6 +14,10 @@
 - **Artifact generation**: `cli.py` produces per-type counts, axis balance tables, a hash-based deduplication index, an empty violations log, and a validation report summarising any error categories【F:cli.py†L133-L190】.
 - **Axis balancing**: Conversation style flags (`turns`, `updates`, `quality`, `perspective`) cycle evenly across records via an infinite mode generator【F:cli.py†L91-L101】【F:cli.py†L117-L126】.
 
+- **Template enforcement**: Validator detects and rejects records for the `role at org`, `skill via method`, and `attendance + industry + connection` templates unless all required entities and relations are present, preventing under‑extracted or miswired samples【F:validator/__init__.py†L168-L241】.
+
+- **Pronoun policy**: The pipeline currently omits explicit `PRONOUN` entities for anaphora; this policy is documented and applied consistently across records.
+
 ## Balance & Quality Assurance
 
 - Span integrity and relation typing are validated for every record before inclusion, ensuring only logically consistent examples are written.

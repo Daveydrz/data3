@@ -6,6 +6,7 @@ considered invalid and should be dropped before writing to disk.
 """
 
 from collections import Counter
+import re
 
 
 # ---------------------------------------------------------------------------
@@ -156,7 +157,105 @@ def validate_record(record):
             if head_type != tail_type:
                 errors["RELATION_HEAD_TYPE"] += 1
 
-    return {"is_valid": not errors, "errors": errors}
+    tmpl_errors, templates = _template_checks(record, entity_map)
+    errors.update(tmpl_errors)
+
+    return {"is_valid": not errors, "errors": errors, "templates": templates}
+
+
+ROLE_AT_ORG_RE = re.compile(
+    r"(?:in (?:their|his|her) role as|role as)\s+(?P<role>[^,]+?)\s+at\s+(?P<org>[^.,]+)",
+    re.IGNORECASE,
+)
+SKILL_VIA_METHOD_RE = re.compile(
+    r"(?:develops|masters|learns|builds|improves)\s+(?P<skill>[^,]+?)\s+(?:through|via|by)\s+(?P<method>[^.,]+)",
+    re.IGNORECASE,
+)
+ATTENDANCE_RE = re.compile(
+    r"attended a\s+(?P<event>[^,]+?)\s+in the\s+(?P<industry>[^,]+?)\s+industry and connected with\s+(?P<person>[^.,]+)",
+    re.IGNORECASE,
+)
+
+
+def _template_checks(record, entity_map):
+    errors = Counter()
+    templates = {
+        "role_at_org": False,
+        "skill_via_method": False,
+        "attendance_industry_connection": False,
+    }
+
+    text = record.get("text", "")
+    entities = record.get("entities", [])
+    relations = record.get("relations", [])
+
+    m = ROLE_AT_ORG_RE.search(text)
+    if m:
+        templates["role_at_org"] = True
+        role_txt = m.group("role").strip().lower()
+        org_txt = m.group("org").strip().lower()
+        role_ids = [e["id"] for e in entities if e["type"] == "ROLE" and e["text"].lower() == role_txt]
+        org_ids = [e["id"] for e in entities if e["type"] == "ORGANIZATION" and e["text"].lower() == org_txt]
+        has_role_heads = {r["head"] for r in relations if r["type"] == "HAS_ROLE" and r["tail"] in role_ids}
+        works_for_heads = {r["head"] for r in relations if r["type"] == "WORKS_FOR" and r["tail"] in org_ids}
+        if not role_ids or not org_ids or not (has_role_heads & works_for_heads):
+            errors["UNDEREXTRACT_ROLE"] += 1
+
+    m = SKILL_VIA_METHOD_RE.search(text)
+    if m:
+        templates["skill_via_method"] = True
+        skill_txt = m.group("skill").strip().lower()
+        method_txt = m.group("method").strip().lower()
+        skill_ids = [e["id"] for e in entities if e["type"] == "SKILL" and e["text"].lower() == skill_txt]
+        method_ids = [
+            e["id"]
+            for e in entities
+            if e["type"] in {"METHOD", "APPROACH", "TECHNIQUE"} and e["text"].lower() == method_txt
+        ]
+        has_skill = any(
+            r["type"] in {"HAS_SKILL", "LEARNS", "DEVELOPS"} and r["tail"] in skill_ids
+            for r in relations
+        )
+        learned_via = any(
+            r["type"] in {"LEARNED_VIA", "ACQUIRED_VIA", "BY_METHOD"}
+            and r["head"] in skill_ids
+            and r["tail"] in method_ids
+            for r in relations
+        )
+        if not skill_ids or not method_ids or not has_skill or not learned_via:
+            errors["MISSING_METHOD_EDGE"] += 1
+
+    m = ATTENDANCE_RE.search(text)
+    if m:
+        templates["attendance_industry_connection"] = True
+        event_txt = m.group("event").strip().lower()
+        industry_txt = m.group("industry").strip().lower()
+        person2_txt = m.group("person").strip().lower()
+        event_ids = [e["id"] for e in entities if e["type"] == "EVENT" and e["text"].lower() == event_txt]
+        industry_ids = [e["id"] for e in entities if e["type"] == "INDUSTRY" and e["text"].lower() == industry_txt]
+        person2_ids = [
+            e["id"]
+            for e in entities
+            if e["type"] in {"PERSON", "PRONOUN"} and e["text"].lower() == person2_txt
+        ]
+        attended = any(r["type"] == "ATTENDED" and r["tail"] in event_ids for r in relations)
+        event_industry = any(
+            r["type"] == "EVENT_IN_INDUSTRY" and r["head"] in event_ids and r["tail"] in industry_ids
+            for r in relations
+        )
+        connected = any(
+            r["type"] == "CONNECTED_WITH" and r["tail"] in person2_ids for r in relations
+        )
+        if not event_ids or not industry_ids or not person2_ids or not attended or not event_industry or not connected:
+            errors["MISSING_ATTENDANCE_EDGE"] += 1
+        for rel in relations:
+            if rel["type"] == "AT_LOCATION":
+                head = entity_map.get(rel["head"])
+                tail = entity_map.get(rel["tail"])
+                if head and tail and head["type"] in {"PERSON", "PRONOUN"} and tail["type"] in {"PERSON", "PRONOUN"}:
+                    errors["AT_LOCATION_PERSON_PERSON"] += 1
+
+    return errors, templates
 
 
 def compute_counts(records):

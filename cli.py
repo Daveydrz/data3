@@ -135,9 +135,13 @@ def main():
     seen = set()
     error_totals = Counter()
     violations = []
+    template_totals = Counter()
     for r in records:
         res = validate_record(r)
         error_totals.update(res["errors"])
+        for tmpl, used in res.get("templates", {}).items():
+            if used:
+                template_totals[tmpl] += 1
         if res["errors"]:
             for err in res["errors"]:
                 violations.append({"id": r["id"], "error": err})
@@ -187,6 +191,16 @@ def main():
         f.write(f"Total records: {len(records)}\n")
         for err, count in error_totals.items():
             f.write(f"{err}: {count}\n")
+        f.write("\nTemplate coverage:\n")
+        f.write(
+            f"role_at_org: {template_totals.get('role_at_org', 0)} (UNDEREXTRACT_ROLE: {error_totals.get('UNDEREXTRACT_ROLE', 0)})\n"
+        )
+        f.write(
+            f"skill_via_method: {template_totals.get('skill_via_method', 0)} (MISSING_METHOD_EDGE: {error_totals.get('MISSING_METHOD_EDGE', 0)})\n"
+        )
+        f.write(
+            f"attendance_industry_connection: {template_totals.get('attendance_industry_connection', 0)} (MISSING_ATTENDANCE_EDGE: {error_totals.get('MISSING_ATTENDANCE_EDGE', 0)})\n"
+        )
 
 
 
