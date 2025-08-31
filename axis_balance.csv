@@ -1,0 +1,9 @@
+axis,bucket,count,percentage
+turns,single,495,0.495
+turns,multi,505,0.505
+updates,False,495,0.495
+updates,True,505,0.505
+quality,clean,495,0.495
+quality,asr,505,0.505
+perspective,first,495,0.495
+perspective,third,505,0.505
