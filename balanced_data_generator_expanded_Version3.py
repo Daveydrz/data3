@@ -316,7 +316,10 @@ class MultiTurnGenerator:
         
         continuation_entities = [
             {'text': 'Daveydrz', 'type': 'PERSON', 'span': [text.find('Daveydrz'), text.find('Daveydrz') + 8]},
-            {'text': pronoun, 'type': 'PRONOUN', 'span': [text.find(pronoun), text.find(pronoun) + len(pronoun)]}
+            {'text': pronoun, 'type': 'PRONOUN', 'span': [
+                (re.search(r'\b' + re.escape(pronoun) + r'\b', text).start() if re.search(r'\b' + re.escape(pronoun) + r'\b', text) else -1),
+                (re.search(r'\b' + re.escape(pronoun) + r'\b', text).end() if re.search(r'\b' + re.escape(pronoun) + r'\b', text) else -1)
+            ]}
         ]
         
         return {
@@ -863,6 +866,9 @@ class RelationTypes:
     EARNS = "EARNS"
     SAVES = "SAVES"
     BUDGETS_FOR = "BUDGETS_FOR"
+    PURCHASES = "PURCHASES"
+    PURCHASED_FROM = "PURCHASED_FROM"
+    ALLOCATES = "ALLOCATES"
     
     # Health Relations (3)
     HAS_HEALTH_INFO = "HAS_HEALTH_INFO"
@@ -3816,7 +3822,7 @@ class PerfectBalanceTracker:
             # NEW MEMORY-SPECIFIC RELATIONS (STEP 3)
             'MENTIONED_PREVIOUSLY', 'DISCUSSED_BEFORE', 'RECALLS', 'WANTS', 'HAS_HABIT',
             'HAS_CONCERN', 'HAS_ROUTINE', 'WORKS_TOWARD', 'OCCURS_DAILY', 'OCCURS_WEEKLY',
-            'DISLIKES', 'AVOIDS'
+            'DISLIKES', 'AVOIDS', 'PURCHASES', 'PURCHASED_FROM', 'ALLOCATES'
         ]
         
         # Assign remaining 15% evenly among low-frequency relations
@@ -4175,12 +4181,11 @@ def print_coverage_analysis(tracker: PerfectBalanceTracker):
 
 def find_span_case_insensitive(text: str, subtext: str) -> Optional[List[int]]:
     """Find span of subtext in text, case-insensitive."""
-    lower_text = text.lower()
-    lower_subtext = subtext.lower()
-    start = lower_text.find(lower_subtext)
-    if start == -1: 
+    pattern = re.compile(r'\b' + re.escape(subtext) + r'\b', re.IGNORECASE)
+    match = pattern.search(text)
+    if not match:
         return None
-    return [start, start + len(subtext)]
+    return [match.start(), match.end()]
 
 def create_entity(entity_id: int, text: str, entity_type: str, entity_text: str) -> Optional[Dict]:
     """Create entity with proper span calculation."""
@@ -4293,8 +4298,7 @@ class TimelineGoalTemplate(BalancedTemplate):
             (RelationTypes.AIMS_FOR, "person1", "goal1"),
             (RelationTypes.SCHEDULED_FOR, "project1", "timeline1"),
             (RelationTypes.STARTS_AT, "project1", "time1"),
-            (RelationTypes.WORKS_ON, "person1", "project1"),
-            (RelationTypes.INTENDS, "person1", "intent1")
+            (RelationTypes.WORKS_ON, "person1", "project1")
         ]
         
         return text, entities, relations
@@ -4307,27 +4311,27 @@ class BudgetSentimentTemplate(BalancedTemplate):
         budget = random.choice(BUDGETS)
         sentiment = random.choice(SENTIMENTS)
         amount = random.choice(AMOUNTS)
-        money = random.choice(MONEY)
+        fund = random.choice(["emergency fund", "retirement fund", "investment portfolio"])
         organization = random.choice(TECH_COMPANIES)
-        
-        text = f"{person} manages the {budget} at {organization} with {sentiment} sentiment. They allocated {amount} and spent {money} on improvements."
-        
+
+        text = f"{person} manages the {budget} at {organization} with {sentiment} sentiment. They allocated {amount} and spent from the {fund} on improvements."
+
         entities = {
             "person1": (EntityTypes.PERSON, person),
             "budget1": (EntityTypes.BUDGET, budget),
             "sentiment1": (EntityTypes.SENTIMENT, sentiment),
             "amount1": (EntityTypes.AMOUNT, amount),
-            "money1": (EntityTypes.MONEY, money),
+            "fund1": (EntityTypes.BUDGET, fund),
             "org1": (EntityTypes.ORGANIZATION, organization)
         }
-        
+
         relations = [
             (RelationTypes.BUDGETS_FOR, "person1", "budget1"),
             (RelationTypes.FEELS, "person1", "sentiment1"),
-            (RelationTypes.SPENDS, "person1", "money1"),
-            (RelationTypes.EARNS, "org1", "money1"),
+            (RelationTypes.SPENDS, "person1", "fund1"),
             (RelationTypes.WORKS_FOR, "person1", "org1"),
-            (RelationTypes.USES, "person1", "budget1")
+            (RelationTypes.USES, "person1", "budget1"),
+            (RelationTypes.ALLOCATES, "person1", "amount1")
         ]
         
         return text, entities, relations
@@ -5173,8 +5177,7 @@ class CommunityEngagementTemplate(BalancedTemplate):
             (RelationTypes.AT_LOCATION, "person1", "location1"),
             (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
             (RelationTypes.PARTICIPATES_IN, "person1", "event1"),
-            (RelationTypes.LEARNS, "person1", "culture1"),
-            (RelationTypes.LEADS, "person1", "group1")
+            (RelationTypes.FOCUSES_ON, "activity1", "culture1")
         ]
         
         return text, entities, relations
@@ -5509,10 +5512,11 @@ class ObjectInteractionTemplate(BalancedTemplate):
             (RelationTypes.OWNS, "person1", "obj1"),
             (RelationTypes.BORROWED, "person1", "obj1"),
             (RelationTypes.LENT, "person2", "obj1"),
+            (RelationTypes.LENT, "person1", "obj1"),
             (RelationTypes.SPENDS, "person1", "money1"),
-            (RelationTypes.RECEIVES, "person1", "product1"),
-            (RelationTypes.GIVES, "person1", "obj1"),
-            (RelationTypes.HAS_OBJECT, "person1", "obj1")
+            (RelationTypes.PURCHASES, "person1", "product1"),
+            (RelationTypes.PURCHASED_FROM, "person1", "business1"),
+            (RelationTypes.GIVES, "person1", "obj1")
         ]
         
         return text, entities, relations
@@ -5765,12 +5769,26 @@ class HealthLocationTemplate(BalancedTemplate):
         
         # First person variation (50% chance)
         use_first_person = random.choice([True, False])
+        verbs = {
+            'audio': ('listen to', RelationTypes.LISTENS_TO),
+            'video': ('watch', RelationTypes.WATCHES),
+            'text': ('read', RelationTypes.READS)
+        }
+        video_media = {"movie", "TV series", "YouTube video", "livestream", "documentary", "webinar", "online course", "tutorial"}
+        audio_media = {"podcast", "audiobook"}
+        if media in video_media:
+            verb, rel = verbs['video']
+        elif media in audio_media:
+            verb, rel = verbs['audio']
+        else:
+            verb, rel = verbs['text']
+
         if use_first_person:
-            text = f"I have {health_condition} and stay at the {location} in the {room}. I'm near the {business} where I do {activity} and listen to {media}."
+            text = f"I have {health_condition} and stay at the {location} in the {room}. I'm near the {business} where I do {activity} and {verb} {media}."
             person_entity = "I"
         else:
             # Third person variation
-            text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and listen to {media}."
+            text = f"{person} has {health_condition} and stays at the {location} in the {room}. They're near the {business} where they do {activity} and {verb} {media}."
             person_entity = person
         
         
@@ -5793,7 +5811,7 @@ class HealthLocationTemplate(BalancedTemplate):
             (RelationTypes.AT_LOCATION, "person1", "room1"),
             (RelationTypes.IS_NEAR, "location1", "business1"),
             (RelationTypes.DOES_ACTIVITY, "person1", "activity1"),
-            (RelationTypes.LISTENS_TO, "person1", "media1"),
+            (rel, "person1", "media1"),
             (RelationTypes.LOCATED_AT, "business1", "location1")
         ]
         
